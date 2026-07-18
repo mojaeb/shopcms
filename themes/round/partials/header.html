@@ -1,0 +1,63 @@
+<div class="rd-topbar">
+    <div class="rd-width rd-topbar-inner">
+        <div class="rd-topbar-support">پشتیبانی: همیشه در خدمت شما</div>
+        <div class="rd-topbar-links">
+            {% if user.is_authenticated %}
+            <a href="/dashboard/">حساب من</a>
+            {% if is_store_staff %}<a href="/manage/">پنل مدیریت</a>{% endif %}
+            {% else %}
+            <a href="/login/">ورود</a>
+            <a href="/register/">ثبت‌نام</a>
+            {% endif %}
+            <a href="/orders/">پیگیری سفارش</a>
+        </div>
+    </div>
+</div>
+
+<header class="rd-header">
+    <div class="rd-width rd-header-inner">
+        <a href="/" class="rd-logo">
+            <span class="rd-logo-mark">{{ store.name|default:"S"|first }}</span>
+            {{ store.name|default:"ShopCMS" }}
+        </a>
+        <form action="/search/" method="get" class="rd-search" role="search">
+            <input type="search" name="q" placeholder="جستجوی محصول..." aria-label="جستجو">
+            <button type="submit" aria-label="جستجو">⌕</button>
+        </form>
+        <div class="rd-header-actions">
+            {% if user.is_authenticated %}
+            <a href="/dashboard/">
+                <span class="rd-icon-badge">☺</span>
+                <span class="rd-action-txt">حساب<br><strong>داشبورد</strong></span>
+            </a>
+            {% else %}
+            <a href="/login/">
+                <span class="rd-icon-badge">☺</span>
+                <span class="rd-action-txt">حساب<br><strong>ورود</strong></span>
+            </a>
+            {% endif %}
+            <a href="/cart/">
+                <span class="rd-icon-badge">▢<span data-cart-count>0</span></span>
+                <span class="rd-action-txt">سبد<br><strong>خرید</strong></span>
+            </a>
+        </div>
+    </div>
+</header>
+
+<nav class="rd-nav" aria-label="منوی اصلی">
+    <div class="rd-width rd-nav-inner">
+        <a href="/category/" class="rd-nav-cat">☰ همه دسته‌ها</a>
+        <ul class="rd-nav-links">
+            {% if cms_menus.header %}
+                {% for item in cms_menus.header.items %}
+                <li><a href="{{ item.url }}" {% if item.open_new_tab %}target="_blank"{% endif %}>{{ item.label }}</a></li>
+                {% endfor %}
+            {% else %}
+                <li><a href="/">خانه</a></li>
+                <li><a href="/category/">فروشگاه</a></li>
+                <li><a href="/blog/">وبلاگ</a></li>
+                <li><a href="/wishlist/">علاقه‌مندی</a></li>
+            {% endif %}
+        </ul>
+    </div>
+</nav>

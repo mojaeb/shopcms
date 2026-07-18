@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}{{ store.name }} - دسته‌بندی{% endblock %}
+{% block content %}
+<h1 class="page-title">{% if category %}{{ category.name }}{% else %}دسته‌بندی محصولات{% endif %}</h1>
+{% if categories and not category %}
+<div class="grid" style="margin-bottom:1.5rem;">
+    {% for cat in categories %}
+    <a href="/category/{{ cat.slug }}/" class="card">{{ cat.name }}</a>
+    {% endfor %}
+</div>
+{% endif %}
+<div id="product-catalog"
+     data-api-base="/api/v1/products/"
+     data-currency="{{ store.currency }}"
+     data-category="{{ category_slug|default:'' }}">
+    {% include "partials/product_catalog.html" %}
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="/static/js/product-filters.js"></script>
+{% endblock %}

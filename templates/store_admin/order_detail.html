@@ -1,0 +1,10 @@
+{% extends "store_admin/base.html" %}
+{% block content %}
+<div id="sa-order-detail" class="sa-page" data-order-id="{{ order_id }}">
+    <p class="sa-back"><a href="/manage/orders/">← بازگشت به لیست</a></p>
+    <div class="sa-loading">در حال بارگذاری...</div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="/static/js/store_admin/orders.js"></script>
+{% endblock %}

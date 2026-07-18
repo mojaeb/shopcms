@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}جستجو{% if query %}: {{ query }}{% endif %} - {{ store.name }}{% endblock %}
+{% block content %}
+<div class="vg-page">
+    <div class="vg-page-head vg-width" data-vg-reveal>
+        <p class="vg-eyebrow-dark"><i data-lucide="search"></i> جستجو</p>
+        <h1 class="vg-page-title">{% if query %}نتایج برای «{{ query }}»{% else %}جستجوی محصولات{% endif %}</h1>
+    </div>
+    <div id="product-catalog"
+         data-api-base="/api/v1/products/"
+         data-currency="{{ store.currency }}"
+         data-query="{{ query|default:'' }}">
+        {% include "partials/product_catalog.html" %}
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="/static/js/product-filters.js"></script>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}{{ store.name }} - آدرس‌ها{% endblock %}
+{% block extra_css %}
+<style>
+.form-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap:0.75rem; }
+.form-grid label { font-size:0.9rem; }
+.form-grid input, .form-grid textarea { width:100%; margin-top:0.35rem; padding:0.5rem; border:1px solid var(--border); border-radius:var(--radius); }
+.address-card h3 { margin-bottom:0.35rem; }
+</style>
+{% endblock %}
+{% block content %}
+<div id="addresses-page">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:0.5rem;">
+        <h1 class="page-title" style="margin:0;">آدرس‌های من</h1>
+        <button type="button" class="btn" id="add-address-btn">افزودن آدرس</button>
+    </div>
+
+    <div id="address-list">
+        <div class="empty-state card">در حال بارگذاری...</div>
+    </div>
+
+    <div id="address-form-panel" class="card" style="display:none; margin-top:1rem;">
+        <h2 id="form-title" style="margin-bottom:1rem;">افزودن آدرس</h2>
+        <form id="address-form">
+            <div class="form-grid">
+                <label>نام و نام خانوادگی<input type="text" name="full_name" required></label>
+                <label>موبایل<input type="tel" name="phone" required placeholder="09123456789"></label>
+                <label>استان<input type="text" name="province" required></label>
+                <label>شهر<input type="text" name="city" required></label>
+                <label>کد پستی<input type="text" name="postal_code" required maxlength="10"></label>
+                <label>پلاک<input type="text" name="building_no"></label>
+                <label>واحد<input type="text" name="unit"></label>
+                <label>برچسب (اختیاری)<input type="text" name="label" placeholder="خانه، محل کار"></label>
+            </div>
+            <label style="display:block; margin-top:0.75rem;">آدرس کامل<textarea name="address_line" rows="3" required style="width:100%; margin-top:0.35rem; padding:0.5rem;"></textarea></label>
+            <label class="filter-check" style="margin-top:0.75rem;">
+                <input type="checkbox" name="is_default"> آدرس پیش‌فرض
+            </label>
+            <p id="form-message" class="muted" style="margin-top:0.5rem;"></p>
+            <div style="margin-top:1rem; display:flex; gap:0.5rem;">
+                <button type="submit" class="btn">ذخیره</button>
+                <button type="button" class="btn btn-outline" id="cancel-address-btn">انصراف</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="/static/js/addresses.js"></script>
+{% endblock %}

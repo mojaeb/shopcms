@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}{{ store.name }} - سفارشات{% endblock %}
+{% block extra_css %}
+<style>
+.order-card { margin-bottom: 1rem; }
+.order-card h3 { margin-bottom: 0.35rem; }
+.order-meta { display:flex; gap:1rem; flex-wrap:wrap; margin-top:0.5rem; }
+.status-badge { display:inline-block; padding:0.2rem 0.6rem; border-radius:999px; background:var(--border); font-size:0.85rem; }
+</style>
+{% endblock %}
+{% block content %}
+<div id="orders-page">
+    <h1 class="page-title">سفارشات من</h1>
+    <div id="orders-list">
+        <div class="empty-state card">در حال بارگذاری...</div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="/static/js/orders.js"></script>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "store_admin/base.html" %}
+{% block content %}
+<div id="sa-products" class="sa-page">
+    <div class="sa-toolbar">
+        <input type="search" id="product-search" placeholder="جستجوی محصول..." class="sa-input">
+        <a href="/manage/products/new/" class="sa-btn" id="product-new">محصول جدید</a>
+    </div>
+    <div id="products-table-wrap">
+        <div class="sa-loading">در حال بارگذاری...</div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="/static/js/store_admin/products.js"></script>
+{% endblock %}

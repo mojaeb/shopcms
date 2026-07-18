@@ -1,0 +1,7 @@
+-r base.txt
+
+# Production server
+gunicorn>=22.0.0
+
+# Monitoring (optional hooks)
+sentry-sdk>=2.0.0

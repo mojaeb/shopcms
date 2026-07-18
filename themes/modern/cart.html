@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}{{ store.name }} - سبد خرید{% endblock %}
+{% block content %}
+<div class="vg-page vg-width" id="cart-page" data-currency="{{ store.currency }}" data-vg-reveal>
+    <div class="vg-page-head">
+        <p class="vg-eyebrow-dark"><i data-lucide="shopping-cart"></i> سفارش</p>
+        <h1 class="vg-page-title">سبد خرید</h1>
+    </div>
+    <div id="cart-container">
+        <div class="vg-empty">
+            <i data-lucide="loader-circle" class="vg-empty-icon"></i>
+            <p>در حال بارگذاری...</p>
+        </div>
+    </div>
+    <div class="vg-card vg-coupon" style="margin-top:1.25rem;">
+        <h3><i data-lucide="ticket-percent"></i> کد تخفیف / کارت هدیه</h3>
+        <div class="vg-coupon-row">
+            <input type="text" id="coupon-code" class="vg-input" placeholder="کد کوپن">
+            <button type="button" class="vg-btn" id="apply-coupon"><i data-lucide="check"></i> اعمال</button>
+            <button type="button" class="vg-btn vg-btn--ghost" id="remove-coupon"><i data-lucide="x"></i></button>
+        </div>
+        <div class="vg-coupon-row">
+            <input type="text" id="gift-code" class="vg-input" placeholder="کد کارت هدیه">
+            <button type="button" class="vg-btn" id="apply-gift"><i data-lucide="gift"></i> اعمال</button>
+            <button type="button" class="vg-btn vg-btn--ghost" id="remove-gift"><i data-lucide="x"></i></button>
+        </div>
+        <p id="coupon-message" class="muted" style="margin-top:0.5rem;"></p>
+    </div>
+    <div id="cart-summary" style="margin-top:1rem;"></div>
+</div>
+{% endblock %}

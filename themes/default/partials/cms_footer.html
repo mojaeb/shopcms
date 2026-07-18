@@ -1,0 +1,5 @@
+{% if cms_layout.use_custom_footer %}
+{{ cms_layout.footer_html|safe }}
+{% else %}
+{% include "partials/footer.html" %}
+{% endif %}

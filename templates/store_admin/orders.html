@@ -1,0 +1,17 @@
+{% extends "store_admin/base.html" %}
+{% block content %}
+<div id="sa-orders" class="sa-page">
+    <div class="sa-toolbar">
+        <select id="order-status-filter" class="sa-input">
+            <option value="">همه وضعیت‌ها</option>
+        </select>
+        <button type="button" class="sa-btn sa-btn-ghost" id="orders-refresh">بروزرسانی</button>
+    </div>
+    <div id="orders-table-wrap">
+        <div class="sa-loading">در حال بارگذاری...</div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="/static/js/store_admin/orders.js"></script>
+{% endblock %}

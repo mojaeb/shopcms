@@ -1,0 +1,5 @@
+{% if cms_layout.use_custom_header %}
+{{ cms_layout.header_html|safe }}
+{% else %}
+{% include "partials/header.html" %}
+{% endif %}

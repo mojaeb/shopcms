@@ -1,0 +1,31 @@
+{% if products %}
+<div class="vg-products vg-products--catalog">
+    {% for p in products %}
+    <a href="/product/{{ p.slug }}/" class="vg-product" data-vg-reveal>
+        <div class="vg-product-media">
+            {% if p.image %}
+            <img src="{{ p.image }}" alt="{{ p.name }}" loading="lazy">
+            {% else %}
+            <div class="vg-product-placeholder"></div>
+            {% endif %}
+            {% if not p.in_stock %}<span class="vg-pill">ناموجود</span>{% endif %}
+            {% if p.is_featured %}<span class="vg-pill vg-pill--feat">ویژه</span>{% endif %}
+            <span class="vg-product-hover"><i data-lucide="eye"></i> مشاهده</span>
+        </div>
+        <div class="vg-product-body">
+            {% if p.category %}<span class="vg-product-cat">{{ p.category }}</span>{% endif %}
+            <h3>{{ p.name }}</h3>
+            <p class="vg-price">
+                {% if p.compare_price %}<s>{{ p.compare_price }}</s>{% endif %}
+                <span>{% money p.base_price %}</span>
+            </p>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+{% else %}
+<div class="vg-empty" data-vg-reveal>
+    <i data-lucide="package-open" class="vg-empty-icon"></i>
+    <p>محصولی یافت نشد.</p>
+</div>
+{% endif %}

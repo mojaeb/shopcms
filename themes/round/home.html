@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+
+{% block title %}{{ store.name }} - خانه{% endblock %}
+
+{% block content %}
+<div class="rd-home rd-width">
+
+    <section class="rd-hero" aria-label="هیرو">
+        <div class="rd-hero-main">
+            <div class="rd-hero-copy">
+                <span class="rd-pill">پیشنهاد ویژه</span>
+                <h1>{{ store.name }}؛ مقصد زیبایی و خرید شما</h1>
+                <p>مجموعه‌ای منتخب از محصولات روزمره تا کالاهای خاص — خرید سریع، امن و لذت‌بخش.</p>
+                <a href="/category/" class="rd-btn">همین حالا بخرید</a>
+            </div>
+            <img src="/static/themes/round/hero-model.png" alt="" loading="eager">
+        </div>
+        <div class="rd-hero-side">
+            <div class="rd-side-card">
+                <h3>فروشگاه روزانه شما</h3>
+                <p>نیازهای روزمره و پیشنهادهای داغ.</p>
+                <a href="/category/" class="rd-btn rd-btn-sm">خرید</a>
+            </div>
+            <div class="rd-side-card rd-side-card--amber">
+                <h3>کلیک. خرید. لبخند.</h3>
+                <p>سریع، ساده و قابل اعتماد.</p>
+                <a href="/cart/" class="rd-btn rd-btn-sm">سبد خرید</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="rd-section">
+        <div class="rd-sec-head">
+            <div>
+                <h2>خرید بر اساس دسته</h2>
+                <p>دسته‌بندی‌های منتخب برای شروع</p>
+            </div>
+            <a href="/category/">مشاهده همه</a>
+        </div>
+        <div class="rd-cats">
+            {% if home_categories %}
+                {% for cat in home_categories %}
+                <a href="/category/{{ cat.slug }}/" class="rd-cat">
+                    <div class="rd-cat-img">
+                        {% if cat.image %}
+                        <img src="{{ cat.image }}" alt="{{ cat.name }}" loading="lazy">
+                        {% else %}
+                        <span class="rd-cat-ph">{{ cat.name|truncatechars:1 }}</span>
+                        {% endif %}
+                    </div>
+                    <h3>{{ cat.name }}</h3>
+                </a>
+                {% endfor %}
+            {% else %}
+                <a href="/category/" class="rd-cat">
+                    <div class="rd-cat-img"><img src="/static/themes/round/serum.png" alt="" loading="lazy"></div>
+                    <h3>محصولات</h3>
+                </a>
+                <a href="/category/" class="rd-cat">
+                    <div class="rd-cat-img"><img src="/static/themes/round/cream.png" alt="" loading="lazy"></div>
+                    <h3>مراقبت</h3>
+                </a>
+                <a href="/category/" class="rd-cat">
+                    <div class="rd-cat-img"><img src="/static/themes/round/foundation.png" alt="" loading="lazy"></div>
+                    <h3>آرایشی</h3>
+                </a>
+                <a href="/blog/" class="rd-cat">
+                    <div class="rd-cat-img"><span class="rd-cat-ph">ب</span></div>
+                    <h3>وبلاگ</h3>
+                </a>
+            {% endif %}
+        </div>
+    </section>
+
+    {% if home_products %}
+    <section class="rd-section">
+        <div class="rd-offer-head">
+            <div>
+                <h2>پیشنهاد امروز</h2>
+                <p>محصولات منتخب فروشگاه</p>
+            </div>
+            <a href="/category/" class="rd-btn rd-btn-sm" style="margin:0;">مشاهده همه</a>
+        </div>
+        <div class="rd-offer-body">
+            <div class="rd-products">
+                {% for p in home_products|slice:":4" %}
+                <a href="/product/{{ p.slug }}/" class="rd-product">
+                    <div class="rd-product-media">
+                        {% if p.image %}<img src="{{ p.image }}" alt="{{ p.name }}" loading="lazy">{% else %}<div class="rd-product-ph"></div>{% endif %}
+                    </div>
+                    <h3>{{ p.name }}</h3>
+                    <p class="price">
+                        {% money p.base_price %}
+                        {% if p.compare_price %}<s>{% money p.compare_price %}</s>{% endif %}
+                    </p>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <section class="rd-section">
+        <div class="rd-sec-head">
+            <div>
+                <h2>محبوب‌ترین‌ها</h2>
+                <p>محصولاتی که بیشتر دیده می‌شوند</p>
+            </div>
+            <a href="/category/">ادامه</a>
+        </div>
+        <div class="rd-products">
+            {% for p in home_products %}
+            <a href="/product/{{ p.slug }}/" class="rd-product">
+                <div class="rd-product-media">
+                    {% if p.image %}<img src="{{ p.image }}" alt="{{ p.name }}" loading="lazy">{% else %}<div class="rd-product-ph"></div>{% endif %}
+                </div>
+                <h3>{{ p.name }}</h3>
+                <p class="price">{% money p.base_price %}</p>
+            </a>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    <section class="rd-section rd-promos" aria-label="پروموها">
+        <a href="/category/" class="rd-promo">
+            <img src="/static/themes/round/promo1.png" alt="" loading="lazy">
+            <div class="rd-promo-copy">
+                <span class="rd-pill">٪۲۰ تخفیف</span>
+                <h3>فروشگاه روزانه</h3>
+                <p>نیازهای روزانه و پیشنهادهای ویژه</p>
+            </div>
+        </a>
+        <a href="/category/" class="rd-promo">
+            <img src="/static/themes/round/promo2.png" alt="" loading="lazy">
+            <div class="rd-promo-copy">
+                <span class="rd-pill">٪۲۰ تخفیف</span>
+                <h3>هر روز ساده‌تر</h3>
+                <p>خرید سریع و بدون پیچیدگی</p>
+            </div>
+        </a>
+        <a href="/cart/" class="rd-promo">
+            <img src="/static/themes/round/glow.png" alt="" loading="lazy">
+            <div class="rd-promo-copy">
+                <span class="rd-pill">٪۲۰ تخفیف</span>
+                <h3>سبد، به سبک شما</h3>
+                <p>همه‌چیز با یک کلیک</p>
+            </div>
+        </a>
+    </section>
+
+    <section class="rd-section rd-features" aria-label="ویژگی‌ها">
+        <div class="rd-feature"><span>✿</span>طبیعی</div>
+        <div class="rd-feature"><span>✦</span>زیبایی</div>
+        <div class="rd-feature"><span>◆</span>لوکس</div>
+        <div class="rd-feature"><span>❀</span>ارگانیک</div>
+        <div class="rd-feature"><span>●</span>مراقبت</div>
+        <div class="rd-feature"><span>♡</span>دوست‌داشتنی</div>
+    </section>
+
+    <section class="rd-section rd-dual">
+        <div class="rd-dual-card">
+            <img src="/static/themes/round/glow.png" alt="" loading="lazy">
+            <div class="rd-dual-copy">
+                <span class="rd-pill">درخشش طبیعی</span>
+                <h3>زیبایی واقعی خود را آشکار کنید</h3>
+                <p>روتین مراقبت از پوست با نتایج درخشان.</p>
+                <a href="/category/" class="rd-btn rd-btn-sm">مشاهده محصولات</a>
+            </div>
+        </div>
+        <div class="rd-dual-card">
+            <img src="/static/themes/round/luxury.png" alt="" loading="lazy">
+            <div class="rd-dual-copy">
+                <span class="rd-pill">لوکس</span>
+                <h3>تجربه مراقبت پریمیوم</h3>
+                <p>ارتقا روتین با محصولات منتخب.</p>
+                <a href="/category/" class="rd-btn rd-btn-sm">کاوش کنید</a>
+            </div>
+        </div>
+    </section>
+
+    {% if home_products %}
+    <section class="rd-section rd-panel">
+        <div class="rd-sec-head">
+            <div>
+                <h2>تازه‌واردها</h2>
+                <p>جدیدترین محصولات فروشگاه</p>
+            </div>
+        </div>
+        <div class="rd-products">
+            {% for p in home_products|slice:":5" %}
+            <a href="/product/{{ p.slug }}/" class="rd-product">
+                <div class="rd-product-media">
+                    {% if p.image %}<img src="{{ p.image }}" alt="{{ p.name }}" loading="lazy">{% else %}<div class="rd-product-ph"></div>{% endif %}
+                </div>
+                <h3>{{ p.name }}</h3>
+                <p class="price">{% money p.base_price %}</p>
+            </a>
+            {% endfor %}
+        </div>
+        <div class="rd-center">
+            <a href="/category/" class="rd-btn">همه محصولات</a>
+        </div>
+    </section>
+    {% endif %}
+
+</div>
+{% endblock %}

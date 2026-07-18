@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}{{ store.name }} - اشتراک‌ها{% endblock %}
+{% block content %}
+<div id="subscriptions-page">
+    <h1 class="page-title">اشتراک‌های من</h1>
+    <div id="subscriptions-container">
+        <div class="empty-state card">در حال بارگذاری...</div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="/static/js/subscriptions.js"></script>
+{% endblock %}

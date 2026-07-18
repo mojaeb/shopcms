@@ -1,0 +1,129 @@
+<style>
+:root {
+    --primary: #111111;
+    --accent: #111111;
+    --bg: #ffffff;
+    --card: #ffffff;
+    --text: #111111;
+    --muted: #737373;
+    --border: #e5e5e5;
+    --radius: 2px;
+    --shadow: none;
+    --shadow-lg: none;
+    --font: "Segoe UI", Tahoma, sans-serif;
+}
+
+body.theme-minimal {
+    background: #fff;
+}
+
+body.theme-minimal .site-header {
+    background: #fff;
+    color: var(--text);
+    border-bottom: 1px solid var(--border);
+    box-shadow: none;
+    position: sticky;
+}
+
+body.theme-minimal .logo,
+body.theme-minimal .main-nav a {
+    color: var(--text);
+}
+
+body.theme-minimal .logo:hover,
+body.theme-minimal .main-nav a:hover {
+    color: #000;
+    opacity: 1;
+}
+
+body.theme-minimal .header-search input {
+    background: #fafafa;
+    border: 1px solid var(--border);
+}
+
+body.theme-minimal .cart-badge {
+    background: #111;
+    border-radius: 2px;
+}
+
+body.theme-minimal .card {
+    border: 1px solid var(--border);
+    box-shadow: none;
+}
+
+body.theme-minimal .btn {
+    background: #111;
+    border-radius: 2px;
+    font-weight: 500;
+}
+
+body.theme-minimal .btn-outline {
+    background: transparent;
+    border-color: #111;
+    color: #111;
+}
+
+body.theme-minimal .btn-outline:hover {
+    background: #111;
+    color: #fff;
+}
+
+body.theme-minimal .badge {
+    background: #111;
+    border-radius: 2px;
+}
+
+body.theme-minimal .site-footer {
+    background: #fff;
+    border-top: 1px solid var(--border);
+}
+
+body.theme-minimal .product-card:hover {
+    transform: none;
+    box-shadow: none;
+    border-color: #111;
+}
+
+.minimal-hero {
+    text-align: center;
+    padding: clamp(3rem, 12vw, 6rem) 1rem;
+}
+
+.minimal-hero .badge {
+    background: #111;
+}
+
+.minimal-hero h1 {
+    margin-top: 1.5rem;
+    font-size: clamp(2rem, 5vw, 2.75rem);
+    font-weight: 300;
+    letter-spacing: -0.04em;
+    line-height: 1.15;
+}
+
+.minimal-hero p {
+    color: var(--muted);
+    margin-top: 0.75rem;
+    font-size: 1rem;
+}
+
+.minimal-links {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-top: 2.5rem;
+}
+
+.minimal-links a {
+    color: var(--text);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.15rem;
+    font-size: 0.95rem;
+}
+
+.minimal-links a:hover {
+    border-color: #111;
+    text-decoration: none;
+}
+</style>

@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}{{ product.seo.meta_title|default:product.name }} - {{ store.name }}{% endblock %}
+{% block content %}
+<div class="card">
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:2rem;">
+        <div>
+            {% if product.images %}
+            <img src="{{ product.images.0.image }}" alt="{{ product.name }}" style="width:100%; border-radius:8px;">
+            {% endif %}
+        </div>
+        <div>
+            <h1 class="page-title">{{ product.name }}</h1>
+            {% if product.brand %}<p style="color:var(--muted);">برند: {{ product.brand }}</p>{% endif %}
+            <p style="font-size:1.5rem; color:var(--accent); font-weight:bold; margin:1rem 0;">
+                {% money product.base_price %}
+                {% if product.compare_price %}<s style="color:var(--muted); font-size:1rem; margin-right:0.5rem;">{% money product.compare_price %}</s>{% endif %}
+            </p>
+            {% if product.in_stock %}
+            <button class="btn" data-add-to-cart data-product="{{ product.slug }}">افزودن به سبد</button>
+            {% else %}
+            <span class="badge" style="background:#999;">ناموجود</span>
+            {% endif %}
+            <button type="button" class="btn btn-outline" data-toggle-wishlist data-product="{{ product.slug }}" style="margin-right:0.5rem;">♡ افزودن به علاقه‌مندی</button>
+            <div style="margin-top:1.5rem; color:var(--muted); line-height:1.8;">{{ product.description }}</div>
+            <div style="margin-top:2rem;" id="product-comments" data-product="{{ product.slug }}">
+                <h2>نظرات و امتیاز</h2>
+                <p id="comments-summary" class="muted"></p>
+                <div id="comments-list" style="margin-top:1rem;">
+                    <div class="empty-state card">در حال بارگذاری نظرات...</div>
+                </div>
+                <div class="card" style="margin-top:1rem;">
+                    <h3>ثبت نظر</h3>
+                    <label style="display:block; margin-bottom:0.5rem;">امتیاز
+                        <select id="review-rating" style="margin-right:0.5rem; padding:0.35rem;">
+                            <option value="5">۵</option>
+                            <option value="4">۴</option>
+                            <option value="3">۳</option>
+                            <option value="2">۲</option>
+                            <option value="1">۱</option>
+                        </select>
+                    </label>
+                    <textarea id="review-body" rows="4" style="width:100%; padding:0.5rem;" placeholder="نظر خود را بنویسید..."></textarea>
+                    <p id="review-message" class="muted" style="margin-top:0.5rem;"></p>
+                    <button type="button" class="btn" id="submit-review" style="margin-top:0.5rem;">ارسال نظر</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="/static/js/comments.js"></script>
+{% endblock %}

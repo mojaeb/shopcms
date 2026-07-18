@@ -1,0 +1,89 @@
+<header
+    class="vg-header"
+    x-data="modernHeader()"
+    @keydown.escape.window="closeSearch()"
+>
+    <div class="vg-header-bar vg-width">
+        <a href="/" class="vg-brand-link" data-vg-anim="brand">
+            {% if theme_settings.logo %}
+            <img src="{{ theme_settings.logo }}" alt="{{ store.name }}" class="vg-logo-img">
+            {% else %}
+            <span class="vg-logo-mark" aria-hidden="true">{{ store.name|truncatechars:1 }}</span>
+            {% endif %}
+            <span class="vg-logo-name">{{ store.name }}</span>
+        </a>
+
+        <button
+            type="button"
+            class="vg-nav-toggle"
+            @click="mobileOpen = !mobileOpen"
+            :aria-expanded="mobileOpen.toString()"
+            aria-label="منو"
+        >
+            <span x-show="!mobileOpen"><i data-lucide="menu"></i></span>
+            <span x-show="mobileOpen" x-cloak><i data-lucide="x"></i></span>
+        </button>
+
+        <nav
+            class="vg-nav"
+            :class="{ 'is-open': mobileOpen }"
+            aria-label="منوی اصلی"
+            data-vg-anim="nav"
+        >
+            <a href="/">خانه</a>
+            <a href="/category/">محصولات</a>
+            <a href="/page/about/">درباره ما</a>
+            <a href="/page/contact/">تماس با ما</a>
+            <a href="/blog/">وبلاگ</a>
+        </nav>
+
+        <div class="vg-header-actions" data-vg-anim="actions">
+            <button
+                type="button"
+                class="vg-icon-btn"
+                @click="toggleSearch()"
+                :aria-expanded="searchOpen.toString()"
+                aria-label="جستجو"
+            >
+                <i data-lucide="search"></i>
+            </button>
+
+            <a href="/cart/" class="vg-icon-btn vg-cart-btn" aria-label="سبد خرید">
+                <i data-lucide="shopping-bag"></i>
+                <span class="vg-cart-chip" data-cart-count style="display:none;">0</span>
+            </a>
+
+            {% if user.is_authenticated %}
+            <a href="/dashboard/" class="vg-icon-btn" aria-label="حساب کاربری">
+                <i data-lucide="user"></i>
+            </a>
+            {% else %}
+            <a href="/login/" class="vg-login-btn">ورود</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div
+        class="vg-search-panel"
+        x-ref="searchPanel"
+        x-show="searchOpen"
+        x-cloak
+    >
+        <form action="/search/" method="get" class="vg-search-form vg-width" @submit="closeSearch()">
+            <i data-lucide="search" class="vg-search-form-icon" aria-hidden="true"></i>
+            <input
+                type="search"
+                name="q"
+                x-ref="searchInput"
+                class="vg-search-input"
+                placeholder="جستجو در فروشگاه..."
+                aria-label="جستجو"
+                autocomplete="off"
+            >
+            <button type="submit" class="vg-search-submit">جستجو</button>
+            <button type="button" class="vg-icon-btn vg-search-close" @click="closeSearch()" aria-label="بستن">
+                <i data-lucide="x"></i>
+            </button>
+        </form>
+    </div>
+</header>

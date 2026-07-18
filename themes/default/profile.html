@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}{{ store.name }} - پروفایل{% endblock %}
+{% block content %}
+<h1 class="page-title">پروفایل</h1>
+<div class="card">
+    {% if user.is_authenticated %}
+    <p>{{ user.full_name }} — {{ user.phone }}</p>
+    <a href="/profile/edit/" class="btn" style="margin-top:1rem;">ویرایش</a>
+    {% else %}
+    <p class="empty-state">لطفاً <a href="/login/?next=/profile/">وارد شوید</a>.</p>
+    {% endif %}
+</div>
+{% endblock %}

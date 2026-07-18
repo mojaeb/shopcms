@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ page_title }} — {{ store.name|default:"ShopCMS" }}{% endblock %}</title>
+    <link rel="stylesheet" href="/static/css/store_admin.css">
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="sa-body">
+    <div class="sa-shell">
+        <aside class="sa-sidebar">
+            <div class="sa-brand">
+                <a href="/manage/">{{ store.name|default:"ShopCMS" }}</a>
+                <span>پنل مدیریت</span>
+            </div>
+            <nav class="sa-nav">
+                <a href="/manage/" class="{% if active_nav == 'dashboard' %}is-active{% endif %}">داشبورد</a>
+                <a href="/manage/products/" class="{% if active_nav == 'products' %}is-active{% endif %}">محصولات</a>
+                <a href="/manage/files/" class="{% if active_nav == 'files' %}is-active{% endif %}">رسانه</a>
+                <a href="/manage/orders/" class="{% if active_nav == 'orders' %}is-active{% endif %}">سفارشات</a>
+                <a href="/manage/settings/" class="{% if active_nav == 'settings' %}is-active{% endif %}">تنظیمات</a>
+            </nav>
+            <div class="sa-sidebar-foot">
+                <a href="/" class="sa-link-muted">مشاهده فروشگاه</a>
+                <a href="#" id="sa-logout" class="sa-link-muted">خروج</a>
+            </div>
+        </aside>
+        <div class="sa-main">
+            <header class="sa-topbar">
+                <h1>{{ page_title }}</h1>
+                <div class="sa-topbar-meta">
+                    {% if store %}<span class="sa-chip">{{ store.get_store_type_display }}</span>{% endif %}
+                </div>
+            </header>
+            <main class="sa-content">
+                <div id="sa-flash" class="sa-flash" hidden></div>
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+    <script src="/static/js/store_admin/api.js"></script>
+    <script>
+    (function () {
+        const btn = document.getElementById("sa-logout");
+        if (!btn || !window.StoreAdminApi) return;
+        btn.addEventListener("click", function (e) {
+            e.preventDefault();
+            window.StoreAdminApi.logout();
+        });
+    })();
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

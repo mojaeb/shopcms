@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+
+{% block title %}{{ store.name }} - خانه{% endblock %}
+
+{% block content %}
+<div class="vg-home">
+    <div class="vg-announce" role="note">
+        <span>ارسال سریع · پرداخت امن · پشتیبانی واقعی</span>
+    </div>
+
+    {% if theme_settings.hero.slides %}
+    <section class="vg-hero vg-hero--theme" aria-label="اسلایدر">
+        {% include "partials/theme_hero_slider.html" %}
+    </section>
+    {% elif cms_slider and cms_slider.slides %}
+    <section class="vg-hero" aria-label="اسلایدر">
+        {% include "partials/slider.html" %}
+        <div class="vg-hero-overlay">
+            <div class="vg-hero-overlay-inner vg-width">
+                <p class="vg-brand">{{ store.name }}</p>
+                <p class="vg-lead">کشف کنید، انتخاب کنید، بدرخشید.</p>
+                <div class="vg-hero-actions">
+                    <a href="/category/" class="vg-btn">خرید کنید</a>
+                    <a href="/blog/" class="vg-btn vg-btn--ghost vg-btn--on-dark">بیشتر بدانید</a>
+                </div>
+            </div>
+        </div>
+    </section>
+    {% else %}
+    <section class="vg-hero vg-hero--fallback" aria-label="معرفی فروشگاه">
+        <div class="vg-hero-fallback-inner vg-width">
+            <p class="vg-brand">{{ store.name }}</p>
+            <p class="vg-lead">مجموعه‌های منتخب برای هر سلیقه — کشف کنید، انتخاب کنید، بدرخشید.</p>
+            <div class="vg-hero-actions">
+                <a href="/category/" class="vg-btn">خرید کنید</a>
+                <a href="/blog/" class="vg-btn vg-btn--ghost vg-btn--on-dark">بیشتر بدانید</a>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    <section class="vg-section" data-vg-reveal>
+        <div class="vg-width">
+            <header class="vg-sec-head">
+                <h2 class="vg-sttl">از مجموعه‌های ما بخرید</h2>
+                <p class="vg-sbttl">دسته‌بندی‌های منتخب برای شروع خرید</p>
+            </header>
+            {% if home_categories %}
+            <div class="vg-collections">
+                {% for cat in home_categories %}
+                <a href="/category/{{ cat.slug }}/" class="vg-collection">
+                    <div class="vg-collection-img">
+                        {% if cat.image %}
+                        <img src="{{ cat.image }}" alt="{{ cat.name }}" loading="lazy">
+                        {% else %}
+                        <span class="vg-collection-placeholder">{{ cat.name|truncatechars:1 }}</span>
+                        {% endif %}
+                    </div>
+                    <h3>{{ cat.name }}</h3>
+                </a>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="vg-collections vg-collections--fallback">
+                <a href="/category/" class="vg-collection">
+                    <div class="vg-collection-img"><span class="vg-collection-placeholder">همه</span></div>
+                    <h3>همه محصولات</h3>
+                </a>
+                <a href="/blog/" class="vg-collection">
+                    <div class="vg-collection-img"><span class="vg-collection-placeholder">وبلاگ</span></div>
+                    <h3>وبلاگ</h3>
+                </a>
+                <a href="/cart/" class="vg-collection">
+                    <div class="vg-collection-img"><span class="vg-collection-placeholder">سبد</span></div>
+                    <h3>سبد خرید</h3>
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </section>
+
+    {% if cms_banners.home_top %}
+    <section class="vg-section vg-section--tight">
+        <div class="vg-width vg-banners">
+            {% for banner in cms_banners.home_top %}
+            <a href="{{ banner.link|default:'/category/' }}" class="vg-banner">
+                {% if banner.image %}<img src="{{ banner.image }}" alt="{{ banner.title }}" loading="lazy">{% endif %}
+                <div class="vg-banner-copy">
+                    <strong>{{ banner.title }}</strong>
+                    {% if banner.subtitle %}<span>{{ banner.subtitle }}</span>{% endif %}
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    <section class="vg-section vg-section--soft" data-vg-reveal>
+        <div class="vg-width">
+            <header class="vg-sec-head">
+                <h2 class="vg-sttl">تازه‌ها</h2>
+                <p class="vg-sbttl">منتخب محصولات فروشگاه</p>
+            </header>
+            {% if home_products %}
+            <div class="vg-products">
+                {% for p in home_products %}
+                <a href="/product/{{ p.slug }}/" class="vg-product">
+                    <div class="vg-product-media">
+                        {% if p.image %}
+                        <img src="{{ p.image }}" alt="{{ p.name }}" loading="lazy">
+                        {% else %}
+                        <div class="vg-product-placeholder"></div>
+                        {% endif %}
+                        {% if not p.in_stock %}<span class="vg-pill">ناموجود</span>{% endif %}
+                        {% if p.is_featured %}<span class="vg-pill vg-pill--feat">ویژه</span>{% endif %}
+                        <span class="vg-product-hover"><i data-lucide="eye"></i> مشاهده</span>
+                    </div>
+                    <div class="vg-product-body">
+                        {% if p.category %}<span class="vg-product-cat">{{ p.category }}</span>{% endif %}
+                        <h3>{{ p.name }}</h3>
+                        <p class="vg-price">
+                            {% if p.compare_price %}<s>{{ p.compare_price }}</s>{% endif %}
+                            <span>{% money p.base_price %}</span>
+                        </p>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="vg-empty">
+                <p>به‌زودی محصولات جدیدی اضافه می‌شود.</p>
+                <a href="/category/" class="vg-btn vg-btn--ghost">مشاهده دسته‌بندی‌ها</a>
+            </div>
+            {% endif %}
+            <div class="vg-sec-cta">
+                <a href="/category/" class="vg-btn vg-btn--ghost">مشاهده همه محصولات</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="vg-editorial" data-vg-reveal>
+        <div class="vg-editorial-media" aria-hidden="true"></div>
+        <div class="vg-editorial-copy">
+            <p class="vg-eyebrow-dark"><i data-lucide="sparkles"></i> تجربه خرید</p>
+            <h2 class="vg-sttl">{{ store.name }}</h2>
+            <p>هر چیزی که نیاز دارید در یک فروشگاه؛ با انتخابی دقیق، پرداخت امن و پیگیری شفاف سفارش.</p>
+            <a href="/category/" class="vg-btn">کاوش محصولات <i data-lucide="arrow-left"></i></a>
+        </div>
+    </section>
+
+    {% if cms_banners.home_middle %}
+    <section class="vg-section">
+        <div class="vg-width vg-banners">
+            {% for banner in cms_banners.home_middle %}
+            <a href="{{ banner.link|default:'#' }}" class="vg-banner">
+                {% if banner.image %}<img src="{{ banner.image }}" alt="{{ banner.title }}" loading="lazy">{% endif %}
+                <div class="vg-banner-copy">
+                    <strong>{{ banner.title }}</strong>
+                    {% if banner.subtitle %}<span>{{ banner.subtitle }}</span>{% endif %}
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    <section class="vg-section" data-vg-reveal>
+        <div class="vg-width">
+            <header class="vg-sec-head">
+                <h2 class="vg-sttl">با اطمینان خرید کنید</h2>
+                <p class="vg-sbttl">ساده، امن و شفاف</p>
+            </header>
+            <div class="vg-trust">
+                <div class="vg-trust-item">
+                    <span class="vg-trust-icon"><i data-lucide="truck"></i></span>
+                    <h3>ارسال سریع</h3>
+                    <p>پیگیری از ثبت سفارش تا تحویل</p>
+                </div>
+                <div class="vg-trust-item">
+                    <span class="vg-trust-icon"><i data-lucide="shield-check"></i></span>
+                    <h3>پرداخت امن</h3>
+                    <p>درگاه معتبر و اطلاعات محفوظ</p>
+                </div>
+                <div class="vg-trust-item">
+                    <span class="vg-trust-icon"><i data-lucide="headphones"></i></span>
+                    <h3>پشتیبانی واقعی</h3>
+                    <p>همراه شما قبل و بعد از خرید</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

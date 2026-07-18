@@ -1,0 +1,303 @@
+{% extends "base.html" %}
+{% block title %}{{ store.name }} - حساب کاربری{% endblock %}
+
+{% block extra_css %}
+<style>
+.udash {
+    width: min(100% - 2rem, 1100px);
+    margin: 0 auto;
+    padding: clamp(1.5rem, 4vw, 2.75rem) 0 3rem;
+}
+
+.udash-hero {
+    position: relative;
+    overflow: hidden;
+    padding: clamp(1.75rem, 4vw, 2.75rem);
+    margin-bottom: 1.75rem;
+    background:
+        radial-gradient(ellipse 70% 80% at 100% 0%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 55%),
+        linear-gradient(135deg, var(--card) 0%, color-mix(in srgb, var(--bg) 65%, var(--card)) 100%);
+    border: 1px solid var(--border);
+    border-radius: max(var(--radius), 14px);
+}
+
+body.theme-modern .udash-hero {
+    background:
+        linear-gradient(120deg, rgba(17, 17, 17, 0.04), transparent 40%),
+        var(--vg-soft, #f6f4f1);
+    border-radius: 0;
+}
+
+.udash-hero::after {
+    content: "";
+    position: absolute;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    right: -40px;
+    bottom: -60px;
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+    pointer-events: none;
+}
+
+.udash-kicker {
+    display: inline-block;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.65rem;
+}
+
+.udash-hero h1 {
+    font-size: clamp(1.7rem, 3.5vw, 2.4rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+}
+
+body.theme-modern .udash-hero h1 {
+    font-family: var(--vg-display, Georgia, serif);
+    font-weight: 600;
+}
+
+.udash-hero p {
+    color: var(--muted);
+    max-width: 34rem;
+    font-size: 0.98rem;
+}
+
+.udash-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1.15rem;
+}
+
+.udash-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--card);
+    color: var(--muted);
+    font-size: 0.8rem;
+}
+
+.udash-staff {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding: 1.1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    background: var(--primary);
+    color: #fff;
+    border-radius: max(var(--radius), 12px);
+    text-decoration: none;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+body.theme-modern .udash-staff { border-radius: 0; }
+
+.udash-staff:hover {
+    opacity: 0.94;
+    text-decoration: none;
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+.udash-staff strong {
+    display: block;
+    font-size: 1.05rem;
+    margin-bottom: 0.2rem;
+}
+
+.udash-staff span {
+    opacity: 0.8;
+    font-size: 0.88rem;
+}
+
+.udash-staff .udash-go {
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+}
+
+.udash-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1rem;
+}
+
+.udash-tile {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    padding: 1.35rem 1.25rem 1.25rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: max(var(--radius), 12px);
+    color: inherit;
+    text-decoration: none;
+    transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    overflow: hidden;
+}
+
+body.theme-modern .udash-tile { border-radius: 0; }
+
+.udash-tile:hover {
+    text-decoration: none;
+    color: inherit;
+    transform: translateY(-3px);
+    border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
+    box-shadow: var(--shadow-lg, 0 14px 30px rgba(0, 0, 0, 0.08));
+}
+
+.udash-icon {
+    width: 2.4rem;
+    height: 2.4rem;
+    display: grid;
+    place-items: center;
+    margin-bottom: 0.35rem;
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--accent) 10%, var(--bg));
+    color: var(--accent);
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+
+body.theme-modern .udash-icon {
+    border-radius: 0;
+    background: #111;
+    color: #fff;
+}
+
+.udash-tile h2 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+body.theme-modern .udash-tile h2 {
+    font-family: var(--vg-display, Georgia, serif);
+    font-weight: 600;
+}
+
+.udash-tile p {
+    color: var(--muted);
+    font-size: 0.88rem;
+    line-height: 1.5;
+    flex: 1;
+}
+
+.udash-tile .udash-link {
+    margin-top: 0.65rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 0.02em;
+}
+
+.udash-tile:hover .udash-link {
+    text-decoration: underline;
+}
+
+@media (max-width: 560px) {
+    .udash-staff { align-items: flex-start; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="udash">
+    <section class="udash-hero">
+        <span class="udash-kicker">حساب کاربری</span>
+        <h1>
+            {% if user.get_full_name %}
+            سلام، {{ user.get_full_name }}
+            {% elif user.first_name %}
+            سلام، {{ user.first_name }}
+            {% else %}
+            خوش آمدید
+            {% endif %}
+        </h1>
+        <p>سفارش‌ها، علاقه‌مندی‌ها و تنظیمات حسابتان را از اینجا مدیریت کنید.</p>
+        <div class="udash-meta">
+            {% if user.phone %}<span class="udash-chip">{{ user.phone }}</span>{% endif %}
+            {% if store %}<span class="udash-chip">{{ store.name }}</span>{% endif %}
+        </div>
+    </section>
+
+    {% if is_store_staff %}
+    <a href="/manage/" class="udash-staff">
+        <div>
+            <strong>پنل مدیریت فروشگاه</strong>
+            <span>دسترسی به محصولات، سفارشات و تنظیمات ادمین</span>
+        </div>
+        <span class="udash-go">ورود به پنل ←</span>
+    </a>
+    {% endif %}
+
+    <nav class="udash-grid" aria-label="منوی حساب کاربری">
+        <a href="/profile/" class="udash-tile">
+            <span class="udash-icon" aria-hidden="true">◉</span>
+            <h2>پروفایل</h2>
+            <p>مشاهده و ویرایش اطلاعات شخصی</p>
+            <span class="udash-link">رفتن به پروفایل</span>
+        </a>
+        <a href="/orders/" class="udash-tile">
+            <span class="udash-icon" aria-hidden="true">▦</span>
+            <h2>سفارشات</h2>
+            <p>پیگیری وضعیت و جزئیات خریدها</p>
+            <span class="udash-link">مشاهده سفارشات</span>
+        </a>
+        <a href="/wishlist/" class="udash-tile">
+            <span class="udash-icon" aria-hidden="true">♡</span>
+            <h2>علاقه‌مندی‌ها</h2>
+            <p>محصولاتی که برای بعد ذخیره کرده‌اید</p>
+            <span class="udash-link">لیست علاقه‌مندی</span>
+        </a>
+        <a href="/addresses/" class="udash-tile">
+            <span class="udash-icon" aria-hidden="true">⌖</span>
+            <h2>آدرس‌ها</h2>
+            <p>مدیریت آدرس‌های تحویل سفارش</p>
+            <span class="udash-link">مدیریت آدرس</span>
+        </a>
+        <a href="/invoices/" class="udash-tile">
+            <span class="udash-icon" aria-hidden="true">≡</span>
+            <h2>فاکتورها</h2>
+            <p>دانلود و مشاهده صورتحساب‌ها</p>
+            <span class="udash-link">مشاهده فاکتورها</span>
+        </a>
+        <a href="/comments/" class="udash-tile">
+            <span class="udash-icon" aria-hidden="true">✎</span>
+            <h2>نظرات</h2>
+            <p>نظرها و امتیازهایی که ثبت کرده‌اید</p>
+            <span class="udash-link">مشاهده نظرات</span>
+        </a>
+        {% if store.store_type == "digital_download" %}
+        <a href="/downloads/" class="udash-tile">
+            <span class="udash-icon" aria-hidden="true">↓</span>
+            <h2>دانلودها</h2>
+            <p>فایل‌های دیجیتال خریداری‌شده</p>
+            <span class="udash-link">رفتن به دانلودها</span>
+        </a>
+        {% endif %}
+        {% if store.store_type == "subscription" %}
+        <a href="/subscriptions/" class="udash-tile">
+            <span class="udash-icon" aria-hidden="true">↻</span>
+            <h2>اشتراک‌ها</h2>
+            <p>مدیریت اشتراک‌های فعال شما</p>
+            <span class="udash-link">مشاهده اشتراک‌ها</span>
+        </a>
+        {% endif %}
+    </nav>
+</div>
+{% endblock %}

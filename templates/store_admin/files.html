@@ -1,0 +1,238 @@
+{% extends "store_admin/base.html" %}
+{% block extra_css %}
+<style>
+.sa-media-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1rem;
+}
+.sa-media-card {
+    background: var(--sa-surface);
+    border: 1px solid var(--sa-border);
+    border-radius: var(--sa-radius);
+    overflow: hidden;
+    box-shadow: var(--sa-shadow);
+    display: flex;
+    flex-direction: column;
+}
+.sa-media-thumb {
+    aspect-ratio: 4 / 3;
+    background: #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    cursor: pointer;
+}
+.sa-media-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.sa-media-thumb-icon {
+    color: var(--sa-muted);
+    font-size: 0.85rem;
+    text-align: center;
+    padding: 1rem;
+}
+.sa-media-body {
+    padding: 0.85rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    flex: 1;
+}
+.sa-media-name {
+    font-size: 0.88rem;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.sa-media-meta {
+    font-size: 0.78rem;
+    color: var(--sa-muted);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.65rem;
+}
+.sa-media-url {
+    font-size: 0.72rem;
+    color: var(--sa-muted);
+    word-break: break-all;
+    direction: ltr;
+    text-align: left;
+    background: #f8fafc;
+    border: 1px solid var(--sa-border);
+    border-radius: 6px;
+    padding: 0.35rem 0.45rem;
+    max-height: 3.2em;
+    overflow: hidden;
+}
+.sa-media-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-top: auto;
+    padding-top: 0.35rem;
+}
+.sa-upload-zone {
+    border: 2px dashed var(--sa-border);
+    border-radius: var(--sa-radius);
+    padding: 1.25rem;
+    background: #fafbfc;
+    margin-bottom: 1rem;
+    text-align: center;
+    transition: border-color 0.15s, background 0.15s;
+}
+.sa-upload-zone.is-drag {
+    border-color: var(--sa-accent);
+    background: #f0fdfa;
+}
+.sa-upload-zone p {
+    color: var(--sa-muted);
+    font-size: 0.9rem;
+    margin-bottom: 0.75rem;
+}
+.sa-upload-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.65rem;
+    align-items: end;
+    margin-top: 0.85rem;
+    text-align: right;
+}
+.sa-upload-fields label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    font-size: 0.85rem;
+}
+.sa-detail-preview {
+    width: 100%;
+    max-height: 280px;
+    object-fit: contain;
+    background: #f1f5f9;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+}
+.sa-copy-row {
+    display: flex;
+    gap: 0.4rem;
+    align-items: stretch;
+}
+.sa-copy-row .sa-input {
+    flex: 1;
+    direction: ltr;
+    text-align: left;
+    font-size: 0.82rem;
+}
+.sa-pager {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+}
+@media (max-width: 720px) {
+    .sa-upload-fields { grid-template-columns: 1fr; }
+}
+</style>
+{% endblock %}
+{% block content %}
+<div id="sa-files" class="sa-page">
+    <div class="sa-upload-zone" id="upload-zone">
+        <p>تصویر یا فایل را بکشید و رها کنید، یا از دکمه انتخاب کنید.</p>
+        <input type="file" id="file-input" accept="image/*,video/*,application/pdf" multiple hidden>
+        <button type="button" class="sa-btn" id="file-pick">انتخاب فایل</button>
+        <div class="sa-upload-fields">
+            <label>عنوان
+                <input type="text" id="upload-title" class="sa-input" placeholder="اختیاری">
+            </label>
+            <label>پوشه
+                <input type="text" id="upload-folder" class="sa-input" placeholder="مثلاً products">
+            </label>
+            <label>متن جایگزین (alt)
+                <input type="text" id="upload-alt" class="sa-input" placeholder="اختیاری">
+            </label>
+        </div>
+    </div>
+
+    <div class="sa-toolbar">
+        <select id="filter-type" class="sa-input" style="width:auto;min-width:140px;flex:0;">
+            <option value="">همه انواع</option>
+            <option value="image">تصویر</option>
+            <option value="video">ویدیو</option>
+            <option value="document">سند</option>
+            <option value="other">سایر</option>
+        </select>
+        <input type="search" id="filter-folder" placeholder="فیلتر پوشه..." class="sa-input">
+        <button type="button" class="sa-btn sa-btn-ghost" id="filter-apply">اعمال فیلتر</button>
+    </div>
+
+    <div id="files-grid-wrap">
+        <div class="sa-loading">در حال بارگذاری...</div>
+    </div>
+    <div class="sa-pager" id="files-pager" hidden>
+        <button type="button" class="sa-btn sa-btn-ghost sa-btn-sm" id="page-prev">قبلی</button>
+        <span id="page-label" class="sa-muted"></span>
+        <button type="button" class="sa-btn sa-btn-ghost sa-btn-sm" id="page-next">بعدی</button>
+    </div>
+
+    <dialog id="file-dialog" class="sa-dialog">
+        <form id="file-form" class="sa-form">
+            <h2>جزئیات فایل</h2>
+            <input type="hidden" id="file-id" value="">
+            <div id="file-preview-wrap"></div>
+
+            <label>شناسه (ID)
+                <div class="sa-copy-row">
+                    <input type="text" id="detail-id" class="sa-input" readonly>
+                    <button type="button" class="sa-btn sa-btn-ghost sa-btn-sm" data-copy="detail-id">کپی</button>
+                </div>
+            </label>
+            <label>لینک (URL)
+                <div class="sa-copy-row">
+                    <input type="text" id="detail-url" class="sa-input" readonly>
+                    <button type="button" class="sa-btn sa-btn-ghost sa-btn-sm" data-copy="detail-url">کپی</button>
+                </div>
+            </label>
+            <label>نام اصلی
+                <input type="text" id="detail-name" class="sa-input" readonly>
+            </label>
+            <div class="sa-grid-2">
+                <label>نوع
+                    <input type="text" id="detail-type" class="sa-input" readonly>
+                </label>
+                <label>حجم
+                    <input type="text" id="detail-size" class="sa-input" readonly>
+                </label>
+                <label>ابعاد
+                    <input type="text" id="detail-dims" class="sa-input" readonly>
+                </label>
+                <label>MIME
+                    <input type="text" id="detail-mime" class="sa-input" readonly>
+                </label>
+            </div>
+            <label>عنوان
+                <input type="text" id="detail-title" class="sa-input">
+            </label>
+            <label>متن جایگزین (alt)
+                <input type="text" id="detail-alt" class="sa-input">
+            </label>
+            <label>پوشه
+                <input type="text" id="detail-folder" class="sa-input">
+            </label>
+            <div id="detail-thumbs" class="sa-muted" style="font-size:0.82rem;"></div>
+            <div class="sa-form-actions">
+                <button type="submit" class="sa-btn">ذخیره</button>
+                <button type="button" class="sa-btn sa-btn-danger" id="file-delete">حذف</button>
+                <button type="button" class="sa-btn sa-btn-ghost" id="file-close">بستن</button>
+            </div>
+        </form>
+    </dialog>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="/static/js/store_admin/files.js"></script>
+{% endblock %}

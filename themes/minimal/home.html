@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}{{ store.name }}{% endblock %}
+
+{% block content %}
+<div class="minimal-hero">
+    <span class="badge">{{ store.name }}</span>
+    <h1>{{ store.name }}</h1>
+    <p>طراحی ساده و مینیمال</p>
+    <nav class="minimal-links" aria-label="دسترسی سریع">
+        <a href="/category/">محصولات</a>
+        <a href="/blog/">وبلاگ</a>
+        <a href="/cart/">سبد خرید</a>
+    </nav>
+</div>
+
+{% if home_products %}
+<section style="max-width:960px;margin:0 auto 3rem;padding:0 1rem;">
+    <h2 style="text-align:center;font-weight:300;letter-spacing:-0.03em;margin-bottom:1.5rem;">تازه‌ها</h2>
+    {% with products=home_products %}
+    {% include "partials/product_grid.html" %}
+    {% endwith %}
+</section>
+{% endif %}
+{% endblock %}

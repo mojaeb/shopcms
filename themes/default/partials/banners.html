@@ -1,0 +1,13 @@
+{% if cms_banners.home_top %}
+<section class="cms-banners">
+    {% for banner in cms_banners.home_top %}
+    <a href="{{ banner.link|default:'#' }}" class="banner-item card" style="display:block; padding:0; overflow:hidden;">
+        {% if banner.image %}<img src="{{ banner.image }}" alt="{{ banner.title }}" style="width:100%; height:200px; object-fit:cover;">{% endif %}
+        <div style="padding:1rem;">
+            <strong>{{ banner.title }}</strong>
+            {% if banner.subtitle %}<p style="color:var(--muted); margin-top:0.25rem;">{{ banner.subtitle }}</p>{% endif %}
+        </div>
+    </a>
+    {% endfor %}
+</section>
+{% endif %}

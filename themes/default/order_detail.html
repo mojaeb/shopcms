@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}{{ store.name }} - سفارش {{ order_id }}{% endblock %}
+{% block extra_css %}
+<style>
+.order-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:1rem; margin-top:1rem; }
+.order-item { display:flex; gap:0.75rem; align-items:center; padding:0.5rem 0; border-bottom:1px solid var(--border); }
+.order-item img { width:64px; height:64px; object-fit:cover; border-radius:var(--radius); }
+.history-item { padding:0.5rem 0; border-bottom:1px solid var(--border); }
+</style>
+{% endblock %}
+{% block content %}
+<div id="order-detail-page" data-order-id="{{ order_id }}">
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+        <h1 class="page-title" style="margin:0;">جزئیات سفارش</h1>
+        <a href="/orders/" class="btn btn-outline">بازگشت</a>
+    </div>
+    <div id="order-detail-content" style="margin-top:1rem;">
+        <div class="empty-state card">در حال بارگذاری...</div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="/static/js/orders.js"></script>
+{% endblock %}

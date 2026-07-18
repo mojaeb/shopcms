@@ -1,0 +1,91 @@
+{% extends "store_admin/base.html" %}
+{% block content %}
+<div id="sa-settings" class="sa-page">
+    <form id="settings-form" class="sa-form sa-card" hidden>
+        <h2>تنظیمات عمومی</h2>
+        <label>نام فروشگاه
+            <input type="text" id="setting-name" required class="sa-input">
+        </label>
+        <label>ارز
+            <input type="text" id="setting-currency" required class="sa-input" maxlength="10">
+        </label>
+        <label>منطقه زمانی
+            <input type="text" id="setting-timezone" class="sa-input" placeholder="Asia/Tehran">
+        </label>
+        <label>زبان
+            <input type="text" id="setting-language" class="sa-input" placeholder="fa">
+        </label>
+        <div class="sa-form-actions">
+            <button type="submit" class="sa-btn">ذخیره تغییرات</button>
+        </div>
+    </form>
+
+    <form id="theme-settings-form" class="sa-form sa-card" hidden>
+        <h2>تنظیمات تم / Hero</h2>
+        <p class="sa-muted" style="margin:0 0 1rem;font-size:0.88rem;color:var(--sa-muted);">
+            اسلایدهای صفحهٔ خانه (تم modern). اگر خالی باشد از اسلایدر CMS استفاده می‌شود.
+        </p>
+        <label>لوگو (URL)
+            <input type="url" id="theme-logo" class="sa-input" placeholder="https://...">
+        </label>
+        <div class="sa-theme-colors" style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.75rem;">
+            <label>رنگ اصلی
+                <input type="text" id="theme-color-primary" class="sa-input" placeholder="#111111">
+            </label>
+            <label>پس‌زمینه
+                <input type="text" id="theme-color-bg" class="sa-input" placeholder="#ffffff">
+            </label>
+            <label>متن
+                <input type="text" id="theme-color-text" class="sa-input" placeholder="#111111">
+            </label>
+        </div>
+
+        <div class="sa-hero-head" style="display:flex;justify-content:space-between;align-items:center;margin:1.25rem 0 0.75rem;">
+            <h3 style="font-size:1rem;margin:0;">اسلایدهای Hero</h3>
+            <button type="button" id="theme-add-slide" class="sa-btn sa-btn-ghost sa-btn-sm">افزودن اسلاید</button>
+        </div>
+        <div id="theme-slides" class="sa-theme-slides"></div>
+
+        <div class="sa-form-actions">
+            <button type="submit" class="sa-btn">ذخیره تنظیمات تم</button>
+        </div>
+    </form>
+
+    <div class="sa-loading" id="settings-loading">در حال بارگذاری...</div>
+</div>
+
+<template id="theme-slide-template">
+    <fieldset class="sa-theme-slide sa-card" style="padding:1rem;margin-bottom:0.75rem;border:1px solid var(--sa-border);">
+        <legend class="sa-theme-slide-legend" style="padding:0 0.35rem;font-size:0.85rem;color:var(--sa-muted);"></legend>
+        <div style="display:grid;gap:0.65rem;">
+            <label>آدرس تصویر
+                <input type="url" name="image" class="sa-input" placeholder="https://...">
+            </label>
+            <label>آدرس Thumbnail (lazy load)
+                <input type="url" name="thumbnail" class="sa-input" placeholder="https://... (کوچک)">
+            </label>
+            <label>عنوان
+                <input type="text" name="title" class="sa-input">
+            </label>
+            <label>متن
+                <textarea name="text" class="sa-input" rows="2"></textarea>
+            </label>
+            <label>متن دکمه
+                <input type="text" name="button_text" class="sa-input" placeholder="خرید کنید">
+            </label>
+            <label>لینک دکمه
+                <input type="text" name="button_link" class="sa-input" placeholder="/category/">
+            </label>
+            <label>رنگ پس‌زمینه
+                <input type="text" name="background_color" class="sa-input" placeholder="#f6f4f1">
+            </label>
+            <div class="sa-form-actions">
+                <button type="button" class="sa-btn sa-btn-danger sa-btn-sm theme-remove-slide">حذف اسلاید</button>
+            </div>
+        </div>
+    </fieldset>
+</template>
+{% endblock %}
+{% block extra_js %}
+<script src="/static/js/store_admin/settings.js"></script>
+{% endblock %}

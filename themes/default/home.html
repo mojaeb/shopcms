@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}{{ store.name }} - خانه{% endblock %}
+
+{% block content %}
+{% include "partials/slider.html" %}
+{% include "partials/banners.html" %}
+
+{% if home_categories %}
+<section style="margin:2rem 0;">
+    <h2 class="page-title" style="text-align:center;">از مجموعه‌های ما بخرید</h2>
+    <div class="grid" style="margin-top:1rem;">
+        {% for cat in home_categories %}
+        <a href="/category/{{ cat.slug }}/" class="card" style="text-align:center;">
+            {% if cat.image %}<img src="{{ cat.image }}" alt="{{ cat.name }}" style="width:100%;height:140px;object-fit:cover;border-radius:8px;">{% endif %}
+            <h3 style="margin-top:0.75rem;">{{ cat.name }}</h3>
+        </a>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+{% if home_products %}
+<section style="margin:2rem 0;">
+    <h2 class="page-title" style="text-align:center;">تازه‌ها</h2>
+    {% with products=home_products %}
+    {% include "partials/product_grid.html" %}
+    {% endwith %}
+    <p style="text-align:center;margin-top:1rem;"><a href="/category/" class="btn btn-outline">همه محصولات</a></p>
+</section>
+{% else %}
+<div class="card home-welcome">
+    <h1 class="page-title" style="margin-top:0;">به {{ store.name }} خوش آمدید</h1>
+    <p class="muted">
+        نوع فروشگاه: <strong>{{ store.get_store_type_display }}</strong> |
+        ارز: {% if store.currency == "IRR" or store.currency == "IRT" %}تومان{% else %}{{ store.currency }}{% endif %}
+    </p>
+</div>
+<div class="home-actions">
+    <div class="card"><h3>محصولات</h3><a href="/category/" class="btn">مشاهده</a></div>
+    <div class="card"><h3>وبلاگ</h3><a href="/blog/" class="btn btn-outline">مطالب</a></div>
+    <div class="card"><h3>سبد خرید</h3><a href="/cart/" class="btn btn-outline">سبد</a></div>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ store.name|default:"ShopCMS" }}{% endblock %}</title>
+    {% if seo %}
+    <meta name="description" content="{{ seo.meta_description }}">
+    <meta name="keywords" content="{{ seo.meta_keywords }}">
+    <meta name="robots" content="{{ seo.robots }}">
+    {% if seo.og_image %}<meta property="og:image" content="{{ seo.og_image }}">{% endif %}
+    {% if seo.canonical_url %}<link rel="canonical" href="{{ seo.canonical_url }}">{% endif %}
+    {{ seo.head_scripts|safe }}
+    {% endif %}
+    {% include "partials/styles.html" %}
+    {% include "partials/theme.css.html" %}
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="theme-{{ theme_slug|default:'default' }}">
+    {% include "partials/currency_sprite.html" %}
+    {% include "partials/cms_header.html" %}
+    <main class="site-main">
+        {% block content %}{% endblock %}
+    </main>
+    {% include "partials/cms_footer.html" %}
+    {% if seo %}{{ seo.footer_scripts|safe }}{% endif %}
+    <script src="/static/js/money.js"></script>
+    <script src="/static/js/cart.js"></script>
+    <script src="/static/js/wishlist.js"></script>
+    <script src="/static/js/auth-header.js"></script>
+    <script src="/static/themes/modern/vendor/lucide.min.js"></script>
+    <script src="/static/themes/modern/vendor/gsap.min.js"></script>
+    <script src="/static/themes/modern/js/theme.js"></script>
+    <script defer src="/static/themes/modern/vendor/alpine.min.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

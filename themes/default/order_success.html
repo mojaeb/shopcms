@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}{{ store.name }} - نتیجه پرداخت{% endblock %}
+{% block content %}
+<div class="card" style="text-align:center;" id="order-success-page">
+    <h1 class="page-title" id="success-title">سفارش با موفقیت ثبت شد</h1>
+    <p id="success-detail" class="muted" style="margin:1rem 0;"></p>
+    <a href="/orders/" class="btn">مشاهده سفارشات</a>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+(function () {
+    const params = new URLSearchParams(window.location.search);
+    const status = params.get("status");
+    const tracking = params.get("tracking");
+    const ref = params.get("ref");
+    const title = document.getElementById("success-title");
+    const detail = document.getElementById("success-detail");
+    if (status === "failed") {
+        title.textContent = "پرداخت ناموفق بود";
+        detail.textContent = tracking ? `کد پیگیری: ${tracking}` : "لطفاً دوباره تلاش کنید.";
+    } else if (tracking) {
+        const order = params.get("order");
+        detail.textContent = order
+            ? `شماره سفارش: ${order} — کد پیگیری: ${tracking}${ref ? " — Ref: " + ref : ""}`
+            : `کد پیگیری: ${tracking}${ref ? " — Ref: " + ref : ""}`;
+    }
+})();
+</script>
+{% endblock %}

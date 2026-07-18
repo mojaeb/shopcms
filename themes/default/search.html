@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}{{ store.name }} - جستجو{% if query %}: {{ query }}{% endif %}{% endblock %}
+{% block content %}
+<h1 class="page-title">جستجو{% if query %}: {{ query }}{% endif %}</h1>
+<div id="product-catalog"
+     data-api-base="/api/v1/products/"
+     data-currency="{{ store.currency }}"
+     data-query="{{ query|default:'' }}">
+    {% include "partials/product_catalog.html" %}
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="/static/js/product-filters.js"></script>
+{% endblock %}

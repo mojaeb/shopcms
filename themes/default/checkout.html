@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}{{ store.name }} - تسویه{% endblock %}
+{% block content %}
+<div id="checkout-page" data-currency="{{ store.currency }}">
+    <h1 class="page-title">تسویه حساب</h1>
+
+    <div class="checkout-grid">
+        <section class="card">
+            <h2>آدرس تحویل</h2>
+            <div id="checkout-address">
+                <p class="muted">در حال بارگذاری آدرس...</p>
+            </div>
+            <a href="/addresses/" class="btn btn-outline" style="margin-top:0.75rem;">مدیریت آدرس‌ها</a>
+        </section>
+
+        <section class="card">
+            <h2>روش ارسال</h2>
+            <div id="shipping-options">
+                <p class="muted">ابتدا آدرس را انتخاب کنید.</p>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>درگاه پرداخت</h2>
+            <div id="payment-gateways">
+                <p class="muted">در حال بارگذاری درگاه‌ها...</p>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>خلاصه سفارش</h2>
+            <div id="checkout-summary">
+                <p>سبد: <span id="cart-subtotal" class="money-slot">—</span></p>
+                <p>هزینه ارسال: <span id="shipping-cost" class="money-slot">—</span></p>
+                <p id="tax-row" style="display:none;">مالیات: <span id="tax-cost" class="money-slot">—</span></p>
+                <p style="font-size:1.2rem; margin-top:0.5rem; font-weight:bold;">
+                    جمع کل: <span id="checkout-total" class="money-slot" style="color:var(--accent);">—</span>
+                </p>
+            </div>
+            <button type="button" class="btn" id="checkout-submit" disabled style="margin-top:1rem;">پرداخت</button>
+            <p id="checkout-message" class="muted" style="margin-top:0.5rem;"></p>
+        </section>
+    </div>
+</div>
+{% endblock %}
+{% block extra_css %}
+<style>
+.checkout-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:1rem; }
+.shipping-option { display:flex; align-items:center; gap:0.75rem; padding:0.75rem; border:1px solid var(--border); border-radius:var(--radius); margin-bottom:0.5rem; cursor:pointer; }
+.shipping-option.selected { border-color:var(--accent); background:rgba(233,69,96,0.05); }
+.shipping-option input { margin:0; }
+</style>
+{% endblock %}
+{% block extra_js %}
+<script src="/static/js/checkout.js"></script>
+{% endblock %}

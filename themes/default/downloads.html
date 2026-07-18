@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}{{ store.name }} - دانلودها{% endblock %}
+{% block content %}
+<div id="downloads-page">
+    <h1 class="page-title">دانلودهای من</h1>
+    <div id="downloads-container">
+        <div class="empty-state card">در حال بارگذاری...</div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="/static/js/downloads.js"></script>
+{% endblock %}

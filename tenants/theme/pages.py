@@ -1,0 +1,27 @@
+"""Registered storefront page templates."""
+
+STOREFRONT_PAGES = {
+    "home": "home.html",
+    "category": "category.html",
+    "product": "product.html",
+    "search": "search.html",
+    "cart": "cart.html",
+    "checkout": "checkout.html",
+    "order_success": "order_success.html",
+    "dashboard": "dashboard.html",
+    "profile": "profile.html",
+    "profile_edit": "profile_edit.html",
+    "wishlist": "wishlist.html",
+    "orders": "orders.html",
+    "order_detail": "order_detail.html",
+    "invoices": "invoices.html",
+    "comments": "comments.html",
+    "addresses": "addresses.html",
+    "blog_list": "blog_list.html",
+    "blog_single": "blog_single.html",
+    "auth": "auth.html",
+    "downloads": "downloads.html",
+    "subscriptions": "subscriptions.html",
+    "404": "404.html",
+    "500": "500.html",
+}
