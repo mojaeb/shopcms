@@ -59,10 +59,10 @@ def get_page(request, slug: str):
     store = get_current_store() or getattr(request, "store", None)
     if not store:
         return 404, {"detail": "فروشگاه یافت نشد"}
-    page = cms.get_page(store, slug)
-    if not page:
+    payload = cms.get_published_page_payload(store, slug)
+    if not payload:
         return 404, {"detail": "صفحه یافت نشد"}
-    return cms.serialize_page(page)
+    return payload
 
 
 @router.get("/layout")

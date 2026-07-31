@@ -35,6 +35,7 @@ def store_export_specs() -> list[tuple[str, Callable]]:
     MenuItem = _model("cms.MenuItem")
     ContentBlock = _model("cms.ContentBlock")
     Slide = _model("cms.Slide")
+    Shortcode = _model("cms.Shortcode")
     Coupon = _model("carts.Coupon")
     GiftCard = _model("carts.GiftCard")
     Cart = _model("carts.Cart")
@@ -102,6 +103,7 @@ def store_export_specs() -> list[tuple[str, Callable]]:
         ("cms.MenuItem", lambda s: MenuItem.objects.filter(menu__store=s)),
         ("cms.ContentBlock", lambda s: ContentBlock.objects.filter(page__store=s)),
         ("cms.Slide", lambda s: Slide.objects.filter(slider__store=s)),
+        ("cms.Shortcode", lambda s: Shortcode.objects.filter(store=s)),
         ("carts.Coupon", lambda s: Coupon.objects.filter(store=s)),
         ("carts.GiftCard", lambda s: GiftCard.objects.filter(store=s)),
         ("carts.Cart", lambda s: Cart.objects.filter(store=s)),

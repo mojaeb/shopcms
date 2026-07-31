@@ -88,10 +88,15 @@ def test_storefront_pages(client, modern_store):
         base_price=1000,
     )
 
-    pages = ["/", "/cart/", "/checkout/", "/blog/", "/dashboard/", "/product/test-item/"]
+    pages = ["/", "/cart/", "/blog/", "/dashboard/", "/product/test-item/"]
     for url in pages:
         response = client.get(url, HTTP_HOST="modern.local")
         assert response.status_code == 200, f"Failed for {url}"
+
+    checkout = client.get("/checkout/", HTTP_HOST="modern.local")
+    assert checkout.status_code == 302
+    assert checkout["Location"].startswith("/login/?next=")
+    assert "/checkout/" in checkout["Location"]
 
 
 @pytest.mark.django_db

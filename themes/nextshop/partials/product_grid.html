@@ -1,0 +1,11 @@
+{% if products %}
+<div class="ns-products-grid">
+    {% for p in products %}
+    {% include "partials/product_card.html" with product=p %}
+    {% endfor %}
+</div>
+{% else %}
+<div class="ns-empty">
+    <p>محصولی یافت نشد.</p>
+</div>
+{% endif %}

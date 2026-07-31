@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}{{ store.name }} - نتیجه پرداخت{% endblock %}
+{% block content %}
+<div class="ns-page ns-width">
+    <div class="ns-success-card" id="order-success-page">
+        <div class="ns-success-icon" id="success-icon">
+            <i data-lucide="check-circle-2"></i>
+        </div>
+        <h1 class="ns-page-title" id="success-title">سفارش با موفقیت ثبت شد</h1>
+        <p id="success-detail" class="ns-page-sub" style="margin:0.85rem auto 1.35rem;max-width:28rem;"></p>
+        <div class="ns-success-actions">
+            <a href="/orders/" class="ns-btn">مشاهده سفارشات</a>
+            <a href="/products/" class="ns-btn ns-btn--ghost">ادامه خرید</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+(function () {
+    const params = new URLSearchParams(window.location.search);
+    const status = params.get("status");
+    const tracking = params.get("tracking");
+    const ref = params.get("ref");
+    const title = document.getElementById("success-title");
+    const detail = document.getElementById("success-detail");
+    const icon = document.getElementById("success-icon");
+    if (status === "failed") {
+        title.textContent = "پرداخت ناموفق بود";
+        detail.textContent = tracking ? ("کد پیگیری: " + tracking) : "لطفاً دوباره تلاش کنید.";
+        if (icon) {
+            icon.classList.add("is-error");
+            icon.innerHTML = '<i data-lucide="x-circle"></i>';
+            if (window.lucide) window.lucide.createIcons();
+        }
+    } else if (tracking) {
+        const order = params.get("order");
+        detail.textContent = order
+            ? ("شماره سفارش: " + order + " — کد پیگیری: " + tracking + (ref ? " — Ref: " + ref : ""))
+            : ("کد پیگیری: " + tracking + (ref ? " — Ref: " + ref : ""));
+    } else {
+        detail.textContent = "می‌توانید وضعیت سفارش را از حساب کاربری پیگیری کنید.";
+    }
+})();
+</script>
+{% endblock %}

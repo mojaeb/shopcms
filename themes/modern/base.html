@@ -16,7 +16,7 @@
     {% include "partials/theme.css.html" %}
     {% block extra_css %}{% endblock %}
 </head>
-<body class="theme-{{ theme_slug|default:'default' }}">
+<body class="theme-{{ theme_slug|default:'default' }}"{% if user.is_authenticated %} data-authenticated="1"{% endif %}>
     {% include "partials/currency_sprite.html" %}
     {% include "partials/cms_header.html" %}
     <main class="site-main">
@@ -25,6 +25,7 @@
     {% include "partials/cms_footer.html" %}
     {% if seo %}{{ seo.footer_scripts|safe }}{% endif %}
     <script src="/static/js/money.js"></script>
+    <script src="/static/js/toast.js"></script>
     <script src="/static/js/cart.js"></script>
     <script src="/static/js/wishlist.js"></script>
     <script src="/static/js/auth-header.js"></script>

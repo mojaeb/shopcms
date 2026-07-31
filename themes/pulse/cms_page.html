@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}{{ page.seo.meta_title|default:page.title }} - {{ store.name }}{% endblock %}
+{% block content %}
+<div class="ps-cms-band {% if page.slug == 'about' %}ps-cms-band--about{% elif page.slug == 'contact' %}ps-cms-band--contact{% endif %}">
+    <article class="ps-page ps-width ps-cms {% if page.slug == 'about' %}ps-cms--about{% elif page.slug == 'contact' %}ps-cms--contact{% endif %}">
+        <header class="ps-cms-head">
+            <nav class="ps-breadcrumb" aria-label="مسیر">
+                <a href="/">خانه</a>
+                <span aria-hidden="true">/</span>
+                <span>{{ page.title }}</span>
+            </nav>
+            <h1 class="ps-page-title">{{ page.title }}</h1>
+            {% if page.seo.meta_description or page.meta_description %}
+            <p class="ps-page-sub">{{ page.seo.meta_description|default:page.meta_description }}</p>
+            {% endif %}
+        </header>
+
+        <div class="ps-cms-panel">
+            {% if page.content %}
+            <div class="ps-prose ps-cms-body rich-content page-content">
+                {{ page.content|safe }}
+            </div>
+            {% endif %}
+
+            {% for block in page.blocks %}
+            <section class="ps-cms-block">
+                {% if block.title %}<h2>{{ block.title }}</h2>{% endif %}
+                {% if block.type == "html" %}
+                    {{ block.content.html|default:""|safe }}
+                {% elif block.type == "text" %}
+                    <p>{{ block.content.text|default:"" }}</p>
+                {% else %}
+                    <pre>{{ block.content }}</pre>
+                {% endif %}
+            </section>
+            {% endfor %}
+        </div>
+
+        {% if page.slug == 'contact' %}
+        <div class="ps-cms-actions">
+            <a href="/category/" class="ps-btn">مشاهده محصولات</a>
+            <a href="/blog/" class="ps-btn ps-btn--ghost">وبلاگ</a>
+        </div>
+        {% elif page.slug == 'about' %}
+        <div class="ps-cms-actions">
+            <a href="/category/" class="ps-btn">شروع خرید</a>
+            <a href="/page/contact/" class="ps-btn ps-btn--ghost">تماس با ما</a>
+        </div>
+        {% endif %}
+    </article>
+</div>
+{% endblock %}

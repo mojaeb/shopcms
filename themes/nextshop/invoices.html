@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}{{ store.name }} - فاکتورها{% endblock %}
+{% block content %}
+<div class="ns-account ns-width">
+    {% include "partials/account_nav.html" with active="invoices" %}
+    <div class="ns-account-main">
+        <h1 class="page-title">رسیدها و فاکتورها</h1>
+        <div class="ns-empty">
+            <div class="ns-empty-icon" aria-hidden="true"><i data-lucide="file-text"></i></div>
+            <strong>هنوز فاکتوری نیست</strong>
+            <p>پس از ثبت و پرداخت سفارش، رسیدها از اینجا در دسترس خواهند بود.</p>
+            <a href="/orders/" class="ns-btn ns-btn--ghost">مشاهده سفارشات</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

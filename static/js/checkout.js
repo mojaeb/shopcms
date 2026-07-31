@@ -30,7 +30,7 @@
 
     function formatMoney(v) {
         if (window.ShopMoney) return window.ShopMoney.formatMoney(v, currency);
-        return Number(v || 0).toLocaleString("en-US") + (currency ? " " + currency : "");
+        return Number(v || 0).toLocaleString("fa-IR") + (currency ? " " + currency : "");
     }
 
     function setMoney(elId, value) {
@@ -41,6 +41,18 @@
 
     function canPay() {
         return selectedAddressId && selectedShipping && selectedGateway;
+    }
+
+    function notify(message, isError, type) {
+        const msg = document.getElementById("checkout-message");
+        if (msg) {
+            msg.textContent = message;
+            msg.classList.toggle("is-error", !!isError);
+        }
+        if (window.ShopToast) {
+            const toastType = type || (isError ? "error" : "success");
+            window.ShopToast.show(message, { type: toastType });
+        }
     }
 
     function updateTotals() {
@@ -54,7 +66,8 @@
             taxRow.style.display = "none";
         }
         setMoney("checkout-total", cartSubtotal + shipping + cartTax);
-        document.getElementById("checkout-submit").disabled = !canPay();
+        const submit = document.getElementById("checkout-submit");
+        if (submit) submit.disabled = false;
     }
 
     function refreshTaxPreview() {
@@ -70,12 +83,57 @@
         });
     }
 
+    function escapeHtml(str) {
+        return String(str ?? "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;");
+    }
+
+    function renderCheckoutItems(items) {
+        const el = document.getElementById("checkout-items");
+        if (!el) return;
+
+        if (!items || !items.length) {
+            el.innerHTML = '<p class="muted">سبد خرید خالی است. <a href="/cart/">بازگشت به سبد</a></p>';
+            return;
+        }
+
+        el.innerHTML = items.map((item) => {
+            const name = escapeHtml(item.product_name);
+            const variant = item.variant_label
+                ? `<p class="ns-variant-chip checkout-item-meta"><i data-lucide="layers" aria-hidden="true"></i>${escapeHtml(item.variant_label)}</p>`
+                : "";
+            const img = item.image
+                ? `<img src="${escapeHtml(item.image)}" alt="${name}" class="cart-item-img checkout-item-img">`
+                : `<div class="checkout-item-img checkout-item-img--empty" aria-hidden="true"></div>`;
+            return `
+                <div class="checkout-item cart-item" data-item-id="${item.id}">
+                    <div class="cart-item-info checkout-item-info">
+                        ${img}
+                        <div class="checkout-item-body">
+                            <h3 class="checkout-item-title">${name}</h3>
+                            ${variant}
+                            <p class="muted checkout-item-meta">تعداد: ${Number(item.quantity) || 0}</p>
+                        </div>
+                    </div>
+                    <p class="line-total checkout-item-total">${formatMoney(item.line_total)}</p>
+                </div>
+            `;
+        }).join("");
+        if (window.lucide) window.lucide.createIcons();
+    }
+
     function loadCart() {
         apiFetch("/api/v1/cart/").then(({ ok, data }) => {
             if (ok) {
                 cartSubtotal = Number(data.subtotal || 0) - Number(data.discount || 0);
                 setMoney("cart-subtotal", cartSubtotal);
+                renderCheckoutItems(data.items || []);
                 refreshTaxPreview();
+            } else {
+                renderCheckoutItems([]);
             }
         });
     }
@@ -108,19 +166,35 @@
         });
     }
 
-    function loadAddresses() {
+    function loadAddresses(options = {}) {
+        const preferId = options.selectId != null ? Number(options.selectId) : null;
+
         apiFetch("/api/v1/addresses/").then(({ ok, status, data }) => {
             const el = document.getElementById("checkout-address");
             if (status === 401) {
-                el.innerHTML = '<p class="muted">برای تسویه وارد شوید.</p>';
+                el.innerHTML =
+                    '<p class="muted">برای تسویه وارد شوید. <a href="/login/?next=' +
+                    encodeURIComponent(window.location.pathname + window.location.search) +
+                    '">ورود</a></p>';
                 return;
             }
             if (!ok || !data.length) {
-                el.innerHTML = '<p class="muted">آدرسی ثبت نشده. <a href="/addresses/">افزودن آدرس</a></p>';
+                const hasModal = !!document.getElementById("checkout-address-modal");
+                el.innerHTML = hasModal
+                    ? '<p class="muted">آدرسی ثبت نشده. روی «افزودن آدرس» کلیک کنید.</p>'
+                    : '<p class="muted">آدرسی ثبت نشده. <a href="/addresses/">افزودن آدرس</a></p>';
+                selectedAddressId = null;
                 return;
             }
 
-            const auto = data.length === 1 ? data[0] : data.find((a) => a.is_default);
+            let auto = null;
+            if (preferId != null) {
+                auto = data.find((a) => Number(a.id) === preferId) || null;
+            }
+            if (!auto) {
+                auto = data.length === 1 ? data[0] : data.find((a) => a.is_default);
+            }
+
             el.innerHTML = data.map((a) => `
                 <label class="shipping-option ${auto && auto.id === a.id ? "selected" : ""}">
                     <input type="radio" name="address" value="${a.id}" ${auto && auto.id === a.id ? "checked" : ""}>
@@ -143,6 +217,98 @@
                     input.closest(".shipping-option").classList.add("selected");
                     loadShipping(selectedAddressId);
                 });
+            });
+        });
+    }
+
+    function initAddressModal() {
+        const modal = document.getElementById("checkout-address-modal");
+        const openBtn = document.getElementById("checkout-add-address-btn");
+        const form = document.getElementById("checkout-address-form");
+        if (!modal || !openBtn || !form) return;
+
+        let lastFocus = null;
+
+        function getFocusable() {
+            return Array.from(
+                modal.querySelectorAll(
+                    'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+                )
+            ).filter((el) => !el.hasAttribute("disabled") && el.getAttribute("aria-hidden") !== "true");
+        }
+
+        function openModal() {
+            lastFocus = document.activeElement;
+            modal.hidden = false;
+            document.body.classList.add("ps-modal-open");
+            const first = form.querySelector("input, textarea, select, button");
+            (first || openBtn).focus();
+            if (window.lucide) window.lucide.createIcons();
+        }
+
+        function closeModal() {
+            if (modal.hidden) return;
+            modal.hidden = true;
+            document.body.classList.remove("ps-modal-open");
+            const msg = document.getElementById("checkout-address-form-message");
+            if (msg) msg.textContent = "";
+            form.reset();
+            if (lastFocus && typeof lastFocus.focus === "function") lastFocus.focus();
+        }
+
+        openBtn.addEventListener("click", openModal);
+
+        modal.querySelectorAll("[data-modal-dismiss]").forEach((el) => {
+            el.addEventListener("click", closeModal);
+        });
+
+        document.addEventListener("keydown", (e) => {
+            if (modal.hidden) return;
+            if (e.key === "Escape") {
+                e.preventDefault();
+                closeModal();
+                return;
+            }
+            if (e.key !== "Tab") return;
+            const focusable = getFocusable();
+            if (!focusable.length) return;
+            const first = focusable[0];
+            const last = focusable[focusable.length - 1];
+            if (e.shiftKey && document.activeElement === first) {
+                e.preventDefault();
+                last.focus();
+            } else if (!e.shiftKey && document.activeElement === last) {
+                e.preventDefault();
+                first.focus();
+            }
+        });
+
+        form.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const msg = document.getElementById("checkout-address-form-message");
+            const payload = Object.fromEntries(new FormData(form).entries());
+            payload.is_default = !!form.querySelector('[name="is_default"]')?.checked;
+
+            const submitBtn = form.querySelector('button[type="submit"]');
+            if (submitBtn) submitBtn.disabled = true;
+            if (msg) msg.textContent = "در حال ذخیره...";
+
+            apiFetch("/api/v1/addresses/", {
+                method: "POST",
+                body: JSON.stringify(payload),
+            }).then(({ ok, data }) => {
+                if (submitBtn) submitBtn.disabled = false;
+                if (ok) {
+                    if (msg) msg.textContent = "";
+                    closeModal();
+                    loadAddresses({ selectId: data.id });
+                    notify("آدرس ذخیره شد");
+                } else if (msg) {
+                    msg.textContent = data.detail || "خطا در ذخیره آدرس";
+                }
+            }).catch(() => {
+                if (submitBtn) submitBtn.disabled = false;
+                if (msg) msg.textContent = "خطا در ذخیره آدرس";
             });
         });
     }
@@ -191,9 +357,21 @@
     }
 
     document.getElementById("checkout-submit")?.addEventListener("click", () => {
+        if (!selectedAddressId) {
+            notify("آدرس وارد نشده", true);
+            return;
+        }
+        if (!selectedShipping) {
+            notify("روش ارسال انتخاب نشده", true);
+            return;
+        }
+        if (!selectedGateway) {
+            notify("درگاه پرداخت انتخاب نشده", true);
+            return;
+        }
         if (!canPay()) return;
-        const msg = document.getElementById("checkout-message");
-        msg.textContent = "در حال انتقال به درگاه...";
+
+        notify("در حال انتقال به درگاه...", false, "info");
         apiFetch("/api/v1/payments/create", {
             method: "POST",
             body: JSON.stringify({
@@ -206,11 +384,12 @@
             if (ok && data.payment_url) {
                 window.location.href = data.payment_url;
             } else {
-                msg.textContent = data.detail || "خطا در ایجاد پرداخت";
+                notify(data.detail || "خطا در ایجاد پرداخت", true);
             }
         });
     });
 
+    initAddressModal();
     loadCart();
     loadAddresses();
     loadGateways();

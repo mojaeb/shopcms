@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}{{ store.name }} - سفارش {{ order_id }}{% endblock %}
+{% block content %}
+<div class="ns-account ns-width">
+    {% include "partials/account_nav.html" with active="orders" %}
+    <div class="ns-account-main" id="order-detail-page" data-order-id="{{ order_id }}">
+        <div class="ns-account-toolbar">
+            <h1 class="page-title">جزئیات سفارش</h1>
+            <a href="/orders/" class="ns-btn ns-btn--ghost">بازگشت</a>
+        </div>
+        <div id="order-detail-content">
+            <div class="ns-loading-panel" aria-busy="true" aria-label="در حال بارگذاری سفارش">
+                <div class="ns-skeleton-stack">
+                    <div class="ns-skeleton ns-skeleton-line ns-skeleton-line--md"></div>
+                    <div class="ns-skeleton ns-skeleton-card"></div>
+                    <div class="ns-skeleton ns-skeleton-line"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="/static/js/orders.js"></script>
+{% endblock %}

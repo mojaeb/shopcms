@@ -55,10 +55,90 @@
         return document.body.classList.contains("theme-modern");
     }
 
+    function isNextshop() {
+        return document.body.classList.contains("theme-nextshop");
+    }
+
+    function isPulse() {
+        return document.body.classList.contains("theme-pulse");
+    }
+
     function renderProductCard(product) {
         const money = window.ShopMoney
             ? window.ShopMoney.formatMoney(product.base_price, currency)
-            : Number(product.base_price || 0).toLocaleString("en-US") + " " + currency;
+            : Number(product.base_price || 0).toLocaleString("fa-IR") + " " + currency;
+
+        if (isPulse()) {
+            const image = product.image
+                ? `<img src="${product.image}" alt="${product.name}" loading="lazy">`
+                : '<div class="ps-card-placeholder"><i data-lucide="package"></i></div>';
+            const cat = product.category
+                ? `<span class="ps-card-cat">${product.category}</span>`
+                : '<span class="ps-card-cat">&nbsp;</span>';
+            const oos = product.in_stock
+                ? ""
+                : '<div class="ps-card-oos"><span>ناموجود</span></div>';
+            let badge = "";
+            if (product.discount_percent) {
+                const pct = window.ShopMoney
+                    ? window.ShopMoney.formatAmount(product.discount_percent)
+                    : product.discount_percent;
+                badge = `<span class="ps-badge ps-badge--sale ps-card-badge">${pct}٪</span>`;
+            } else if (product.is_featured) {
+                badge = '<span class="ps-badge ps-badge--feat ps-card-badge">ویژه</span>';
+            }
+            const compare = product.compare_price && product.discount_percent
+                ? `<s class="ps-price-was">${window.ShopMoney ? window.ShopMoney.formatMoney(product.compare_price, currency) : product.compare_price}</s>`
+                : '<span class="ps-price-was ps-price-was--empty" aria-hidden="true">&nbsp;</span>';
+            return `
+                <a href="/product/${product.slug}/" class="ps-card">
+                    <div class="ps-card-media">${image}${badge}</div>
+                    <div class="ps-card-body">
+                        ${cat}
+                        <h3 class="ps-card-title">${product.name}</h3>
+                        <div class="ps-price">${compare}<strong class="ps-price-now">${money}</strong></div>
+                    </div>
+                    ${oos}
+                </a>
+            `;
+        }
+
+        if (isNextshop()) {
+            const image = product.image
+                ? `<img src="${product.image}" alt="${product.name}" loading="lazy">`
+                : '<div class="ns-card-placeholder"><i data-lucide="package"></i></div>';
+            const cat = product.category
+                ? `<span class="ns-card-cat">${product.category}</span>`
+                : '<span class="ns-card-cat">&nbsp;</span>';
+            const oos = product.in_stock
+                ? ""
+                : '<div class="ns-card-oos"><span>ناموجود</span></div>';
+            let badge = "";
+            if (product.discount_percent) {
+                const pct = window.ShopMoney
+                    ? window.ShopMoney.formatAmount(product.discount_percent)
+                    : product.discount_percent;
+                badge = `<span class="ns-badge ns-badge--sale ns-card-badge">${pct}٪</span>`;
+            } else if (product.is_featured) {
+                badge = '<span class="ns-badge ns-badge--feat ns-card-badge">ویژه</span>';
+            }
+            const compare = product.compare_price && product.discount_percent
+                ? `<s>${window.ShopMoney ? window.ShopMoney.formatMoney(product.compare_price, currency) : product.compare_price}</s>`
+                : '<span class="ns-price-was ns-price-was--empty" aria-hidden="true">&nbsp;</span>';
+            return `
+                <a href="/product/${product.slug}/" class="ns-card">
+                    <div class="ns-card-media">${image}${badge}</div>
+                    <div class="ns-card-body">
+                        ${cat}
+                        <h3 class="ns-card-title">${product.name}</h3>
+                        <div class="ns-card-meta">
+                            <div class="ns-price">${compare}<strong>${money}</strong></div>
+                        </div>
+                    </div>
+                    ${oos}
+                </a>
+            `;
+        }
 
         if (isModern()) {
             const stockPill = product.in_stock ? "" : '<span class="vg-pill">ناموجود</span>';
@@ -135,14 +215,33 @@
                     countEl.textContent = `${data.count || 0} محصول`;
                 }
                 if (!data.items || !data.items.length) {
-                    resultsEl.innerHTML = isModern()
+                    resultsEl.innerHTML = isPulse()
+                        ? '<div class="ps-empty"><p>محصولی یافت نشد.</p></div>'
+                        : isNextshop()
+                        ? '<div class="ns-empty"><div class="ns-empty-icon" aria-hidden="true"><i data-lucide="package-open"></i></div><strong>محصولی یافت نشد</strong><p>فیلترها را تغییر دهید یا عبارت دیگری جستجو کنید.</p></div>'
+                        : isModern()
                         ? '<div class="vg-empty" data-vg-reveal><i data-lucide="package-open" class="vg-empty-icon"></i><p>محصولی یافت نشد.</p></div>'
                         : '<div class="empty-state card">محصولی یافت نشد.</div>';
+                    if (isNextshop() && window.lucide) window.lucide.createIcons();
                 } else {
-                    const wrapClass = isModern() ? "vg-products vg-products--catalog" : "grid";
+                    const wrapClass = isPulse()
+                        ? "ps-products-grid"
+                        : isNextshop()
+                        ? "ns-products-grid"
+                        : isModern()
+                        ? "vg-products vg-products--catalog"
+                        : "grid";
                     resultsEl.innerHTML = `<div class="${wrapClass}">${data.items.map(renderProductCard).join("")}</div>`;
                 }
                 renderPagination(data.count || 0, currentPage);
+                if (window.PulseTheme && typeof window.PulseTheme.refreshIcons === "function") {
+                    window.PulseTheme.refreshIcons(resultsEl);
+                } else if (window.lucide && typeof window.lucide.createIcons === "function") {
+                    window.lucide.createIcons({
+                        attrs: { "stroke-width": 1.75 },
+                        nameAttr: "data-lucide",
+                    });
+                }
                 if (window.ShopModern && typeof window.ShopModern.afterCatalogUpdate === "function") {
                     window.ShopModern.afterCatalogUpdate();
                 }

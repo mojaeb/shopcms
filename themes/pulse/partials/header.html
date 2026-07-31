@@ -1,0 +1,101 @@
+<header class="ps-header" data-ps-header>
+    <div class="ps-header-bar">
+        <div class="ps-header-inner ps-width">
+            <div class="ps-header-actions">
+                <button type="button" class="ps-icon-btn ps-menu-btn" data-ps-open-menu aria-expanded="false" aria-controls="ps-drawer" aria-label="منو">
+                    <i data-lucide="menu"></i>
+                </button>
+                <a href="/" class="ps-brand">
+                    {% if theme_settings.logo %}
+                    <img src="{{ theme_settings.logo }}" alt="{{ store.name }}" class="ps-brand-mark">
+                    {% else %}
+                    <span class="ps-brand-mark" aria-hidden="true">{{ store.name|truncatechars:1 }}</span>
+                    {% endif %}
+                    <span>
+                        <span class="ps-brand-name">{{ store.name }}</span>
+                        <span class="ps-brand-sub">خرید سریع و مطمئن</span>
+                    </span>
+                </a>
+            </div>
+
+            <form class="ps-search" action="/search/" method="get" role="search">
+                <input type="search" name="q" placeholder="جستجو در محصولات..." autocomplete="off" value="{{ query|default:'' }}" aria-label="جستجو">
+                <button type="submit" class="ps-search-submit" aria-label="جستجو">
+                    <i data-lucide="search" aria-hidden="true"></i>
+                </button>
+            </form>
+
+            <div class="ps-header-actions">
+                <a href="/wishlist/" class="ps-icon-btn" aria-label="علاقه‌مندی">
+                    <i data-lucide="heart"></i>
+                </a>
+                <a href="/cart/" class="ps-icon-btn ps-cart-link" aria-label="سبد خرید">
+                    <i data-lucide="shopping-cart"></i>
+                    <span class="ps-cart-chip" data-cart-count style="display:none;">0</span>
+                </a>
+                {% if user.is_authenticated %}
+                <a href="/dashboard/" class="ps-btn ps-btn--ghost" style="display:none;" id="ps-user-desktop">
+                    <i data-lucide="user"></i>
+                    <span>حساب من</span>
+                </a>
+                <a href="/dashboard/" class="ps-icon-btn" aria-label="حساب کاربری">
+                    <i data-lucide="user"></i>
+                </a>
+                {% else %}
+                <a href="/login/?next={{ request.get_full_path|urlencode }}" class="ps-btn ps-btn--ghost" style="min-height:2.5rem;">
+                    <i data-lucide="log-in"></i>
+                    <span class="ps-login-label">ورود</span>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="ps-nav-bar">
+        <nav class="ps-nav ps-width" aria-label="منوی اصلی">
+            {% if cms_menus.header and cms_menus.header.items %}
+                {% for item in cms_menus.header.items %}
+                <a href="{{ item.url|default:'#' }}" {% if item.open_new_tab %}target="_blank" rel="noopener"{% endif %}>{{ item.label }}</a>
+                {% endfor %}
+            {% else %}
+                <a href="/category/">محصولات</a>
+                <a href="/blog/">وبلاگ</a>
+                <a href="/page/about/">درباره ما</a>
+                <a href="/page/contact/">تماس</a>
+            {% endif %}
+        </nav>
+    </div>
+
+    <div class="ps-overlay" data-ps-overlay data-ps-close-menu></div>
+    <aside id="ps-drawer" class="ps-drawer" data-ps-drawer aria-hidden="true">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+            <strong>{{ store.name }}</strong>
+            <button type="button" class="ps-icon-btn" data-ps-close-menu aria-label="بستن">
+                <i data-lucide="x"></i>
+            </button>
+        </div>
+        <form action="/search/" method="get" role="search" style="display:flex;gap:0.4rem;">
+            <input class="ps-input" type="search" name="q" placeholder="جستجو...">
+            <button class="ps-btn" type="submit"><i data-lucide="search"></i></button>
+        </form>
+        <nav class="ps-drawer-nav" aria-label="منوی موبایل">
+            {% if cms_menus.header and cms_menus.header.items %}
+                {% for item in cms_menus.header.items %}
+                <a href="{{ item.url|default:'#' }}" {% if item.open_new_tab %}target="_blank" rel="noopener"{% endif %}>{{ item.label }}</a>
+                {% endfor %}
+            {% else %}
+                <a href="/category/">محصولات</a>
+                <a href="/blog/">وبلاگ</a>
+                <a href="/page/about/">درباره ما</a>
+                <a href="/page/contact/">تماس</a>
+            {% endif %}
+            <a href="/wishlist/">علاقه‌مندی</a>
+            <a href="/cart/">سبد خرید</a>
+            {% if user.is_authenticated %}
+            <a href="/dashboard/">حساب کاربری</a>
+            {% else %}
+            <a href="/login/?next={{ request.get_full_path|urlencode }}">ورود / عضویت</a>
+            {% endif %}
+        </nav>
+    </aside>
+</header>

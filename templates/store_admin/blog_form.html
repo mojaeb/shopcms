@@ -1,0 +1,66 @@
+{% extends "store_admin/base.html" %}
+{% block content %}
+<div id="sa-blog-form" class="sa-page" data-post-id="{{ post_id|default:'' }}" data-is-edit="{{ is_edit|yesno:'1,0' }}">
+    <div class="sa-back">
+        <a href="/manage/blog/" class="sa-link-muted">← بازگشت به وبلاگ</a>
+    </div>
+
+    <form id="blog-form" class="sa-form sa-editor">
+        <section class="sa-editor-section">
+            <h2>{% if is_edit %}ویرایش مقاله{% else %}مقاله جدید{% endif %}</h2>
+            <p class="sa-section-desc">عنوان، محتوا و وضعیت انتشار مقاله را تنظیم کنید.</p>
+            <label>عنوان
+                <input type="text" id="blog-title" class="sa-input" required>
+            </label>
+            <label>شناسه URL (slug)
+                <input type="text" id="blog-slug" class="sa-input" dir="ltr" required>
+            </label>
+            <div class="sa-grid-2">
+                <label>دسته
+                    <select id="blog-category" class="sa-input">
+                        <option value="">— بدون دسته —</option>
+                    </select>
+                </label>
+                <label class="sa-check-inline sa-align-end">
+                    <input type="checkbox" id="blog-published">
+                    منتشر شده
+                </label>
+            </div>
+            <label>خلاصه
+                <textarea id="blog-excerpt" class="sa-input" rows="2"></textarea>
+            </label>
+            <label>تصویر شاخص (URL)
+                <input type="url" id="blog-featured" class="sa-input" dir="ltr">
+            </label>
+            <label>محتوا
+                <textarea id="blog-content" class="sa-input" rows="14"></textarea>
+            </label>
+        </section>
+        <section class="sa-editor-section">
+            <h2>SEO</h2>
+            <p class="sa-section-desc">عنوان و توضیحات برای موتورهای جستجو.</p>
+            <label>عنوان متا
+                <input type="text" id="blog-meta-title" class="sa-input">
+            </label>
+            <label>توضیح متا
+                <textarea id="blog-meta-description" class="sa-input" rows="2"></textarea>
+            </label>
+        </section>
+    </form>
+
+    <div class="sa-sticky-bar" id="blog-sticky-bar">
+        <div class="sa-sticky-bar-meta">
+            <strong>{% if is_edit %}ویرایش مقاله{% else %}مقاله جدید{% endif %}</strong>
+            <span class="sa-muted sa-text-sm">ذخیره تغییرات قبل از ترک صفحه</span>
+        </div>
+        <div class="sa-sticky-bar-actions">
+            <a href="/manage/blog/" class="sa-btn sa-btn-ghost">بازگشت</a>
+            <button type="submit" form="blog-form" class="sa-btn" id="blog-save">ذخیره</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="/static/js/store_admin/richtext.js"></script>
+<script src="/static/js/store_admin/blog_form.js"></script>
+{% endblock %}

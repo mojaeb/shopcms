@@ -1,8 +1,8 @@
 {% extends "store_admin/base.html" %}
 {% block content %}
-<div id="sa-order-detail" class="sa-page" data-order-id="{{ order_id }}">
-    <p class="sa-back"><a href="/manage/orders/">← بازگشت به لیست</a></p>
-    <div class="sa-loading">در حال بارگذاری...</div>
+<div id="sa-order-detail" class="sa-page sa-loading-host" data-order-id="{{ order_id }}">
+    <p class="sa-back"><a href="/manage/orders/" class="sa-link-muted">← بازگشت به لیست</a></p>
+    <div id="order-detail-body"></div>
 </div>
 {% endblock %}
 {% block extra_js %}

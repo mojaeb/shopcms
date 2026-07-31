@@ -1,0 +1,73 @@
+{% if cms_slider and cms_slider.slides %}
+<div class="ps-hero" aria-label="اسلایدر">
+    <div class="swiper ps-hero-swiper" data-ps-hero>
+        <div class="swiper-wrapper">
+            {% for slide in cms_slider.slides %}
+            <div class="swiper-slide">
+                {% if slide.link %}<a href="{{ slide.link }}" class="ps-hero-slide">{% else %}<div class="ps-hero-slide">{% endif %}
+                    {% if slide.image %}
+                    <img src="{{ slide.image }}" alt="{{ slide.title|default:store.name }}" {% if not forloop.first %}loading="lazy"{% endif %} draggable="false">
+                    {% else %}
+                    <div class="ps-hero-fallback"></div>
+                    {% endif %}
+                    <div class="ps-hero-caption"{% if forloop.first %} data-ps-hero-copy{% endif %}>
+                        {% if slide.title %}<strong>{{ slide.title }}</strong>{% endif %}
+                        {% if slide.subtitle %}<span>{{ slide.subtitle }}</span>{% endif %}
+                    </div>
+                {% if slide.link %}</a>{% else %}</div>{% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        <div class="swiper-pagination"></div>
+    </div>
+    {% if cms_slider.slides|length > 1 %}
+    <div class="ps-hero-nav">
+        <button type="button" class="ps-icon-btn ps-hero-prev" aria-label="قبلی"><i data-lucide="chevron-right"></i></button>
+        <button type="button" class="ps-icon-btn ps-hero-next" aria-label="بعدی"><i data-lucide="chevron-left"></i></button>
+    </div>
+    {% endif %}
+</div>
+{% elif theme_settings.hero.slides %}
+<div class="ps-hero" aria-label="اسلایدر">
+    <div class="swiper ps-hero-swiper" data-ps-hero>
+        <div class="swiper-wrapper">
+            {% for slide in theme_settings.hero.slides %}
+            <div class="swiper-slide">
+                {% if slide.button_link %}<a href="{{ slide.button_link }}" class="ps-hero-slide">{% else %}<div class="ps-hero-slide">{% endif %}
+                    {% if slide.image %}
+                    <img src="{{ slide.image }}" alt="{{ slide.title|default:store.name }}" {% if not forloop.first %}loading="lazy"{% endif %} draggable="false">
+                    {% else %}
+                    <div class="ps-hero-fallback" style="background:{{ slide.background_color|default:'#0f766e' }};"></div>
+                    {% endif %}
+                    <div class="ps-hero-caption"{% if forloop.first %} data-ps-hero-copy{% endif %}>
+                        {% if slide.title %}<strong>{{ slide.title }}</strong>{% endif %}
+                        {% if slide.text %}<span>{{ slide.text }}</span>{% endif %}
+                        {% if slide.button_text %}
+                        <span class="ps-btn ps-btn--white" style="width:fit-content;">{{ slide.button_text }} <i data-lucide="arrow-left"></i></span>
+                        {% endif %}
+                    </div>
+                {% if slide.button_link %}</a>{% else %}</div>{% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        <div class="swiper-pagination"></div>
+    </div>
+    {% if theme_settings.hero.slides|length > 1 %}
+    <div class="ps-hero-nav">
+        <button type="button" class="ps-icon-btn ps-hero-prev" aria-label="قبلی"><i data-lucide="chevron-right"></i></button>
+        <button type="button" class="ps-icon-btn ps-hero-next" aria-label="بعدی"><i data-lucide="chevron-left"></i></button>
+    </div>
+    {% endif %}
+</div>
+{% else %}
+<div class="ps-hero" aria-label="معرفی فروشگاه">
+    <div class="ps-hero-slide">
+        <div class="ps-hero-fallback"></div>
+        <div class="ps-hero-caption" data-ps-hero-copy>
+            <strong>{{ store.name }}</strong>
+            <span>خرید آنلاین با ارسال سریع، پرداخت امن و تجربه مدرن</span>
+            <a href="/category/" class="ps-btn ps-btn--white" style="width:fit-content;">مشاهده محصولات <i data-lucide="arrow-left"></i></a>
+        </div>
+    </div>
+</div>
+{% endif %}

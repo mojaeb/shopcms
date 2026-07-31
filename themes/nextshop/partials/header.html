@@ -1,0 +1,193 @@
+<header
+    class="ns-header"
+    x-data="nsHeader()"
+    @keydown.escape.window="closeMobile()"
+>
+    <div class="ns-header-bar">
+        <div class="ns-header-inner ns-width">
+            <div class="ns-header-start">
+                <button
+                    type="button"
+                    class="ns-icon-btn ns-menu-toggle"
+                    @click="openMobile()"
+                    :aria-expanded="mobileOpen.toString()"
+                    aria-controls="ns-mobile-drawer"
+                    aria-label="منو"
+                >
+                    <i data-lucide="menu"></i>
+                </button>
+                <a href="/" class="ns-brand-link">
+                    {% if theme_settings.logo %}
+                    <img src="{{ theme_settings.logo }}" alt="{{ store.name }}" class="ns-brand-logo">
+                    {% else %}
+                    <img src="/static/themes/nextshop/img/logo.png" alt="{{ store.name }}" class="ns-brand-logo">
+                    {% endif %}
+                    <span class="ns-brand-text">
+                        <span class="ns-brand-name">{{ store.name }}</span>
+                        <span class="ns-brand-sub">موبایل و لوازم جانبی</span>
+                    </span>
+                </a>
+            </div>
+
+            <form class="ns-search ns-search--desktop" action="/search/" method="get" role="search">
+                <span class="ns-search-icon" aria-hidden="true">
+                    <i data-lucide="search"></i>
+                </span>
+                <input type="search" name="q" placeholder="جستجو در محصولات..." autocomplete="off" x-ref="searchInput">
+                <button type="submit" class="ns-search-submit">جستجو</button>
+            </form>
+
+            <div class="ns-header-end">
+                <a href="/products/" class="ns-filter-chip ns-filter-chip--tablet" title="مشاهده همه محصولات">
+                    <span>محصولات</span>
+                    <i data-lucide="layout-grid"></i>
+                </a>
+                <div class="ns-header-icons">
+                    <a href="/wishlist/" class="ns-icon-btn" aria-label="علاقه‌مندی">
+                        <i data-lucide="heart"></i>
+                    </a>
+                    <a href="/cart/" class="ns-icon-btn ns-cart-link" aria-label="سبد خرید">
+                        <i data-lucide="shopping-cart"></i>
+                        <span class="ns-cart-chip" data-cart-count style="display:none;">0</span>
+                    </a>
+                </div>
+                <div class="ns-header-auth">
+                    {% if user.is_authenticated %}
+                    <a href="/dashboard/" class="ns-user-chip">
+                        <span class="ns-user-meta">
+                            <strong>{{ user.full_name }}</strong>
+                            <span>{{ user.phone }}</span>
+                        </span>
+                        <span class="ns-user-avatar">{{ user.full_name|slice:":1" }}</span>
+                    </a>
+                    <a href="#" class="js-logout ns-logout-btn" aria-label="خروج از حساب" title="خروج از حساب">
+                        <i data-lucide="log-out"></i>
+                    </a>
+                    {% else %}
+                    <a href="/login/" class="ns-login-btn">
+                        <i data-lucide="user"></i>
+                        <span>ورود / عضویت</span>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <form class="ns-search ns-search--mobile ns-width" action="/search/" method="get" role="search">
+            <span class="ns-search-icon" aria-hidden="true">
+                <i data-lucide="search"></i>
+            </span>
+            <input type="search" name="q" placeholder="جستجو در محصولات..." autocomplete="off">
+            <button type="submit" class="ns-search-submit" aria-label="جستجو">
+                <i data-lucide="search"></i>
+            </button>
+        </form>
+    </div>
+
+    <div class="ns-nav-bar">
+        <div class="ns-nav-inner ns-width">
+            <nav class="ns-nav" aria-label="منوی اصلی">
+                {% if cms_menus.header and cms_menus.header.items %}
+                    {% for item in cms_menus.header.items %}
+                    <div class="ns-nav-item {% if item.children %}has-children{% endif %}">
+                        <a href="{{ item.url|default:'#' }}" {% if item.open_new_tab %}target="_blank" rel="noopener"{% endif %}>
+                            {{ item.label }}
+                            {% if item.children %}<i data-lucide="chevron-down" class="ns-nav-caret"></i>{% endif %}
+                        </a>
+                        {% if item.children %}
+                        <div class="ns-mega">
+                            <div class="ns-mega-inner">
+                                {% for ch in item.children %}
+                                <a href="{{ ch.url|default:'#' }}" {% if ch.open_new_tab %}target="_blank" rel="noopener"{% endif %}>{{ ch.label }}</a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <a class="ns-nav-item" href="/products/">محصولات</a>
+                    <a class="ns-nav-item" href="/page/about/">درباره ما</a>
+                    <a class="ns-nav-item" href="/blog/">وبلاگ</a>
+                {% endif %}
+            </nav>
+            <a href="/page/contact/" class="ns-support" aria-label="پشتیبانی و تماس">
+                <span class="ns-support-icon" aria-hidden="true"><i data-lucide="phone"></i></span>
+                <span class="ns-support-text">
+                    <span class="ns-support-label">پشتیبانی</span>
+                    <span class="ns-support-value">مشاوره خرید</span>
+                </span>
+            </a>
+        </div>
+    </div>
+
+    <div
+        id="ns-mobile-drawer"
+        class="ns-drawer"
+        x-show="mobileOpen"
+        x-cloak
+        x-transition.opacity
+        role="dialog"
+        aria-modal="true"
+        aria-label="منوی موبایل"
+    >
+        <div class="ns-drawer-panel">
+            <div class="ns-drawer-head">
+                <a href="/" class="ns-brand-link" @click="closeMobile()">
+                    {% if theme_settings.logo %}
+                    <img src="{{ theme_settings.logo }}" alt="{{ store.name }}" class="ns-brand-logo">
+                    {% else %}
+                    <img src="/static/themes/nextshop/img/logo.png" alt="{{ store.name }}" class="ns-brand-logo">
+                    {% endif %}
+                    <span class="ns-brand-name">{{ store.name }}</span>
+                </a>
+                <button type="button" class="ns-drawer-close" @click="closeMobile()" aria-label="بستن">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+
+            {% if user.is_authenticated %}
+            <a href="/dashboard/" class="ns-drawer-user" @click="closeMobile()">
+                <span class="ns-user-avatar">{{ user.full_name|slice:":1" }}</span>
+                <span>
+                    <strong>{{ user.full_name }}</strong>
+                    <small>{{ user.phone }}</small>
+                </span>
+            </a>
+            <a href="#" class="js-logout ns-drawer-logout">
+                <i data-lucide="log-out"></i> خروج از حساب
+            </a>
+            {% else %}
+            <a href="/login/" class="ns-drawer-login" @click="closeMobile()">
+                <i data-lucide="log-in"></i> ورود / عضویت
+            </a>
+            {% endif %}
+
+            <nav class="ns-drawer-nav" aria-label="منوی موبایل">
+                {% if cms_menus.header and cms_menus.header.items %}
+                    {% for item in cms_menus.header.items %}
+                    <a href="{{ item.url|default:'#' }}" @click="closeMobile()">{{ item.label }}</a>
+                    {% if item.children %}
+                    <div class="ns-drawer-children">
+                        {% for ch in item.children %}
+                        <a href="{{ ch.url|default:'#' }}" @click="closeMobile()">{{ ch.label }}</a>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                {% else %}
+                    <a href="/" @click="closeMobile()">خانه</a>
+                    <a href="/products/" @click="closeMobile()">محصولات</a>
+                    <a href="/page/about/" @click="closeMobile()">درباره ما</a>
+                    <a href="/blog/" @click="closeMobile()">وبلاگ</a>
+                    <a href="/page/contact/" @click="closeMobile()">تماس با ما</a>
+                {% endif %}
+                <div class="ns-drawer-divider"></div>
+                <a href="/cart/" @click="closeMobile()"><i data-lucide="shopping-cart"></i> سبد خرید</a>
+                <a href="/wishlist/" @click="closeMobile()"><i data-lucide="heart"></i> علاقه‌مندی</a>
+                <a href="/orders/" @click="closeMobile()"><i data-lucide="package"></i> سفارش‌ها</a>
+            </nav>
+        </div>
+        <div class="ns-drawer-backdrop" @click="closeMobile()" aria-hidden="true"></div>
+    </div>
+</header>

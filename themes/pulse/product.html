@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% load money_tags %}
+{% block title %}{{ product.seo.meta_title|default:product.name }} - {{ store.name }}{% endblock %}
+{% block content %}
+<div class="ps-page ps-width">
+    <nav class="ps-breadcrumb" aria-label="مسیر">
+        <a href="/">خانه</a>
+        <span aria-hidden="true">/</span>
+        {% if product.category %}
+        <a href="/products/">محصولات</a>
+        <span aria-hidden="true">/</span>
+        {% endif %}
+        <span>{{ product.name }}</span>
+    </nav>
+
+    <div class="ps-product-layout" data-ps-reveal>
+        <div class="ps-gallery" data-ps-gallery>
+            {% if product.images %}
+            <div class="ps-gallery-main">
+                <img src="{{ product.images.0.image }}" alt="{{ product.images.0.alt_text|default:product.name }}" data-ps-gallery-main>
+            </div>
+            {% if product.images|length > 1 %}
+            <div class="ps-gallery-thumbs">
+                {% for img in product.images %}
+                <button type="button"
+                        class="ps-gallery-thumb {% if forloop.first %}is-active{% endif %}"
+                        data-ps-gallery-thumb
+                        data-src="{{ img.image }}"
+                        data-alt="{{ img.alt_text|default:product.name }}"
+                        aria-label="تصویر {{ forloop.counter|money_format }}">
+                    <img src="{{ img.image }}" alt="" loading="lazy">
+                </button>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% else %}
+            <div class="ps-gallery-main" style="display:grid;place-items:center;color:#94a3b8;">
+                <i data-lucide="image-off"></i>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="ps-product-info"
+             {% if product.product_type == 'variable' %}
+             data-ps-variants
+             data-base-price="{{ product.base_price }}"
+             data-base-compare-price="{{ product.compare_price|default:'' }}"
+             {% endif %}>
+            {% if product.product_type == 'variable' %}
+            {{ product.variants|json_script:"ps-product-variants" }}
+            {{ product.attribute_options|json_script:"ps-product-attribute-options" }}
+            {% endif %}
+
+            {% if product.brand %}
+            <p class="ps-product-brand">{{ product.brand }}</p>
+            {% endif %}
+            <div style="display:flex;flex-wrap:wrap;gap:0.4rem;margin-bottom:0.65rem;">
+                {% if product.discount_percent %}<span class="ps-badge ps-badge--sale">{{ product.discount_percent|money_format }}٪ تخفیف</span>{% endif %}
+                {% if product.is_featured %}<span class="ps-badge ps-badge--feat">ویژه</span>{% endif %}
+                {% if product.in_stock %}<span class="ps-badge ps-badge--ok">موجود</span>{% else %}<span class="ps-badge ps-badge--muted">ناموجود</span>{% endif %}
+            </div>
+            <h1 class="ps-page-title">{{ product.name }}</h1>
+
+            {% if product.product_type == 'variable' %}
+            <p class="ps-product-price">
+                <span data-ps-variant-price>{% money product.base_price %}</span>
+                <s data-ps-variant-compare {% if not product.compare_price %}hidden{% endif %}>{% if product.compare_price %}{% money product.compare_price %}{% endif %}</s>
+            </p>
+            {% else %}
+            <p class="ps-product-price">
+                {% money product.base_price %}
+                {% if product.compare_price %}<s>{% money product.compare_price %}</s>{% endif %}
+            </p>
+            {% endif %}
+
+            {% if product.short_description %}
+            <p class="ps-page-sub">{{ product.short_description }}</p>
+            {% endif %}
+
+            <div class="ps-product-trust">
+                <span><i data-lucide="shield-check"></i> پرداخت امن</span>
+                <span><i data-lucide="truck"></i> ارسال سریع</span>
+                <span><i data-lucide="rotate-ccw"></i> ضمانت اصالت</span>
+            </div>
+
+            {% if product.product_type == 'variable' %}
+            <div class="ps-variant-groups" data-ps-variant-groups></div>
+            <p class="ps-variant-summary" data-ps-variant-summary hidden>
+                <i data-lucide="layers" aria-hidden="true"></i>
+                <span data-ps-variant-summary-text></span>
+            </p>
+            {% endif %}
+
+            <div class="ps-product-actions" data-ps-product-actions>
+                <div class="ps-qty" data-ps-qty{% if product.product_type == 'variable' %} data-ps-variant-qty{% endif %}>
+                    <button type="button" class="ps-icon-btn" data-ps-qty-dec aria-label="کاهش"><i data-lucide="minus"></i></button>
+                    <span class="ps-qty-val" data-ps-qty-value>۱</span>
+                    <button type="button" class="ps-icon-btn" data-ps-qty-inc aria-label="افزایش"><i data-lucide="plus"></i></button>
+                </div>
+                {% if product.product_type == 'variable' %}
+                <button class="ps-btn is-disabled" data-add-to-cart data-product="{{ product.slug }}" disabled>
+                    <i data-lucide="shopping-bag"></i> <span data-ps-cart-label>انتخاب تنوع</span>
+                </button>
+                {% elif product.in_stock %}
+                <button class="ps-btn" data-add-to-cart data-product="{{ product.slug }}">
+                    <i data-lucide="shopping-bag"></i> افزودن به سبد
+                </button>
+                {% else %}
+                <span class="ps-badge ps-badge--muted">ناموجود</span>
+                {% endif %}
+                <button type="button" class="ps-btn ps-btn--ghost" data-toggle-wishlist data-product="{{ product.slug }}" aria-pressed="false">
+                    <i data-lucide="heart"></i>
+                    <span data-wishlist-label data-idle-label="علاقه‌مندی">علاقه‌مندی</span>
+                </button>
+            </div>
+
+            <div data-ps-tabs>
+                <div class="ps-tabs" role="tablist">
+                    <button type="button" class="ps-tab is-active" data-ps-tab="info" role="tab" aria-selected="true">شرح</button>
+                    <button type="button" class="ps-tab" data-ps-tab="reviews" role="tab" aria-selected="false">نظرات</button>
+                </div>
+                <div class="ps-panel" data-ps-panel="info" role="tabpanel">
+                    <div class="ps-prose rich-content">{{ product.description|safe }}</div>
+                </div>
+                <div class="ps-panel" data-ps-panel="reviews" role="tabpanel" hidden>
+                    <div id="product-comments" data-product="{{ product.slug }}">
+                        <p id="comments-summary" class="ps-page-sub"></p>
+                        <div id="comments-list" style="margin-top:1rem;">
+                            <div class="ps-empty">در حال بارگذاری نظرات...</div>
+                        </div>
+                        <div class="ps-surface" style="margin-top:1rem;display:grid;gap:0.65rem;">
+                            <h3 style="margin:0;">ثبت نظر</h3>
+                            <label>امتیاز
+                                <select id="review-rating" class="ps-select">
+                                    <option value="5">۵</option>
+                                    <option value="4">۴</option>
+                                    <option value="3">۳</option>
+                                    <option value="2">۲</option>
+                                    <option value="1">۱</option>
+                                </select>
+                            </label>
+                            <textarea id="review-body" rows="4" class="ps-textarea" placeholder="نظر خود را بنویسید..."></textarea>
+                            <p id="review-message" class="ps-page-sub"></p>
+                            <button type="button" class="ps-btn" id="submit-review">ارسال نظر</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="/static/js/comments.js"></script>
+{% endblock %}

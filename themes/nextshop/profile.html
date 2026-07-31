@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}{{ store.name }} - پروفایل{% endblock %}
+{% block content %}
+<div class="ns-account ns-width">
+    {% include "partials/account_nav.html" with active="profile" %}
+    <div class="ns-account-main">
+        <div class="ns-account-toolbar">
+            <h1 class="page-title">پروفایل</h1>
+            {% if user.is_authenticated %}
+            <a href="/profile/edit/" class="ns-btn">
+                <i data-lucide="pencil" aria-hidden="true"></i>
+                ویرایش پروفایل
+            </a>
+            {% endif %}
+        </div>
+
+        {% if user.is_authenticated %}
+        <div class="ns-panel">
+            <div class="ns-profile-avatar-lg">{{ user.full_name|slice:":1" }}</div>
+            <div class="ns-profile-grid">
+                <div class="ns-profile-field">
+                    <label>نام و نام خانوادگی</label>
+                    <strong>{{ user.full_name }}</strong>
+                </div>
+                <div class="ns-profile-field">
+                    <label>موبایل</label>
+                    <strong>{{ user.phone }}</strong>
+                </div>
+                <div class="ns-profile-field">
+                    <label>ایمیل</label>
+                    <strong>{% if user.email %}{{ user.email }}{% else %}—{% endif %}</strong>
+                </div>
+                <div class="ns-profile-field">
+                    <label>وضعیت موبایل</label>
+                    <strong>{% if user.phone_verified %}تأیید شده{% else %}تأیید نشده{% endif %}</strong>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="ns-empty">
+            <div class="ns-empty-icon" aria-hidden="true"><i data-lucide="log-in"></i></div>
+            <strong>ورود لازم است</strong>
+            <p>برای مشاهده پروفایل وارد حساب کاربری شوید.</p>
+            <a href="/login/?next=/profile/" class="ns-btn">ورود</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

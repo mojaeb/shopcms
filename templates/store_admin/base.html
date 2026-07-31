@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{{ page_title }} — {{ store.name|default:"ShopCMS" }}{% endblock %}</title>
     <link rel="stylesheet" href="/static/css/store_admin.css">
+    <style>
+        :root {
+            --sa-accent: {{ theme_colors.primary|default:"#0f766e" }};
+            --sa-accent-hover: color-mix(in srgb, {{ theme_colors.primary|default:"#0f766e" }} 82%, black);
+        }
+    </style>
     {% block extra_css %}{% endblock %}
 </head>
 <body class="sa-body">
@@ -17,6 +23,10 @@
             <nav class="sa-nav">
                 <a href="/manage/" class="{% if active_nav == 'dashboard' %}is-active{% endif %}">داشبورد</a>
                 <a href="/manage/products/" class="{% if active_nav == 'products' %}is-active{% endif %}">محصولات</a>
+                <a href="/manage/pages/" class="{% if active_nav == 'pages' %}is-active{% endif %}">صفحات</a>
+                <a href="/manage/blog/" class="{% if active_nav == 'blog' %}is-active{% endif %}">وبلاگ</a>
+                <a href="/manage/comments/" class="{% if active_nav == 'comments' %}is-active{% endif %}">نظرات</a>
+                <a href="/manage/shortcodes/" class="{% if active_nav == 'shortcodes' %}is-active{% endif %}">شورت‌کدها</a>
                 <a href="/manage/files/" class="{% if active_nav == 'files' %}is-active{% endif %}">رسانه</a>
                 <a href="/manage/orders/" class="{% if active_nav == 'orders' %}is-active{% endif %}">سفارشات</a>
                 <a href="/manage/settings/" class="{% if active_nav == 'settings' %}is-active{% endif %}">تنظیمات</a>

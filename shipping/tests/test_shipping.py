@@ -111,5 +111,17 @@ def test_shipping_methods_api(client, store, shipping_setup):
 @pytest.mark.django_db
 def test_storefront_checkout_page(client, store):
     response = client.get("/checkout/", HTTP_HOST="ship.local")
+    assert response.status_code == 302
+    assert response["Location"].startswith("/login/?next=")
+    assert "/checkout/" in response["Location"]
+
+
+@pytest.mark.django_db
+def test_storefront_checkout_page_authenticated(client, store):
+    from accounts.models import User
+
+    user = User.objects.create_user(phone="09125556677", phone_verified=True)
+    client.force_login(user)
+    response = client.get("/checkout/", HTTP_HOST="ship.local")
     assert response.status_code == 200
     assert "checkout-page" in response.content.decode()

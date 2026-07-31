@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}{{ store.name }} - وبلاگ{% endblock %}
+{% block content %}
+<div class="ns-page ns-width" id="blog-single-page" data-slug="{{ blog_slug }}">
+    <div id="blog-post-content">
+        <div class="ns-loading-panel" aria-busy="true" aria-label="در حال بارگذاری مطلب">
+            <div class="ns-skeleton-stack">
+                <div class="ns-skeleton ns-skeleton-line ns-skeleton-line--md"></div>
+                <div class="ns-skeleton ns-skeleton-card" style="min-height:12rem;"></div>
+                <div class="ns-skeleton ns-skeleton-line"></div>
+                <div class="ns-skeleton ns-skeleton-line ns-skeleton-line--sm"></div>
+            </div>
+        </div>
+    </div>
+
+    <section id="blog-comments-section" class="ns-blog-comments" style="display:none;" aria-label="نظرات">
+        <h2 class="ns-blog-comments-title">نظرات</h2>
+        <div id="blog-comments-list"></div>
+        <div class="ns-panel ns-blog-comment-form">
+            <h3>ثبت نظر</h3>
+            <textarea id="blog-comment-body" class="ns-input" rows="4" placeholder="نظر شما..."></textarea>
+            <p id="blog-comment-message" class="ns-page-sub" style="margin-top:0.5rem;"></p>
+            <button type="button" class="ns-btn" id="submit-blog-comment" style="margin-top:0.75rem;">ارسال نظر</button>
+        </div>
+    </section>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="/static/js/blog.js"></script>
+{% endblock %}

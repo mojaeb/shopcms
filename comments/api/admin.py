@@ -21,6 +21,7 @@ class CommentAdminSchema(Schema):
     product_id: int
     product_name: str
     product_slug: str
+    parent_id: int | None = None
     user: dict
     rating: int | None
     body: str
@@ -43,8 +44,10 @@ def _store(request):
 @paginate(PageNumberPagination, page_size=20)
 def list_comments(request, status: str | None = None):
     store = _store(request)
-    qs = service.list_store_comments(store, status=status)
-    return [service.serialize_comment(c, include_replies=True) for c in qs]
+    # Pending inbox: show all pending (including replies). Otherwise top-level list.
+    top_level_only = status != "pending"
+    qs = service.list_store_comments(store, status=status, top_level_only=top_level_only)
+    return [service.serialize_comment(c, include_replies=True, for_admin=True) for c in qs]
 
 
 @router.get("/stats")
@@ -52,7 +55,7 @@ def comment_stats(request):
     store = _store(request)
     return {
         "pending": service.get_pending_count(store),
-        "total": service.list_store_comments(store).count(),
+        "total": CommentService().list_store_comments(store, top_level_only=False).count(),
     }
 
 
@@ -61,6 +64,6 @@ def moderate_comment(request, comment_id: int, payload: CommentModerateSchema):
     store = _store(request)
     try:
         comment = service.moderate_comment(store, comment_id, payload.status)
-        return service.serialize_comment(comment, include_replies=False)
+        return service.serialize_comment(comment, include_replies=False, for_admin=True)
     except CommentError as e:
         raise HttpError(400, str(e))

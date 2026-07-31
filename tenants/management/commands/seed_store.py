@@ -54,6 +54,30 @@ class Command(BaseCommand):
         if created:
             self.stdout.write(self.style.SUCCESS(f"Created round theme: {round_theme.slug}"))
 
+        nextshop_theme, created = Theme.objects.get_or_create(
+            slug="nextshop",
+            defaults={
+                "name": "Next Shop",
+                "directory": "nextshop",
+                "description": "تم برگرفته از next-shop (Medicaap/Denteb)",
+                "is_active": True,
+            },
+        )
+        if created:
+            self.stdout.write(self.style.SUCCESS(f"Created nextshop theme: {nextshop_theme.slug}"))
+
+        pulse_theme, created = Theme.objects.get_or_create(
+            slug="pulse",
+            defaults={
+                "name": "Pulse",
+                "directory": "pulse",
+                "description": "تم مدرن با Vite، Tailwind، Lucide، GSAP، Swiper و HTMX",
+                "is_active": True,
+            },
+        )
+        if created:
+            self.stdout.write(self.style.SUCCESS(f"Created pulse theme: {pulse_theme.slug}"))
+
         store, created = Store.objects.get_or_create(
             slug="shop1",
             defaults={

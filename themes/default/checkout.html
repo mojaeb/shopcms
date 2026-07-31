@@ -14,6 +14,13 @@
         </section>
 
         <section class="card">
+            <h2>اقلام سفارش</h2>
+            <div id="checkout-items" class="checkout-items">
+                <p class="muted">در حال بارگذاری اقلام...</p>
+            </div>
+        </section>
+
+        <section class="card">
             <h2>روش ارسال</h2>
             <div id="shipping-options">
                 <p class="muted">ابتدا آدرس را انتخاب کنید.</p>
@@ -37,7 +44,7 @@
                     جمع کل: <span id="checkout-total" class="money-slot" style="color:var(--accent);">—</span>
                 </p>
             </div>
-            <button type="button" class="btn" id="checkout-submit" disabled style="margin-top:1rem;">پرداخت</button>
+            <button type="button" class="btn" id="checkout-submit" style="margin-top:1rem;">پرداخت</button>
             <p id="checkout-message" class="muted" style="margin-top:0.5rem;"></p>
         </section>
     </div>
@@ -49,6 +56,18 @@
 .shipping-option { display:flex; align-items:center; gap:0.75rem; padding:0.75rem; border:1px solid var(--border); border-radius:var(--radius); margin-bottom:0.5rem; cursor:pointer; }
 .shipping-option.selected { border-color:var(--accent); background:rgba(233,69,96,0.05); }
 .shipping-option input { margin:0; }
+.checkout-items { display:flex; flex-direction:column; gap:0.75rem; }
+.checkout-item {
+    display:flex; align-items:center; justify-content:space-between; gap:1rem;
+    padding:0.75rem 0; border-bottom:1px solid var(--border);
+}
+.checkout-item:last-child { border-bottom:none; padding-bottom:0; }
+.checkout-item-info { display:flex; align-items:center; gap:0.75rem; min-width:0; }
+.checkout-item-img { width:64px; height:64px; object-fit:cover; border-radius:var(--radius); flex-shrink:0; }
+.checkout-item-img--empty { background:var(--border, #e5e7eb); }
+.checkout-item-title { margin:0; font-size:0.95rem; }
+.checkout-item-meta { margin:0.15rem 0 0; font-size:0.8rem; }
+.checkout-item-total { margin:0; font-weight:600; white-space:nowrap; }
 </style>
 {% endblock %}
 {% block extra_js %}

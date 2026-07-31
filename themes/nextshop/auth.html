@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}{{ store.name }} - {% if auth_mode == 'register' %}ثبت‌نام{% else %}ورود{% endif %}{% endblock %}
+{% block content %}
+<div class="ns-auth" id="auth-page" data-mode="{{ auth_mode|default:'login' }}">
+    <div class="ns-auth-card">
+        <div class="ns-auth-brand">
+            <span class="ns-auth-brand-mark" aria-hidden="true"><i data-lucide="smartphone"></i></span>
+        </div>
+        <h1 class="ns-page-title">
+            {% if auth_mode == 'register' %}ثبت‌نام{% else %}ورود{% endif %}
+        </h1>
+        <p class="ns-auth-lead">با شماره موبایل وارد {{ store.name }} شوید</p>
+
+        <div class="ns-auth-tabs auth-tabs" role="tablist" aria-label="ورود یا ثبت‌نام">
+            <button type="button" class="auth-tab {% if auth_mode != 'register' %}is-active{% endif %}" data-mode="login" role="tab" aria-selected="{% if auth_mode != 'register' %}true{% else %}false{% endif %}">ورود</button>
+            <button type="button" class="auth-tab {% if auth_mode == 'register' %}is-active{% endif %}" data-mode="register" role="tab" aria-selected="{% if auth_mode == 'register' %}true{% else %}false{% endif %}">ثبت‌نام</button>
+        </div>
+
+        <form id="auth-phone-form">
+            <label for="auth-phone">شماره موبایل</label>
+            <input id="auth-phone" class="ns-input" name="phone" type="tel" inputmode="numeric" placeholder="09123456789" required pattern="09[0-9]{9}" autocomplete="tel">
+            <span class="ns-field-hint">کد تأیید به همین شماره پیامک می‌شود.</span>
+
+            <div id="register-fields" style="display:none;">
+                <label for="auth-first-name">نام</label>
+                <input id="auth-first-name" class="ns-input" name="first_name" type="text" placeholder="نام" autocomplete="given-name">
+                <label for="auth-last-name">نام خانوادگی</label>
+                <input id="auth-last-name" class="ns-input" name="last_name" type="text" placeholder="نام خانوادگی" autocomplete="family-name">
+            </div>
+
+            <button type="submit" class="ns-btn" id="auth-send-btn">
+                <i data-lucide="message-square" aria-hidden="true"></i>
+                دریافت کد
+            </button>
+        </form>
+
+        <form id="auth-verify-form" style="display:none; margin-top:0.5rem;">
+            <p class="ns-auth-lead" id="auth-phone-display"></p>
+            <label for="auth-code">کد تأیید (۵ رقمی)</label>
+            <input id="auth-code" class="ns-input" name="code" type="text" inputmode="numeric" maxlength="5" pattern="[0-9]{5}" required placeholder="12345" autocomplete="one-time-code">
+            <button type="submit" class="ns-btn">
+                <i data-lucide="check" aria-hidden="true"></i>
+                تأیید و ادامه
+            </button>
+            <button type="button" class="ns-btn ns-btn--ghost" id="auth-back-btn">تغییر شماره</button>
+        </form>
+
+        <p id="auth-message" class="ns-auth-msg" role="status" aria-live="polite"></p>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="/static/js/auth.js"></script>
+{% endblock %}

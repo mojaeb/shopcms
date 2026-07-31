@@ -115,7 +115,7 @@ class Command(BaseCommand):
 
         color_attr, _ = ProductAttribute.objects.get_or_create(
             store=store,
-            slug="hoodie-color",
+            slug="color",
             defaults={
                 "name": "رنگ",
                 "display_type": AttributeDisplayType.COLOR,
@@ -124,9 +124,9 @@ class Command(BaseCommand):
         )
         color_values = {}
         for idx, (label, code, av_slug) in enumerate([
-            ("مشکی", "#111111", "black"),
-            ("سفید", "#f5f5f5", "white"),
-            ("سرمه‌ای", "#1e3a5f", "navy"),
+            ("مشکی", "#111111,#2a2a2a", "black"),
+            ("سفید", "#f5f5f5,#e5e5e5", "white"),
+            ("سرمه‌ای", "#1e3a5f,#0f2744", "navy"),
         ]):
             val, _ = ProductAttributeValue.objects.get_or_create(
                 attribute=color_attr,
@@ -313,7 +313,7 @@ class Command(BaseCommand):
 
         color_attr, _ = ProductAttribute.objects.get_or_create(
             store=store,
-            slug="mobile-color",
+            slug="color",
             defaults={
                 "name": "رنگ",
                 "display_type": AttributeDisplayType.COLOR,
@@ -322,8 +322,8 @@ class Command(BaseCommand):
         )
         colors = {}
         for idx, (label, code, av_slug) in enumerate([
-            ("سبز", "#22c55e", "green"),
-            ("آبی", "#3b82f6", "blue"),
+            ("سبز", "#22c55e,#16a34a", "green"),
+            ("آبی", "#3b82f6,#1d4ed8", "blue"),
         ]):
             val, _ = ProductAttributeValue.objects.get_or_create(
                 attribute=color_attr,

@@ -1,0 +1,25 @@
+{% extends "store_admin/base.html" %}
+{% block content %}
+<div id="sa-pages" class="sa-page">
+    <div class="sa-toolbar">
+        <input type="search" id="pages-q" class="sa-input" placeholder="جستجوی صفحه...">
+        <a href="/manage/pages/new/" class="sa-btn">صفحه جدید</a>
+    </div>
+    <div class="sa-table-wrap sa-loading-host" id="pages-table-host">
+        <table class="sa-table">
+            <thead>
+                <tr>
+                    <th>عنوان</th>
+                    <th>شناسه</th>
+                    <th>وضعیت</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="pages-tbody"></tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="/static/js/store_admin/pages.js"></script>
+{% endblock %}

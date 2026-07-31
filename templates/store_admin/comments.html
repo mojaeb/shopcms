@@ -1,0 +1,24 @@
+{% extends "store_admin/base.html" %}
+{% block content %}
+<div id="sa-comments" class="sa-page">
+    <div class="sa-toolbar">
+        <select id="comments-status-filter" class="sa-input sa-input-auto">
+            <option value="pending" selected>در انتظار تایید</option>
+            <option value="approved">تایید شده</option>
+            <option value="rejected">رد شده</option>
+            <option value="">همه</option>
+        </select>
+        <select id="comments-source-filter" class="sa-input sa-input-auto">
+            <option value="all" selected>محصول + وبلاگ</option>
+            <option value="product">فقط محصول</option>
+            <option value="blog">فقط وبلاگ</option>
+        </select>
+        <button type="button" class="sa-btn sa-btn-ghost" id="comments-refresh">بروزرسانی</button>
+        <span id="comments-pending-badge" class="sa-badge sa-badge-warn" hidden>۰ در انتظار</span>
+    </div>
+    <div id="comments-table-wrap" class="sa-loading-host"></div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="/static/js/store_admin/comments.js"></script>
+{% endblock %}

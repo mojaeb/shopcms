@@ -1,13 +1,13 @@
 (function () {
-    const logoutLink = document.getElementById("logout-link");
-    if (!logoutLink) return;
+    const logoutLinks = document.querySelectorAll("#logout-link, .js-logout");
+    if (!logoutLinks.length) return;
 
     function getCookie(name) {
         const match = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
         return match ? decodeURIComponent(match[2]) : "";
     }
 
-    logoutLink.addEventListener("click", (event) => {
+    function logout(event) {
         event.preventDefault();
         const headers = { "Content-Type": "application/json", Accept: "application/json" };
         const csrf = getCookie("csrftoken");
@@ -22,5 +22,7 @@
             sessionStorage.removeItem("refresh_token");
             window.location.href = "/";
         });
-    });
+    }
+
+    logoutLinks.forEach((link) => link.addEventListener("click", logout));
 })();

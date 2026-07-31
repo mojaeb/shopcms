@@ -1,0 +1,30 @@
+{% load money_tags %}
+<a href="/product/{{ product.slug }}/" class="ps-card">
+    <div class="ps-card-media">
+        {% if product.image %}
+        <img src="{{ product.image }}" alt="{{ product.name }}" loading="lazy">
+        {% else %}
+        <div class="ps-card-placeholder"><i data-lucide="package"></i></div>
+        {% endif %}
+        {% if product.discount_percent %}
+        <span class="ps-badge ps-badge--sale ps-card-badge">{{ product.discount_percent|money_format }}٪</span>
+        {% elif product.is_featured %}
+        <span class="ps-badge ps-badge--feat ps-card-badge">ویژه</span>
+        {% endif %}
+    </div>
+    <div class="ps-card-body">
+        <span class="ps-card-cat">{% if product.category %}{{ product.category }}{% else %}&nbsp;{% endif %}</span>
+        <h3 class="ps-card-title">{{ product.name }}</h3>
+        <div class="ps-price">
+            {% if product.discount_percent and product.compare_price %}
+            <s class="ps-price-was">{% money product.compare_price %}</s>
+            {% else %}
+            <span class="ps-price-was ps-price-was--empty" aria-hidden="true">&nbsp;</span>
+            {% endif %}
+            <strong class="ps-price-now">{% money product.base_price %}</strong>
+        </div>
+    </div>
+    {% if not product.in_stock %}
+    <div class="ps-card-oos"><span>ناموجود</span></div>
+    {% endif %}
+</a>

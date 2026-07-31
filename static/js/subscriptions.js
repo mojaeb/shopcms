@@ -37,7 +37,7 @@
                 <div style="display:flex; justify-content:space-between; gap:1rem; flex-wrap:wrap;">
                     <div>
                         <h3>${item.product_name}</h3>
-                        <p class="muted">${item.interval_label} — ${window.ShopMoney ? window.ShopMoney.formatMoney(item.price, "IRR") : (Number(item.price).toLocaleString("en-US") + " تومان")}</p>
+                        <p class="muted">${item.interval_label} — ${window.ShopMoney ? window.ShopMoney.formatMoney(item.price, "IRR") : (Number(item.price).toLocaleString("fa-IR") + " تومان")}</p>
                     </div>
                     <span class="status-badge">${item.status_label}</span>
                 </div>

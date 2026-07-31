@@ -40,6 +40,13 @@ def _cart(request):
     return service.get_or_create_cart(_store(request), request)
 
 
+def _require_user(request):
+    user = service._resolve_user(request)
+    if not user:
+        raise HttpError(401, "ورود الزامی است")
+    return user
+
+
 @router.get("/")
 def get_cart(request):
     cart = _cart(request)
@@ -55,6 +62,7 @@ def cart_count(request):
 
 @router.post("/add")
 def add_to_cart(request, payload: CartAddSchema):
+    _require_user(request)
     try:
         item = service.add_item(_cart(request), payload.product_slug, payload.variant_id, payload.quantity)
         cart = item.cart

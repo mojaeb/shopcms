@@ -23,7 +23,7 @@
 
     function formatPrice(value) {
         if (window.ShopMoney) return window.ShopMoney.formatMoney(value, "IRR");
-        return Number(value || 0).toLocaleString("en-US") + " تومان";
+        return Number(value || 0).toLocaleString("fa-IR") + " تومان";
     }
 
     function formatDate(iso) {
@@ -33,17 +33,17 @@
 
     function renderOrderCard(order) {
         return `
-            <div class="card order-card">
-                <div style="display:flex; justify-content:space-between; gap:1rem; flex-wrap:wrap;">
+            <div class="ns-panel order-card" style="margin-bottom:0.85rem;">
+                <div style="display:flex; justify-content:space-between; gap:1rem; flex-wrap:wrap; align-items:flex-start;">
                     <div>
-                        <h3>سفارش ${order.order_number}</h3>
-                        <p class="muted">${formatDate(order.created_at)}</p>
+                        <h3 style="margin:0 0 0.35rem;">سفارش ${order.order_number}</h3>
+                        <p class="muted" style="margin:0 0 0.5rem;">${formatDate(order.created_at)}</p>
                         <span class="status-badge">${order.status_label}</span>
                     </div>
                     <div style="text-align:left;">
-                        <p><strong>${formatPrice(order.total)}</strong></p>
-                        <p class="muted">${order.item_count} قلم</p>
-                        <a href="/orders/${order.id}/" class="btn btn-outline">جزئیات</a>
+                        <p style="margin:0 0 0.35rem;"><strong>${formatPrice(order.total)}</strong></p>
+                        <p class="muted" style="margin:0 0 0.65rem;">${window.ShopMoney ? window.ShopMoney.formatAmount(order.item_count) : order.item_count} قلم</p>
+                        <a href="/orders/${order.id}/" class="ns-btn ns-btn--ghost">جزئیات</a>
                     </div>
                 </div>
             </div>
@@ -57,8 +57,8 @@
                 ${item.image ? `<img src="${item.image}" alt="">` : ""}
                 <div>
                     <strong>${item.product_name}</strong>
-                    ${item.variant_label ? `<p class="muted">${item.variant_label}</p>` : ""}
-                    <p class="muted">${item.quantity} × ${formatPrice(item.unit_price)}</p>
+                    ${item.variant_label ? `<p class="ns-variant-chip">${item.variant_label}</p>` : ""}
+                    <p class="muted">${window.ShopMoney ? window.ShopMoney.formatAmount(item.quantity) : item.quantity} × ${formatPrice(item.unit_price)}</p>
                 </div>
                 <div style="margin-right:auto;">${formatPrice(item.line_total)}</div>
             </div>
@@ -114,11 +114,19 @@
             const list = document.getElementById("orders-list");
             if (!list) return;
             if (!ok) {
-                list.innerHTML = '<div class="empty-state card">برای مشاهده سفارشات وارد شوید.</div>';
+                list.innerHTML =
+                    '<div class="ns-empty"><div class="ns-empty-icon" aria-hidden="true"><i data-lucide="log-in"></i></div>' +
+                    "<strong>ورود لازم است</strong><p>برای مشاهده سفارشات وارد حساب شوید.</p>" +
+                    '<a href="/login/?next=/orders/" class="ns-btn">ورود</a></div>';
+                if (window.lucide) window.lucide.createIcons();
                 return;
             }
             if (!data.length) {
-                list.innerHTML = '<div class="empty-state card">سفارشی ثبت نشده است.</div>';
+                list.innerHTML =
+                    '<div class="ns-empty"><div class="ns-empty-icon" aria-hidden="true"><i data-lucide="package"></i></div>' +
+                    "<strong>هنوز سفارشی ندارید</strong><p>اولین خریدتان را از فروشگاه شروع کنید.</p>" +
+                    '<a href="/products/" class="ns-btn">شروع خرید</a></div>';
+                if (window.lucide) window.lucide.createIcons();
                 return;
             }
             list.innerHTML = data.map(renderOrderCard).join("");
@@ -131,10 +139,14 @@
         apiFetch(`/${orderId}`).then(({ ok, data }) => {
             const container = document.getElementById("order-detail-content");
             if (!container) return;
-            if (!ok) {
-                container.innerHTML = '<div class="empty-state card">سفارش یافت نشد.</div>';
-                return;
-            }
+                if (!ok) {
+                    container.innerHTML =
+                        '<div class="ns-empty"><div class="ns-empty-icon" aria-hidden="true"><i data-lucide="search-x"></i></div>' +
+                        "<strong>سفارش یافت نشد</strong><p>ممکن است لینک منقضی شده باشد.</p>" +
+                        '<a href="/orders/" class="ns-btn ns-btn--ghost">بازگشت به سفارشات</a></div>';
+                    if (window.lucide) window.lucide.createIcons();
+                    return;
+                }
             container.innerHTML = renderOrderDetail(data);
         });
     }

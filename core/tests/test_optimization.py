@@ -75,6 +75,12 @@ def test_maintenance_warm_store(store):
     result = service.warm_store(store)
     assert result["store_id"] == store.id
     assert "opt.local" in result["domains"]
+    assert "cms_storefront" in result["warmed"]
+
+    from cms.services.cache import CMSCacheService
+
+    assert CMSCacheService().get(store.id, "menus") is not None
+    assert CMSCacheService().get(store.id, "layout") is not None
 
 
 @pytest.mark.django_db

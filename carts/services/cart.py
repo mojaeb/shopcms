@@ -192,7 +192,10 @@ class CartService:
         }
 
     def serialize_cart(self, cart: Cart) -> dict:
-        items = cart.items.select_related("product", "variant", "product__brand").prefetch_related("product__images")
+        items = cart.items.select_related("product", "variant", "product__brand").prefetch_related(
+            "product__images",
+            "variant__attributes__attribute",
+        )
         totals = self.calculate_totals(cart)
         coupon_data = None
         if cart.coupon_id:

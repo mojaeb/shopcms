@@ -4,6 +4,9 @@ from django.utils import timezone
 
 from cms.models import Banner, ContentBlock, LayoutSettings, Menu, MenuItem, Page, Slide, Slider, Widget
 from cms.services.cache import CMSCacheService
+from cms.services.shortcodes import expand_shortcodes
+from core.cache import cache_manager
+from core.cache.keys import cms_page
 
 
 class CMSService:
@@ -117,22 +120,54 @@ class CMSService:
         except Page.DoesNotExist:
             return None
 
-    def serialize_page(self, page: Page) -> dict:
-        blocks = [
-            {
-                "id": b.id,
-                "type": b.block_type,
-                "title": b.title,
-                "content": b.content,
-                "widget_slug": b.widget.slug if b.widget else None,
-            }
-            for b in page.blocks.filter(is_active=True).order_by("sort_order")
-        ]
+    def get_published_page_payload(self, store, slug: str) -> dict | None:
+        """Serialized published page for storefront (cached)."""
+        cache_key = cms_page(store.id, slug)
+
+        def factory():
+            page = self.get_page(store, slug)
+            if not page:
+                return None
+            return self.serialize_page(page, render_content=True)
+
+        # Cache None as sentinel so repeated misses don't thrash DB.
+        cached = cache_manager.get(cache_key)
+        if cached is not None:
+            return None if cached == "__missing__" else cached
+
+        payload = factory()
+        cache_manager.set(cache_key, payload if payload is not None else "__missing__", ttl="medium")
+        return payload
+
+    def serialize_page(self, page: Page, *, render_content: bool = True) -> dict:
+        store = page.store
+        blocks = []
+        for b in page.blocks.filter(is_active=True).order_by("sort_order"):
+            content = b.content
+            if render_content and isinstance(content, dict):
+                content = dict(content)
+                if "html" in content and isinstance(content["html"], str):
+                    content["html"] = expand_shortcodes(content["html"], store)
+                if "text" in content and isinstance(content["text"], str):
+                    content["text"] = expand_shortcodes(content["text"], store)
+            blocks.append(
+                {
+                    "id": b.id,
+                    "type": b.block_type,
+                    "title": b.title,
+                    "content": content,
+                    "widget_slug": b.widget.slug if b.widget else None,
+                }
+            )
+        raw = page.content or ""
         return {
             "id": page.id,
             "title": page.title,
             "slug": page.slug,
-            "content": page.content,
+            "content": expand_shortcodes(raw, store) if render_content else raw,
+            "is_published": page.is_published,
+            "meta_title": page.meta_title,
+            "meta_description": page.meta_description,
             "blocks": blocks,
             "seo": self.serialize_seo(page),
         }
@@ -150,11 +185,13 @@ class CMSService:
         }
 
     def get_storefront_context(self, store) -> dict:
+        # Layout first: get_or_create may fire signals that invalidate CMS cache.
+        layout = self.get_layout(store)
         return {
             "cms_menus": self.get_menus(store),
             "cms_banners": self.get_banners(store),
             "cms_slider": self.get_slider(store, "home"),
-            "cms_layout": self.get_layout(store),
+            "cms_layout": layout,
         }
 
     def list_pages(self, store):

@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>وبلاگ - لونا سنتر</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/themes/pulse/css/theme.css">
+    
+    <style>
+        :root {
+            
+            --color-ps-primary: #0f766e;
+            --color-ps-primary-dark: color-mix(in srgb, #0f766e 82%, black);
+            
+            --color-ps-bg: #f8fafc;
+            --color-ps-ink: #0f172a;
+        }
+    </style>
+    
+    
+</head>
+<body class="theme-pulse">
+    <input type="hidden" name="csrfmiddlewaretoken" value="kfyPk9El1QKjq1YvBN8Y0cszJeJUJCaCi25QXZfpyFLncTsxfW3ypQRNc9AWPupN">
+    <svg xmlns="http://www.w3.org/2000/svg" style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true" focusable="false">
+    <symbol id="toman" viewBox="0 0 14 14">
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M3.057 1.742L3.821 1l.78.75-.776.741-.768-.749zm3.23 2.48c0 .622-.16 1.111-.478 1.467-.201.221-.462.39-.783.505a3.251 3.251 0 01-1.083.163h-.555c-.421 0-.801-.074-1.139-.223a2.045 2.045 0 01-.9-.738A2.238 2.238 0 011 4.148c0-.059.001-.117.004-.176.03-.55.204-1.158.525-1.827l1.095.484c-.257.532-.397 1-.419 1.403-.002.04-.004.08-.004.12 0 .252.055.458.166.618a.887.887 0 00.5.354c.085.028.178.048.278.06.079.01.16.014.243.014h.555c.458 0 .769-.081.933-.244.14-.139.21-.383.21-.731V2.02h1.2v2.202zm5.433 3.184l-.72-.7.709-.706.735.707-.724.7zm-2.856.308c.542 0 .973.19 1.293.569.297.346.445.777.445 1.293v.364h.18v-.004h.41c.221 0 .377-.028.467-.084.093-.055.14-.14.14-.258v-.069c.004-.243.017-1.044 0-1.115L13 8.05v1.574a1.4 1.4 0 01-.287.863c-.306.405-.804.607-1.495.607h-.627c-.061.733-.434 1.257-1.117 1.573-.267.122-.58.21-.937.265a5.845 5.845 0 01-.914.067v-1.159c.612 0 1.072-.082 1.38-.247.25-.132.376-.298.376-.499h-.515c-.436 0-.807-.113-1.113-.339-.367-.273-.55-.667-.55-1.18 0-.488.122-.901.367-1.24.296-.415.728-.622 1.296-.622zm.533 2.226v-.364c0-.217-.048-.389-.143-.516a.464.464 0 00-.39-.187.478.478 0 00-.396.187.705.705 0 00-.136.449.65.65 0 00.003.067c.008.125.066.22.177.283.093.054.21.08.352.08h.533zM9.5 6.707l.72.7.724-.7L10.209 6l-.709.707zm-6.694 4.888h.03c.433-.01.745-.106.937-.29.024.012.065.035.12.068l.074.039.081.042c.135.073.261.133.379.18.345.146.67.22.977.22a1.216 1.216 0 00.87-.34c.3-.285.449-.714.449-1.286a2.19 2.19 0 00-.335-1.145c-.299-.457-.732-.685-1.3-.685-.502 0-.916.192-1.242.575-.113.132-.21.284-.294.456-.032.062-.06.125-.084.191a.504.504 0 00-.03.078 1.67 1.67 0 00-.022.06c-.103.309-.171.485-.205.53-.072.09-.214.14-.427.147-.123-.005-.209-.03-.256-.076-.057-.054-.085-.153-.085-.297V7l-1.201-.5v3.562c0 .261.048.496.143.703.071.158.168.296.29.413.123.118.266.211.43.28.198.084.42.13.665.136v.001h.036zm2.752-1.014a.778.778 0 00.044-.353.868.868 0 00-.165-.47c-.1-.134-.217-.201-.35-.201-.18 0-.33.103-.447.31-.042.071-.08.158-.114.262a2.434 2.434 0 00-.04.12l-.015.053-.015.046c.142.118.323.216.544.293.18.062.325.092.433.092.044 0 .086-.05.125-.152z"/>
+    </symbol>
+</svg>
+
+    
+<header class="ps-header" data-ps-header>
+    <div class="ps-header-bar">
+        <div class="ps-header-inner ps-width">
+            <div class="ps-header-actions">
+                <button type="button" class="ps-icon-btn ps-menu-btn" data-ps-open-menu aria-expanded="false" aria-controls="ps-drawer" aria-label="منو">
+                    <i data-lucide="menu"></i>
+                </button>
+                <a href="/" class="ps-brand">
+                    
+                    <img src="/media/lonacenter/logo.png" alt="لونا سنتر" class="ps-brand-mark">
+                    
+                    <span>
+                        <span class="ps-brand-name">لونا سنتر</span>
+                        <span class="ps-brand-sub">خرید سریع و مطمئن</span>
+                    </span>
+                </a>
+            </div>
+
+            <form class="ps-search" action="/search/" method="get" role="search">
+                <i data-lucide="search" class="text-slate-400" style="width:1.1rem;height:1.1rem;"></i>
+                <input type="search" name="q" placeholder="جستجو در محصولات..." autocomplete="off" value="">
+                <button type="submit" class="ps-btn" style="min-height:2.2rem;padding:0.45rem 0.9rem;">جستجو</button>
+            </form>
+
+            <div class="ps-header-actions">
+                <a href="/wishlist/" class="ps-icon-btn" aria-label="علاقه‌مندی">
+                    <i data-lucide="heart"></i>
+                </a>
+                <a href="/cart/" class="ps-icon-btn ps-cart-link" aria-label="سبد خرید">
+                    <i data-lucide="shopping-cart"></i>
+                    <span class="ps-cart-chip" data-cart-count style="display:none;">0</span>
+                </a>
+                
+                <a href="/login/" class="ps-btn ps-btn--ghost" style="min-height:2.5rem;">
+                    <i data-lucide="log-in"></i>
+                    <span class="ps-login-label">ورود</span>
+                </a>
+                
+            </div>
+        </div>
+    </div>
+
+    <div class="ps-nav-bar">
+        <nav class="ps-nav ps-width" aria-label="منوی اصلی">
+            
+                
+                <a href="/" >خانه</a>
+                
+                <a href="/category/" >محصولات</a>
+                
+                <a href="/page/contact/" >تماس با ما</a>
+                
+                <a href="/blog/" >وبلاگ</a>
+                
+                <a href="/page/about/" >درباره ما</a>
+                
+            
+        </nav>
+    </div>
+
+    <div class="ps-overlay" data-ps-overlay data-ps-close-menu></div>
+    <aside id="ps-drawer" class="ps-drawer" data-ps-drawer aria-hidden="true">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+            <strong>لونا سنتر</strong>
+            <button type="button" class="ps-icon-btn" data-ps-close-menu aria-label="بستن">
+                <i data-lucide="x"></i>
+            </button>
+        </div>
+        <form action="/search/" method="get" role="search" style="display:flex;gap:0.4rem;">
+            <input class="ps-input" type="search" name="q" placeholder="جستجو...">
+            <button class="ps-btn" type="submit"><i data-lucide="search"></i></button>
+        </form>
+        <nav class="ps-drawer-nav" aria-label="منوی موبایل">
+            
+                
+                <a href="/" >خانه</a>
+                
+                <a href="/category/" >محصولات</a>
+                
+                <a href="/page/contact/" >تماس با ما</a>
+                
+                <a href="/blog/" >وبلاگ</a>
+                
+                <a href="/page/about/" >درباره ما</a>
+                
+            
+            <a href="/wishlist/">علاقه‌مندی</a>
+            <a href="/cart/">سبد خرید</a>
+            
+            <a href="/login/">ورود / عضویت</a>
+            
+        </nav>
+    </aside>
+</header>
+
+
+
+    <main class="site-main ps-main">
+        
+<div class="ps-page ps-width" id="blog-list-page">
+    <h1 class="ps-page-title">وبلاگ</h1>
+    <p class="ps-page-sub">راهنماها، بررسی‌ها و اخبار فروشگاه</p>
+    <div id="blog-categories" style="display:flex;flex-wrap:wrap;gap:0.5rem;margin:1rem 0;" aria-label="دسته‌بندی مقالات"></div>
+    <div id="blog-posts">
+        <div class="ps-empty">در حال بارگذاری...</div>
+    </div>
+</div>
+
+    </main>
+    <a href="/cart/" class="ps-cart-fab" aria-label="سبد خرید">
+        <i data-lucide="shopping-cart"></i>
+        <span class="ps-cart-fab-count" data-cart-count style="display:none;">0</span>
+    </a>
+    
+<footer class="ps-footer">
+    <div class="ps-width ps-footer-grid">
+        <div>
+            <h3>لونا سنتر</h3>
+            <p style="margin:0;line-height:1.8;color:#cbd5e1;">
+                فروشگاهی مدرن با تجربه خرید روان، ارسال مطمئن و پرداخت امن.
+            </p>
+        </div>
+        <div>
+            <h3>دسترسی سریع</h3>
+            <div class="ps-footer-links">
+                <a href="/category/">محصولات</a>
+                <a href="/blog/">وبلاگ</a>
+                <a href="/cart/">سبد خرید</a>
+                <a href="/orders/">پیگیری سفارش</a>
+            </div>
+        </div>
+        <div>
+            <h3>پشتیبانی</h3>
+            <div class="ps-footer-links">
+                <a href="/page/about/">درباره ما</a>
+                <a href="/page/contact/">تماس با ما</a>
+                <a href="/wishlist/">علاقه‌مندی‌ها</a>
+            </div>
+        </div>
+    </div>
+    <div class="ps-width ps-footer-bottom">
+        <span>لونا سنتر © 2026</span>
+        <span>Pulse Theme · Vite + Tailwind</span>
+    </div>
+</footer>
+
+
+
+    
+    <script src="/static/js/money.js"></script>
+    <script src="/static/js/cart.js"></script>
+    <script src="/static/js/wishlist.js"></script>
+    <script src="/static/js/auth-header.js"></script>
+    <script type="module" src="/static/themes/pulse/js/theme.js"></script>
+    
+<script src="/static/js/blog.js"></script>
+
+
+
+<link rel="stylesheet" href="/static/debug_toolbar/css/print.css" media="print">
+<link rel="stylesheet" href="/static/debug_toolbar/css/toolbar.css">
+
+
+<script type="module" src="/static/debug_toolbar/js/toolbar.js" async></script>
+
+<div id="djDebug" class="djdt-hidden" dir="ltr"
+     
+     data-request-id="9fb95f2a590e44b2a3407f0fd25e2a36"
+     data-render-panel-url="/__debug__/render_panel/"
+     
+     
+     
+     data-sidebar-url="/__debug__/history_sidebar/"
+     
+     data-default-show="true"
+       data-update-on-fetch="False">
+  <div class="djdt-hidden" id="djDebugToolbar">
+    <ul id="djDebugPanelList">
+      <li><a id="djHideToolBarButton" href="#" title="پنهان کردن toolbar">پنهان کردن »</a></li>
+      <li>
+        <a id="djToggleThemeButton" href="#" title="Toggle Theme">
+          Toggle Theme <svg
+  aria-hidden="true"
+  class="djdt-hidden theme-auto"
+  fill="currentColor"
+  viewBox="0 0 32 32"
+  version="1.1"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <path
+    d="M0 16q0 3.264 1.28 6.24t3.392 5.088 5.12 3.424 6.208 1.248q3.264 0 6.24-1.248t5.088-3.424 3.392-5.088 1.28-6.24-1.28-6.208-3.392-5.12-5.088-3.392-6.24-1.28q-3.264 0-6.208 1.28t-5.12 3.392-3.392 5.12-1.28 6.208zM4 16q0-3.264 1.6-6.016t4.384-4.352 6.016-1.632 6.016 1.632 4.384 4.352 1.6 6.016-1.6 6.048-4.384 4.352-6.016 1.6-6.016-1.6-4.384-4.352-1.6-6.048zM16 26.016q2.72 0 5.024-1.344t3.648-3.648 1.344-5.024-1.344-4.992-3.648-3.648-5.024-1.344v20z"
+  ></path>
+</svg>
+<svg
+  aria-hidden="true"
+  class="djdt-hidden theme-light"
+  viewBox="0 0 24 24"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <path
+    fill-rule="evenodd"
+    clip-rule="evenodd"
+    d="M12 1.25C12.4142 1.25 12.75 1.58579 12.75 2V4C12.75 4.41421 12.4142 4.75 12 4.75C11.5858 4.75 11.25 4.41421 11.25 4V2C11.25 1.58579 11.5858 1.25 12 1.25ZM3.66865 3.71609C3.94815 3.41039 4.42255 3.38915 4.72825 3.66865L6.95026 5.70024C7.25596 5.97974 7.2772 6.45413 6.9977 6.75983C6.7182 7.06553 6.2438 7.08677 5.9381 6.80727L3.71609 4.77569C3.41039 4.49619 3.38915 4.02179 3.66865 3.71609ZM20.3314 3.71609C20.6109 4.02179 20.5896 4.49619 20.2839 4.77569L18.0619 6.80727C17.7562 7.08677 17.2818 7.06553 17.0023 6.75983C16.7228 6.45413 16.744 5.97974 17.0497 5.70024L19.2718 3.66865C19.5775 3.38915 20.0518 3.41039 20.3314 3.71609ZM12 7.75C9.65279 7.75 7.75 9.65279 7.75 12C7.75 14.3472 9.65279 16.25 12 16.25C14.3472 16.25 16.25 14.3472 16.25 12C16.25 9.65279 14.3472 7.75 12 7.75ZM6.25 12C6.25 8.82436 8.82436 6.25 12 6.25C15.1756 6.25 17.75 8.82436 17.75 12C17.75 15.1756 15.1756 17.75 12 17.75C8.82436 17.75 6.25 15.1756 6.25 12ZM1.25 12C1.25 11.5858 1.58579 11.25 2 11.25H4C4.41421 11.25 4.75 11.5858 4.75 12C4.75 12.4142 4.41421 12.75 4 12.75H2C1.58579 12.75 1.25 12.4142 1.25 12ZM19.25 12C19.25 11.5858 19.5858 11.25 20 11.25H22C22.4142 11.25 22.75 11.5858 22.75 12C22.75 12.4142 22.4142 12.75 22 12.75H20C19.5858 12.75 19.25 12.4142 19.25 12ZM17.0255 17.0252C17.3184 16.7323 17.7933 16.7323 18.0862 17.0252L20.3082 19.2475C20.6011 19.5404 20.601 20.0153 20.3081 20.3082C20.0152 20.6011 19.5403 20.601 19.2475 20.3081L17.0255 18.0858C16.7326 17.7929 16.7326 17.3181 17.0255 17.0252ZM6.97467 17.0253C7.26756 17.3182 7.26756 17.7931 6.97467 18.086L4.75244 20.3082C4.45955 20.6011 3.98468 20.6011 3.69178 20.3082C3.39889 20.0153 3.39889 19.5404 3.69178 19.2476L5.91401 17.0253C6.2069 16.7324 6.68177 16.7324 6.97467 17.0253ZM12 19.25C12.4142 19.25 12.75 19.5858 12.75 20V22C12.75 22.4142 12.4142 22.75 12 22.75C11.5858 22.75 11.25 22.4142 11.25 22V20C11.25 19.5858 11.5858 19.25 12 19.25Z"
+    fill="currentColor"
+  />
+</svg>
+<svg
+  aria-hidden="true"
+  class="djdt-hidden theme-dark"
+  viewBox="0 0 24 24"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <path
+    d="M3.32031 11.6835C3.32031 16.6541 7.34975 20.6835 12.3203 20.6835C16.1075 20.6835 19.3483 18.3443 20.6768 15.032C19.6402 15.4486 18.5059 15.6834 17.3203 15.6834C12.3497 15.6834 8.32031 11.654 8.32031 6.68342C8.32031 5.50338 8.55165 4.36259 8.96453 3.32996C5.65605 4.66028 3.32031 7.89912 3.32031 11.6835Z"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+</svg>
+
+        </a>
+      </li>
+      
+        
+
+<li id="djdt-HistoryPanel" class="djDebugPanelButton">
+  <input type="checkbox" data-cookie="djdtHistoryPanel" checked title="غیر فعال کردن برای ریکوئست های پی در پی">
+  
+    <a href="#" title="تاریخچه" class="HistoryPanel">
+  
+  تاریخچه
+  
+    
+      <br><small>/blog/</small>
+    
+  
+  
+    </a>
+  
+</li>
+
+      
+        
+
+<li id="djdt-VersionsPanel" class="djDebugPanelButton">
+  <input type="checkbox" data-cookie="djdtVersionsPanel" checked title="غیر فعال کردن برای ریکوئست های پی در پی">
+  
+    <a href="#" title="ورژن ها" class="VersionsPanel">
+  
+  ورژن ها
+  
+    
+      <br><small>Django 5.1.15</small>
+    
+  
+  
+    </a>
+  
+</li>
+
+      
+        
+
+<li id="djdt-TimerPanel" class="djDebugPanelButton">
+  <input type="checkbox" data-cookie="djdtTimerPanel" checked title="غیر فعال کردن برای ریکوئست های پی در پی">
+  
+    <div class="djdt-contentless">
+  
+  زمان
+  
+    
+      <br><small>مجموع: 159.05 میلی‌ثانیه</small>
+    
+  
+  
+    </div>
+  
+</li>
+
+      
+        
+
+<li id="djdt-SettingsPanel" class="djDebugPanelButton">
+  <input type="checkbox" data-cookie="djdtSettingsPanel" checked title="غیر فعال کردن برای ریکوئست های پی در پی">
+  
+    <a href="#" title="تنظیمات از &#x27;config.settings.development&#x27;" class="SettingsPanel">
+  
+  تنظیمات
+  
+    
+      
+    
+  
+  
+    </a>
+  
+</li>
+
+      
+        
+
+<li id="djdt-HeadersPanel" class="djDebugPanelButton">
+  <input type="checkbox" data-cookie="djdtHeadersPanel" checked title="غیر فعال کردن برای ریکوئست های پی در پی">
+  
+    <a href="#" title="هدر ها" class="HeadersPanel">
+  
+  هدر ها
+  
+    
+      
+    
+  
+  
+    </a>
+  
+</li>
+
+      
+        
+
+<li id="djdt-RequestPanel" class="djDebugPanelButton">
+  <input type="checkbox" data-cookie="djdtRequestPanel" checked title="غیر فعال کردن برای ریکوئست های پی در پی">
+  
+    <a href="#" title="ریکوئست" class="RequestPanel">
+  
+  ریکوئست
+  
+    
+      <br><small>storefront_blog_list</small>
+    
+  
+  
+    </a>
+  
+</li>
+
+      
+        
+
+<li id="djdt-SQLPanel" class="djDebugPanelButton">
+  <input type="checkbox" data-cookie="djdtSQLPanel" checked title="غیر فعال کردن برای ریکوئست های پی در پی">
+  
+    <a href="#" title="کوئری‌های SQL از 1 اتصال" class="SQLPanel">
+  
+  اس کیو ال
+  
+    
+      <br><small>3 کوئری در 16.89 میلی‌ثانیه</small>
+    
+  
+  
+    </a>
+  
+</li>
+
+      
+        
+
+<li id="djdt-StaticFilesPanel" class="djDebugPanelButton">
+  <input type="checkbox" data-cookie="djdtStaticFilesPanel" checked title="غیر فعال کردن برای ریکوئست های پی در پی">
+  
+    <a href="#" title="فایل‌های استاتیک (0 یافته شده، 0 استفاده شده)" class="StaticFilesPanel">
+  
+  فایل های استاتیک
+  
+    
+      <br><small>0 فایل استفاده شده</small>
+    
+  
+  
+    </a>
+  
+</li>
+
+      
+        
+
+<li id="djdt-TemplatesPanel" class="djDebugPanelButton">
+  <input type="checkbox" data-cookie="djdtTemplatesPanel" checked title="غیر فعال کردن برای ریکوئست های پی در پی">
+  
+    <a href="#" title="تمپلیت ها (7 rendered)" class="TemplatesPanel">
+  
+  تمپلیت ها
+  
+    
+      <br><small>themes/pulse/blog_list.html</small>
+    
+  
+  
+    </a>
+  
+</li>
+
+      
+        
+
+<li id="djdt-AlertsPanel" class="djDebugPanelButton">
+  <input type="checkbox" data-cookie="djdtAlertsPanel" checked title="غیر فعال کردن برای ریکوئست های پی در پی">
+  
+    <a href="#" title="Alerts" class="AlertsPanel">
+  
+  Alerts
+  
+    
+      
+    
+  
+  
+    </a>
+  
+</li>
+
+      
+        
+
+<li id="djdt-CachePanel" class="djDebugPanelButton">
+  <input type="checkbox" data-cookie="djdtCachePanel" checked title="غیر فعال کردن برای ریکوئست های پی در پی">
+  
+    <a href="#" title="فراخوان‌های کش از 1 بک‌اند" class="CachePanel">
+  
+  Cache
+  
+    
+      <br><small>5 فراخوان در 0.18 میلی‌ثانیه</small>
+    
+  
+  
+    </a>
+  
+</li>
+
+      
+        
+
+<li id="djdt-SignalsPanel" class="djDebugPanelButton">
+  <input type="checkbox" data-cookie="djdtSignalsPanel" checked title="غیر فعال کردن برای ریکوئست های پی در پی">
+  
+    <a href="#" title="سیگنال‌ها" class="SignalsPanel">
+  
+  سیگنال‌ها
+  
+    
+      <br><small>84 گیرنده از 15 سیگنال</small>
+    
+  
+  
+    </a>
+  
+</li>
+
+      
+        
+
+<li id="djdt-CommunityPanel" class="djDebugPanelButton">
+  <input type="checkbox" data-cookie="djdtCommunityPanel" checked title="غیر فعال کردن برای ریکوئست های پی در پی">
+  
+    <a href="#" title="Community" class="CommunityPanel">
+  
+  Community
+  
+    
+      
+    
+  
+  
+    </a>
+  
+</li>
+
+      
+        
+
+<li id="djdt-RedirectsPanel" class="djDebugPanelButton">
+  <input type="checkbox" data-cookie="djdtRedirectsPanel" title="فعال کردن برای ریکوئست های بعدی و پی در پی">
+  
+    <div class="djdt-contentless djdt-disabled">
+  
+  رهگیری تغییر مسیرها
+  
+  
+    </div>
+  
+</li>
+
+      
+        
+
+<li id="djdt-ProfilingPanel" class="djDebugPanelButton">
+  <input type="checkbox" data-cookie="djdtProfilingPanel" title="فعال کردن برای ریکوئست های بعدی و پی در پی">
+  
+    <div class="djdt-contentless djdt-disabled">
+  
+  نمایه سازی
+  
+  
+    </div>
+  
+</li>
+
+      
+    </ul>
+  </div>
+  <div class="djdt-hidden" id="djDebugToolbarHandle">
+    <div title="نمایش toolbar" id="djShowToolBarButton">
+      <span id="djShowToolBarD">D</span><span id="djShowToolBarJ">J</span>DT
+    </div>
+  </div>
+
+  
+    
+
+
+  <div id="HistoryPanel" class="djdt-panelContent djdt-hidden">
+    <div class="djDebugPanelTitle">
+      <h3>تاریخچه</h3>
+      <button type="button" class="djDebugClose">×</button>
+    </div>
+    <div class="djDebugPanelContent">
+      
+        <div class="djdt-loader"></div>
+        <div class="djdt-scroll"></div>
+      
+    </div>
+  </div>
+
+
+  
+    
+
+
+  <div id="VersionsPanel" class="djdt-panelContent djdt-hidden">
+    <div class="djDebugPanelTitle">
+      <h3>ورژن ها</h3>
+      <button type="button" class="djDebugClose">×</button>
+    </div>
+    <div class="djDebugPanelContent">
+      
+        <div class="djdt-loader"></div>
+        <div class="djdt-scroll"></div>
+      
+    </div>
+  </div>
+
+
+  
+    
+
+
+
+  
+    
+
+
+  <div id="SettingsPanel" class="djdt-panelContent djdt-hidden">
+    <div class="djDebugPanelTitle">
+      <h3>تنظیمات از &#x27;config.settings.development&#x27;</h3>
+      <button type="button" class="djDebugClose">×</button>
+    </div>
+    <div class="djDebugPanelContent">
+      
+        <div class="djdt-loader"></div>
+        <div class="djdt-scroll"></div>
+      
+    </div>
+  </div>
+
+
+  
+    
+
+
+  <div id="HeadersPanel" class="djdt-panelContent djdt-hidden">
+    <div class="djDebugPanelTitle">
+      <h3>هدر ها</h3>
+      <button type="button" class="djDebugClose">×</button>
+    </div>
+    <div class="djDebugPanelContent">
+      
+        <div class="djdt-loader"></div>
+        <div class="djdt-scroll"></div>
+      
+    </div>
+  </div>
+
+
+  
+    
+
+
+  <div id="RequestPanel" class="djdt-panelContent djdt-hidden">
+    <div class="djDebugPanelTitle">
+      <h3>ریکوئست</h3>
+      <button type="button" class="djDebugClose">×</button>
+    </div>
+    <div class="djDebugPanelContent">
+      
+        <div class="djdt-loader"></div>
+        <div class="djdt-scroll"></div>
+      
+    </div>
+  </div>
+
+
+  
+    
+
+
+  <div id="SQLPanel" class="djdt-panelContent djdt-hidden">
+    <div class="djDebugPanelTitle">
+      <h3>کوئری‌های SQL از 1 اتصال</h3>
+      <button type="button" class="djDebugClose">×</button>
+    </div>
+    <div class="djDebugPanelContent">
+      
+        <div class="djdt-loader"></div>
+        <div class="djdt-scroll"></div>
+      
+    </div>
+  </div>
+
+
+  
+    
+
+
+  <div id="StaticFilesPanel" class="djdt-panelContent djdt-hidden">
+    <div class="djDebugPanelTitle">
+      <h3>فایل‌های استاتیک (0 یافته شده، 0 استفاده شده)</h3>
+      <button type="button" class="djDebugClose">×</button>
+    </div>
+    <div class="djDebugPanelContent">
+      
+        <div class="djdt-loader"></div>
+        <div class="djdt-scroll"></div>
+      
+    </div>
+  </div>
+
+
+  
+    
+
+
+  <div id="TemplatesPanel" class="djdt-panelContent djdt-hidden">
+    <div class="djDebugPanelTitle">
+      <h3>تمپلیت ها (7 rendered)</h3>
+      <button type="button" class="djDebugClose">×</button>
+    </div>
+    <div class="djDebugPanelContent">
+      
+        <div class="djdt-loader"></div>
+        <div class="djdt-scroll"></div>
+      
+    </div>
+  </div>
+
+
+  
+    
+
+
+  <div id="AlertsPanel" class="djdt-panelContent djdt-hidden">
+    <div class="djDebugPanelTitle">
+      <h3>Alerts</h3>
+      <button type="button" class="djDebugClose">×</button>
+    </div>
+    <div class="djDebugPanelContent">
+      
+        <div class="djdt-loader"></div>
+        <div class="djdt-scroll"></div>
+      
+    </div>
+  </div>
+
+
+  
+    
+
+
+  <div id="CachePanel" class="djdt-panelContent djdt-hidden">
+    <div class="djDebugPanelTitle">
+      <h3>فراخوان‌های کش از 1 بک‌اند</h3>
+      <button type="button" class="djDebugClose">×</button>
+    </div>
+    <div class="djDebugPanelContent">
+      
+        <div class="djdt-loader"></div>
+        <div class="djdt-scroll"></div>
+      
+    </div>
+  </div>
+
+
+  
+    
+
+
+  <div id="SignalsPanel" class="djdt-panelContent djdt-hidden">
+    <div class="djDebugPanelTitle">
+      <h3>سیگنال‌ها</h3>
+      <button type="button" class="djDebugClose">×</button>
+    </div>
+    <div class="djDebugPanelContent">
+      
+        <div class="djdt-loader"></div>
+        <div class="djdt-scroll"></div>
+      
+    </div>
+  </div>
+
+
+  
+    
+
+
+  <div id="CommunityPanel" class="djdt-panelContent djdt-hidden">
+    <div class="djDebugPanelTitle">
+      <h3>Community</h3>
+      <button type="button" class="djDebugClose">×</button>
+    </div>
+    <div class="djDebugPanelContent">
+      
+        <div class="djdt-loader"></div>
+        <div class="djdt-scroll"></div>
+      
+    </div>
+  </div>
+
+
+  
+    
+
+
+
+  
+    
+
+
+
+  
+  <div id="djDebugWindow" class="djdt-panelContent djdt-hidden"></div>
+</div>
+</body>
+</html>

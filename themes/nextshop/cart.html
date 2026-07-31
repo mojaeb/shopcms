@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}{{ store.name }} - سبد خرید{% endblock %}
+{% block content %}
+<div class="ns-page ns-width" id="cart-page" data-currency="{{ store.currency }}">
+    <div class="ns-page-head">
+        <h1 class="ns-page-title">سبد خرید</h1>
+        <p class="ns-page-sub">اقلام انتخابی را بررسی کنید و برای تسویه ادامه دهید.</p>
+    </div>
+
+    <div class="ns-checkout-trust">
+        <span><i data-lucide="shield-check" aria-hidden="true"></i> پرداخت امن</span>
+        <span><i data-lucide="rotate-ccw" aria-hidden="true"></i> ضمانت بازگشت</span>
+        <span><i data-lucide="truck" aria-hidden="true"></i> ارسال سریع</span>
+    </div>
+
+    <div id="cart-container">
+        <div class="ns-loading-panel" aria-busy="true" aria-label="در حال بارگذاری سبد">
+            <div class="ns-skeleton-stack">
+                <div class="ns-skeleton ns-skeleton-card"></div>
+                <div class="ns-skeleton ns-skeleton-line ns-skeleton-line--md"></div>
+                <div class="ns-skeleton ns-skeleton-line ns-skeleton-line--sm"></div>
+            </div>
+        </div>
+    </div>
+    <div class="ns-coupon ns-panel">
+        <h3><i data-lucide="ticket-percent" aria-hidden="true"></i> کد تخفیف / کارت هدیه</h3>
+        <div class="ns-coupon-row">
+            <input type="text" id="coupon-code" class="ns-input" placeholder="کد کوپن" aria-label="کد کوپن">
+            <button type="button" class="ns-btn" id="apply-coupon">اعمال</button>
+            <button type="button" class="ns-btn ns-btn--ghost" id="remove-coupon">حذف</button>
+        </div>
+        <div class="ns-coupon-row">
+            <input type="text" id="gift-code" class="ns-input" placeholder="کد کارت هدیه" aria-label="کد کارت هدیه">
+            <button type="button" class="ns-btn" id="apply-gift">اعمال</button>
+            <button type="button" class="ns-btn ns-btn--ghost" id="remove-gift">حذف</button>
+        </div>
+        <p id="coupon-message" class="muted ns-coupon-msg"></p>
+    </div>
+    <div id="cart-summary"></div>
+</div>
+{% endblock %}

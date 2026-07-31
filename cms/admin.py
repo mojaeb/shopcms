@@ -9,6 +9,7 @@ from cms.models import (
     Menu,
     MenuItem,
     Page,
+    Shortcode,
     Slide,
     Slider,
     Widget,
@@ -68,3 +69,10 @@ class WidgetAdmin(admin.ModelAdmin):
 @admin.register(LayoutSettings)
 class LayoutSettingsAdmin(admin.ModelAdmin):
     list_display = ("store", "use_custom_header", "use_custom_footer")
+
+
+@admin.register(Shortcode)
+class ShortcodeAdmin(admin.ModelAdmin):
+    list_display = ("name", "label", "store", "is_self_closing", "is_active")
+    list_filter = ("store", "is_active", "is_self_closing")
+    search_fields = ("name", "label")

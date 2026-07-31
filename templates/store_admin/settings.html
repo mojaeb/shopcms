@@ -1,7 +1,7 @@
 {% extends "store_admin/base.html" %}
 {% block content %}
-<div id="sa-settings" class="sa-page">
-    <form id="settings-form" class="sa-form sa-card" hidden>
+<div id="sa-settings" class="sa-page sa-settings">
+    <form id="settings-form" class="sa-form sa-card">
         <h2>تنظیمات عمومی</h2>
         <label>نام فروشگاه
             <input type="text" id="setting-name" required class="sa-input">
@@ -20,15 +20,15 @@
         </div>
     </form>
 
-    <form id="theme-settings-form" class="sa-form sa-card" hidden>
+    <form id="theme-settings-form" class="sa-form sa-card">
         <h2>تنظیمات تم / Hero</h2>
-        <p class="sa-muted" style="margin:0 0 1rem;font-size:0.88rem;color:var(--sa-muted);">
+        <p class="sa-muted sa-form-intro">
             اسلایدهای صفحهٔ خانه (تم modern). اگر خالی باشد از اسلایدر CMS استفاده می‌شود.
         </p>
         <label>لوگو (URL)
             <input type="url" id="theme-logo" class="sa-input" placeholder="https://...">
         </label>
-        <div class="sa-theme-colors" style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.75rem;">
+        <div class="sa-theme-colors">
             <label>رنگ اصلی
                 <input type="text" id="theme-color-primary" class="sa-input" placeholder="#111111">
             </label>
@@ -40,8 +40,29 @@
             </label>
         </div>
 
-        <div class="sa-hero-head" style="display:flex;justify-content:space-between;align-items:center;margin:1.25rem 0 0.75rem;">
-            <h3 style="font-size:1rem;margin:0;">اسلایدهای Hero</h3>
+        <div class="sa-hero-head">
+            <h3>نشان‌های اعتماد (فوتر)</h3>
+        </div>
+        <p class="sa-muted sa-form-intro">
+            تصویر و لینک اینماد و نشان دوم. با کلیک در تب جدید باز می‌شوند.
+        </p>
+        <div class="sa-theme-colors">
+            <label>اینماد — آدرس تصویر
+                <input type="url" id="theme-enamad-image" class="sa-input" placeholder="https://...">
+            </label>
+            <label>اینماد — لینک
+                <input type="url" id="theme-enamad-link" class="sa-input" placeholder="https://trustseal.enamad.ir/...">
+            </label>
+            <label>نشان دوم — آدرس تصویر
+                <input type="url" id="theme-badge2-image" class="sa-input" placeholder="https://...">
+            </label>
+            <label>نشان دوم — لینک
+                <input type="url" id="theme-badge2-link" class="sa-input" placeholder="https://...">
+            </label>
+        </div>
+
+        <div class="sa-hero-head">
+            <h3>اسلایدهای Hero</h3>
             <button type="button" id="theme-add-slide" class="sa-btn sa-btn-ghost sa-btn-sm">افزودن اسلاید</button>
         </div>
         <div id="theme-slides" class="sa-theme-slides"></div>
@@ -51,13 +72,36 @@
         </div>
     </form>
 
-    <div class="sa-loading" id="settings-loading">در حال بارگذاری...</div>
+    <div id="sa-categories" class="sa-form sa-card">
+        <h2>دسته‌بندی‌ها</h2>
+        <p class="sa-muted sa-form-intro">
+            دستهٔ سفارشی (<code>is_custom</code>) در نوار دسته‌ها و صفحهٔ خانه تم Pulse اولویت و برچسب «سفارشی» می‌گیرد.
+        </p>
+        <form id="category-create-form" class="sa-grid-2" style="margin-bottom:1rem;">
+            <label>نام دسته
+                <input type="text" id="cat-name" class="sa-input" required placeholder="مثلاً کالکشن ویژه">
+            </label>
+            <label>اسلاگ
+                <input type="text" id="cat-slug" class="sa-input" required placeholder="special-collection" dir="ltr">
+            </label>
+            <label>تصویر (URL)
+                <input type="url" id="cat-image" class="sa-input" placeholder="https://...">
+            </label>
+            <label class="sa-check-inline sa-align-end">
+                <input type="checkbox" id="cat-is-custom"> دسته سفارشی
+            </label>
+            <div class="sa-form-actions" style="grid-column:1/-1;">
+                <button type="submit" class="sa-btn">افزودن دسته</button>
+            </div>
+        </form>
+        <div id="categories-list" class="sa-theme-slides"></div>
+    </div>
 </div>
 
 <template id="theme-slide-template">
-    <fieldset class="sa-theme-slide sa-card" style="padding:1rem;margin-bottom:0.75rem;border:1px solid var(--sa-border);">
-        <legend class="sa-theme-slide-legend" style="padding:0 0.35rem;font-size:0.85rem;color:var(--sa-muted);"></legend>
-        <div style="display:grid;gap:0.65rem;">
+    <fieldset class="sa-theme-slide sa-card">
+        <legend class="sa-theme-slide-legend"></legend>
+        <div class="sa-theme-slide-fields">
             <label>آدرس تصویر
                 <input type="url" name="image" class="sa-input" placeholder="https://...">
             </label>

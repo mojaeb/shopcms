@@ -1,6 +1,9 @@
 """Storefront views with theme engine."""
 
+from urllib.parse import quote
+
 from django.http import Http404
+from django.shortcuts import redirect
 
 from tenants.context import get_current_store
 from tenants.theme.engine import ThemeEngine
@@ -15,6 +18,19 @@ def _require_store(request):
     return store
 
 
+def _login_redirect(request):
+    next_url = quote(request.get_full_path())
+    return redirect(f"/login/?next={next_url}")
+
+
+def storefront_category_redirect(request, slug=None):
+    """Permanent redirect from legacy /category/ URLs to /products/."""
+    target = f"/products/{slug}/" if slug else "/products/"
+    if request.META.get("QUERY_STRING"):
+        target = f"{target}?{request.META['QUERY_STRING']}"
+    return redirect(target, permanent=True)
+
+
 def storefront_home(request):
     store = _require_store(request)
     extra = {}
@@ -24,20 +40,67 @@ def storefront_home(request):
 
         extra = CMSService().get_storefront_context(store)
         ps = ProductService()
-        categories = list(ps.list_categories(store)[:8])
-        products = list(ps.list_products(store, featured=True)[:8])
-        if len(products) < 4:
-            products = list(ps.list_products(store)[:8])
-        extra["home_categories"] = [
+        categories = list(ps.list_categories(store)[:10])
+        # Prefer custom-flagged categories first for Pulse home strip
+        categories = sorted(
+            categories,
+            key=lambda c: (0 if getattr(c, "is_custom", False) else 1, c.sort_order, c.name),
+        )
+        catalog = [ps.serialize_product_list(p) for p in ps.list_products(store)[:64]]
+
+        home_sections = []
+        active_cats = []
+        for c in categories:
+            items = [p for p in catalog if p.get("category_id") == c.id][:8]
+            cat_payload = {
+                "id": c.id,
+                "name": c.name,
+                "slug": c.slug,
+                "image": getattr(c, "image", "") or "",
+                "is_custom": bool(getattr(c, "is_custom", False)),
+            }
+            if items:
+                active_cats.append(cat_payload)
+                home_sections.append({**cat_payload, "products": items})
+
+        deals = [p for p in catalog if p.get("discount_percent")][:12]
+        if len(deals) < 4:
+            featured = [p for p in catalog if p.get("is_featured")]
+            deals = (deals + [p for p in featured if p not in deals])[:12]
+
+        extra["home_categories"] = active_cats or [
             {
                 "id": c.id,
                 "name": c.name,
                 "slug": c.slug,
                 "image": getattr(c, "image", "") or "",
+                "is_custom": bool(getattr(c, "is_custom", False)),
             }
             for c in categories
         ]
-        extra["home_products"] = [ps.serialize_product_list(p) for p in products]
+        extra["home_sections"] = home_sections
+        extra["home_deals"] = deals
+        extra["home_products"] = catalog[:16]
+
+        from django.utils import formats, timezone
+
+        from blog.services.blog import BlogService
+
+        bs = BlogService()
+        if bs.is_active(store):
+            home_posts = []
+            for p in bs.list_published_posts(store)[:3]:
+                item = bs.serialize_post_list(p)
+                if p.published_at:
+                    item["published_label"] = formats.date_format(
+                        timezone.localtime(p.published_at), "DATE_FORMAT"
+                    )
+                else:
+                    item["published_label"] = ""
+                home_posts.append(item)
+            extra["home_blog_posts"] = home_posts
+        else:
+            extra["home_blog_posts"] = []
     return engine.render_page(request, "home", extra)
 
 
@@ -68,7 +131,15 @@ def storefront_category(request, slug=None):
     context = {
         "category_slug": slug,
         "category": category,
-        "categories": [{"name": c.name, "slug": c.slug} for c in categories],
+        "categories": [
+            {
+                "name": c.name,
+                "slug": c.slug,
+                "image": getattr(c, "image", "") or "",
+                "description": getattr(c, "description", "") or "",
+            }
+            for c in categories
+        ],
         "products": [ps.serialize_product_list(p) for p in products],
         "filter_options": ss.get_filter_options(store, category_slug=slug),
         "query": "",
@@ -115,6 +186,9 @@ def storefront_cart(request):
 
 
 def storefront_checkout(request):
+    user = getattr(request, "user", None)
+    if not user or not getattr(user, "is_authenticated", False):
+        return _login_redirect(request)
     return engine.render_page(request, "checkout")
 
 

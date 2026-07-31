@@ -1,0 +1,56 @@
+{% extends "store_admin/base.html" %}
+{% block content %}
+<div id="sa-page-form" class="sa-page" data-page-id="{{ page_id|default:'' }}" data-is-edit="{{ is_edit|yesno:'1,0' }}">
+    <div class="sa-back">
+        <a href="/manage/pages/" class="sa-link-muted">← بازگشت به صفحات</a>
+    </div>
+
+    <form id="page-form" class="sa-form sa-editor">
+        <section class="sa-editor-section">
+            <h2>{% if is_edit %}ویرایش صفحه{% else %}صفحه جدید{% endif %}</h2>
+            <p class="sa-section-desc">برای صفحات درباره ما، تماس با ما و محتوای ثابت. از ادیتور و شورت‌کدها استفاده کنید.</p>
+            <label>عنوان
+                <input type="text" id="page-title" class="sa-input" required>
+            </label>
+            <label>شناسه URL (slug)
+                <input type="text" id="page-slug" class="sa-input" dir="ltr" required placeholder="about">
+            </label>
+            <label class="sa-check-inline">
+                <input type="checkbox" id="page-published" checked>
+                منتشر شده
+            </label>
+            <label>محتوا
+                <textarea id="page-content" class="sa-input" rows="12"></textarea>
+            </label>
+        </section>
+        <section class="sa-editor-section">
+            <h2>SEO</h2>
+            <p class="sa-section-desc">عنوان و توضیحات برای موتورهای جستجو.</p>
+            <label>عنوان متا
+                <input type="text" id="page-meta-title" class="sa-input">
+            </label>
+            <label>توضیح متا
+                <textarea id="page-meta-description" class="sa-input" rows="2"></textarea>
+            </label>
+        </section>
+    </form>
+
+    <div class="sa-sticky-bar" id="page-sticky-bar">
+        <div class="sa-sticky-bar-meta">
+            <strong>{% if is_edit %}ویرایش صفحه{% else %}صفحه جدید{% endif %}</strong>
+            <span class="sa-muted sa-text-sm">ذخیره تغییرات قبل از ترک صفحه</span>
+        </div>
+        <div class="sa-sticky-bar-actions">
+            <a href="/manage/pages/" class="sa-btn sa-btn-ghost">بازگشت</a>
+            {% if is_edit %}
+            <a id="page-preview" href="#" class="sa-btn sa-btn-ghost" target="_blank" rel="noopener">مشاهده</a>
+            {% endif %}
+            <button type="submit" form="page-form" class="sa-btn" id="page-save">ذخیره</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="/static/js/store_admin/richtext.js"></script>
+<script src="/static/js/store_admin/page_form.js"></script>
+{% endblock %}

@@ -2,15 +2,19 @@
 
 from ninja import Router, Schema
 from ninja.errors import HttpError
-from ninja.pagination import PageNumberPagination, paginate
 
 from accounts.models import User
 from accounts.services.jwt import JWTService
 from blog.services.blog import BlogError, BlogService
+from core.cache import cache_manager
+from core.cache.keys import blog_detail, blog_list
 from tenants.context import get_current_store
 
 router = Router()
 service = BlogService()
+
+BLOG_PAGE_SIZE = 12
+BLOG_MAX_PAGE_SIZE = 50
 
 
 class BlogCommentCreateSchema(Schema):
@@ -56,23 +60,55 @@ def _user(request):
     raise HttpError(401, "ورود الزامی است")
 
 
-@router.get("/posts", response=list[PostListSchema])
-@paginate(PageNumberPagination, page_size=12)
-def list_posts(request, category: str | None = None, tag: str | None = None):
+def _clamp_page(page: int, page_size: int) -> tuple[int, int]:
+    page = max(1, page or 1)
+    page_size = min(max(page_size or BLOG_PAGE_SIZE, 1), BLOG_MAX_PAGE_SIZE)
+    return page, page_size
+
+
+@router.get("/posts")
+def list_posts(
+    request,
+    category: str | None = None,
+    tag: str | None = None,
+    page: int = 1,
+    page_size: int = BLOG_PAGE_SIZE,
+):
     store = _store(request)
     if not service.is_active(store):
-        return []
-    qs = service.list_published_posts(store, category, tag)
-    return [service.serialize_post_list(p) for p in qs]
+        return {"items": [], "count": 0}
+
+    page, page_size = _clamp_page(page, page_size)
+    params = {"category": category, "tag": tag, "page": page, "page_size": page_size}
+    cache_key = blog_list(store.id, cache_manager.hash_params(params))
+
+    def factory():
+        qs = service.list_published_posts(store, category, tag)
+        count = qs.count()
+        offset = (page - 1) * page_size
+        items = [service.serialize_post_list(p) for p in qs[offset : offset + page_size]]
+        return {"items": items, "count": count}
+
+    return cache_manager.get_or_set(cache_key, factory, ttl="medium")
 
 
 @router.get("/posts/{slug}", response=PostDetailSchema)
 def get_post(request, slug: str):
     store = _store(request)
+    cache_key = blog_detail(store.id, slug)
+    cached = cache_manager.get(cache_key)
+    if cached is not None:
+        if cached == "__missing__":
+            raise HttpError(404, "مقاله یافت نشد")
+        return cached
+
     try:
         post = service.get_post(store, slug)
-        return service.serialize_post_detail(post)
+        payload = service.serialize_post_detail(post)
+        cache_manager.set(cache_key, payload, ttl="medium")
+        return payload
     except BlogError as e:
+        cache_manager.set(cache_key, "__missing__", ttl="short")
         raise HttpError(404, str(e))
 
 

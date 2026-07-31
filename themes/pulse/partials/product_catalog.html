@@ -1,0 +1,70 @@
+<div class="ps-catalog">
+    <div class="ps-catalog-toolbar">
+        <span id="product-count" class="ps-catalog-count">{{ products|length }} محصول</span>
+        <select id="filter-sort" name="sort" class="ps-select" style="max-width:12rem;">
+            {% for opt in filter_options.sort_options %}
+            <option value="{{ opt.value }}">{{ opt.label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="ps-catalog-layout">
+        <aside class="ps-filters">
+            <form id="product-filters-form">
+                <div class="ps-filter-group">
+                    <label for="filter-search">جستجو</label>
+                    <input type="search" id="filter-search" name="search" value="{{ query|default:'' }}" placeholder="نام محصول..." class="ps-input">
+                </div>
+
+                {% if filter_options.brands %}
+                <div class="ps-filter-group">
+                    <h3>برند</h3>
+                    {% for brand in filter_options.brands %}
+                    <label class="ps-filter-check">
+                        <input type="checkbox" name="brand" value="{{ brand.slug }}"> {{ brand.name }}
+                    </label>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% if filter_options.price_range.max > 0 %}
+                <div class="ps-filter-group">
+                    <h3>قیمت</h3>
+                    <div class="ps-price-inputs">
+                        <input type="number" name="min_price" placeholder="از" min="{{ filter_options.price_range.min }}" max="{{ filter_options.price_range.max }}" class="ps-input">
+                        <input type="number" name="max_price" placeholder="تا" min="{{ filter_options.price_range.min }}" max="{{ filter_options.price_range.max }}" class="ps-input">
+                    </div>
+                </div>
+                {% endif %}
+
+                {% for attr in filter_options.attributes %}
+                <div class="ps-filter-group">
+                    <h3>{{ attr.name }}</h3>
+                    {% for val in attr.values %}
+                    <label class="ps-filter-check">
+                        <input type="checkbox" data-attr-slug="{{ attr.slug }}" value="{{ val.slug }}"> {{ val.value }}
+                    </label>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+
+                <div class="ps-filter-group">
+                    <label class="ps-filter-check">
+                        <input type="checkbox" name="in_stock" value="1"> فقط موجود
+                    </label>
+                </div>
+
+                <button type="button" class="ps-btn ps-btn--ghost" id="filter-reset" style="width:100%;">
+                    پاک کردن فیلترها
+                </button>
+            </form>
+        </aside>
+
+        <section class="ps-catalog-main">
+            <div id="product-results">
+                {% include "partials/product_grid.html" %}
+            </div>
+            <div id="product-pagination"></div>
+        </section>
+    </div>
+</div>

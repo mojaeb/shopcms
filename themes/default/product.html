@@ -20,8 +20,10 @@
             {% else %}
             <span class="badge" style="background:#999;">ناموجود</span>
             {% endif %}
-            <button type="button" class="btn btn-outline" data-toggle-wishlist data-product="{{ product.slug }}" style="margin-right:0.5rem;">♡ افزودن به علاقه‌مندی</button>
-            <div style="margin-top:1.5rem; color:var(--muted); line-height:1.8;">{{ product.description }}</div>
+            <button type="button" class="btn btn-outline" data-toggle-wishlist data-product="{{ product.slug }}" style="margin-right:0.5rem;" aria-pressed="false">
+                <span data-wishlist-label data-idle-label="♡ افزودن به علاقه‌مندی">♡ افزودن به علاقه‌مندی</span>
+            </button>
+            <div style="margin-top:1.5rem; color:var(--muted); line-height:1.8;" class="rich-content">{{ product.description|safe }}</div>
             <div style="margin-top:2rem;" id="product-comments" data-product="{{ product.slug }}">
                 <h2>نظرات و امتیاز</h2>
                 <p id="comments-summary" class="muted"></p>

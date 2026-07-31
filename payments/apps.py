@@ -7,4 +7,5 @@ class PaymentsConfig(AppConfig):
     verbose_name = "پرداخت"
 
     def ready(self):
-        from payments.providers import registry  # noqa: F401
+        # Load provider modules so @register gateways (including Zarinpal) are available.
+        import payments.providers  # noqa: F401

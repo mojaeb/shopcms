@@ -1,0 +1,35 @@
+<aside class="ns-account-nav" aria-label="منوی حساب کاربری">
+    <a href="/dashboard/" class="{% if active == 'dashboard' %}is-active{% endif %}">
+        <i data-lucide="layout-dashboard"></i> داشبورد
+    </a>
+    <a href="/profile/" class="{% if active == 'profile' %}is-active{% endif %}">
+        <i data-lucide="user"></i> پروفایل
+    </a>
+    <a href="/orders/" class="{% if active == 'orders' %}is-active{% endif %}">
+        <i data-lucide="package"></i> سفارش‌ها
+    </a>
+    <a href="/wishlist/" class="{% if active == 'wishlist' %}is-active{% endif %}">
+        <i data-lucide="heart"></i> علاقه‌مندی
+    </a>
+    <a href="/addresses/" class="{% if active == 'addresses' %}is-active{% endif %}">
+        <i data-lucide="map-pin"></i> آدرس‌ها
+    </a>
+    <a href="/comments/" class="{% if active == 'comments' %}is-active{% endif %}">
+        <i data-lucide="message-square"></i> نظرات
+    </a>
+    <a href="/invoices/" class="{% if active == 'invoices' %}is-active{% endif %}">
+        <i data-lucide="file-text"></i> فاکتورها
+    </a>
+    {% if user.is_authenticated %}
+    <a href="#" id="logout-link" class="js-logout ns-account-logout">
+        <i data-lucide="log-out"></i> خروج از حساب
+    </a>
+    <div class="ns-account-nav-user">
+        <div class="ns-account-nav-avatar">{{ user.full_name|slice:":1" }}</div>
+        <div>
+            <strong>{{ user.full_name }}</strong>
+            <span>{{ user.phone }}</span>
+        </div>
+    </div>
+    {% endif %}
+</aside>

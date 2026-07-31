@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}وبلاگ - {{ store.name }}{% endblock %}
+{% block content %}
+<div class="ns-page ns-width" id="blog-list-page">
+    <div class="ns-page-head">
+        <h1 class="ns-page-title">وبلاگ</h1>
+        <p class="ns-page-sub">راهنماها، بررسی‌ها و اخبار {{ store.name }}</p>
+    </div>
+    <div id="blog-categories" class="ns-blog-filters" aria-label="دسته‌بندی مقالات"></div>
+    <div id="blog-posts">
+        <div class="ns-loading-panel" aria-busy="true" aria-label="در حال بارگذاری مطالب">
+            <div class="ns-skeleton-stack">
+                <div class="ns-skeleton ns-skeleton-card"></div>
+                <div class="ns-skeleton ns-skeleton-line ns-skeleton-line--md"></div>
+                <div class="ns-skeleton ns-skeleton-line ns-skeleton-line--sm"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="/static/js/blog.js"></script>
+{% endblock %}

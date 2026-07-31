@@ -1,0 +1,44 @@
+<footer class="ns-footer">
+    <div class="ns-width ns-footer-grid">
+        <div class="ns-footer-map">
+            <h3>نقشه سایت</h3>
+            <div class="ns-footer-links">
+                <a href="/products/">محصولات</a>
+                <a href="/products/mobile/">موبایل</a>
+                <a href="/products/tablet/">تبلت</a>
+                <a href="/products/powerbank/">پاوربانک</a>
+                <a href="/cart/">سبد خرید</a>
+                <a href="/wishlist/">علاقه‌مندی</a>
+                <a href="/orders/">پیگیری سفارش</a>
+                <a href="/blog/">وبلاگ</a>
+            </div>
+        </div>
+
+        <div class="ns-footer-about">
+            <div>
+                <h3>درباره {{ store.name }}</h3>
+                <div class="ns-footer-about-copy">
+                    {{ store.name }} فروشگاه تخصصی موبایل، تبلت و لوازم جانبی است —
+                    با تمرکز روی قیمت شفاف، اصالت کالا و ارسال مطمئن.
+                </div>
+            </div>
+        </div>
+
+        <div class="ns-footer-contact">
+            <h3>ارتباط با ما</h3>
+            <div class="ns-footer-box">
+                برای مشاوره خرید، پیگیری سفارش یا سوال درباره گارانتی، از صفحه تماس پیام بگذارید.
+            </div>
+            <div class="ns-footer-links ns-footer-links--row">
+                <a href="/page/about/">درباره ما</a>
+                <a href="/page/contact/">تماس با ما</a>
+                <a href="/orders/">پیگیری سفارش</a>
+            </div>
+            <a class="ns-footer-ig" href="/page/contact/">ارسال پیام به فروشگاه</a>
+        </div>
+    </div>
+    <div class="ns-width ns-footer-bottom">
+        <span>{{ store.name }} © {% now "Y" %}</span>
+        <span class="ns-footer-powered">خرید امن · پشتیبانی واقعی</span>
+    </div>
+</footer>

@@ -25,10 +25,20 @@ def store_staff_required(view_func):
 
 def _ctx(request, **extra):
     store = get_current_store() or getattr(request, "store", None)
+    theme_colors = {"primary": "#0f766e", "background": "#f8fafc", "text": "#0f172a"}
+    if store:
+        from tenants.services.theme_settings import ThemeSettingsService
+
+        cfg = ThemeSettingsService().get_theme_settings(store)
+        theme_colors = {
+            **theme_colors,
+            **((cfg.get("colors") if isinstance(cfg, dict) else None) or {}),
+        }
     ctx = {
         "store": store,
         "page_title": extra.pop("page_title", "مدیریت فروشگاه"),
         "active_nav": extra.pop("active_nav", ""),
+        "theme_colors": theme_colors,
     }
     ctx.update(extra)
     return ctx
@@ -120,4 +130,100 @@ def manage_settings(request):
         request,
         "store_admin/settings.html",
         _ctx(request, page_title="تنظیمات", active_nav="settings"),
+    )
+
+
+@store_staff_required
+def manage_pages(request):
+    return render(
+        request,
+        "store_admin/pages.html",
+        _ctx(request, page_title="صفحات", active_nav="pages"),
+    )
+
+
+@store_staff_required
+def manage_page_new(request):
+    return render(
+        request,
+        "store_admin/page_form.html",
+        _ctx(
+            request,
+            page_title="صفحه جدید",
+            active_nav="pages",
+            page_id=None,
+            is_edit=False,
+        ),
+    )
+
+
+@store_staff_required
+def manage_page_edit(request, page_id: int):
+    return render(
+        request,
+        "store_admin/page_form.html",
+        _ctx(
+            request,
+            page_title="ویرایش صفحه",
+            active_nav="pages",
+            page_id=page_id,
+            is_edit=True,
+        ),
+    )
+
+
+@store_staff_required
+def manage_blog(request):
+    return render(
+        request,
+        "store_admin/blog.html",
+        _ctx(request, page_title="وبلاگ", active_nav="blog"),
+    )
+
+
+@store_staff_required
+def manage_comments(request):
+    return render(
+        request,
+        "store_admin/comments.html",
+        _ctx(request, page_title="مدیریت نظرات", active_nav="comments"),
+    )
+
+
+@store_staff_required
+def manage_blog_new(request):
+    return render(
+        request,
+        "store_admin/blog_form.html",
+        _ctx(
+            request,
+            page_title="مقاله جدید",
+            active_nav="blog",
+            post_id=None,
+            is_edit=False,
+        ),
+    )
+
+
+@store_staff_required
+def manage_blog_edit(request, post_id: int):
+    return render(
+        request,
+        "store_admin/blog_form.html",
+        _ctx(
+            request,
+            page_title="ویرایش مقاله",
+            active_nav="blog",
+            post_id=post_id,
+            is_edit=True,
+        ),
+    )
+
+
+@store_staff_required
+def manage_shortcodes(request):
+    return render(
+        request,
+        "store_admin/shortcodes.html",
+        _ctx(request, page_title="شورت‌کدها", active_nav="shortcodes"),
     )

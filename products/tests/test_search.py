@@ -153,6 +153,29 @@ def test_storefront_search_page(client, store, catalog):
 
 @pytest.mark.django_db
 def test_storefront_category_with_filters(client, store, catalog):
-    response = client.get("/category/electronics/", HTTP_HOST="search.local")
+    response = client.get("/products/electronics/", HTTP_HOST="search.local")
     assert response.status_code == 200
     assert "product-catalog" in response.content.decode()
+
+
+@pytest.mark.django_db
+def test_legacy_category_redirects_to_products(client, store, catalog):
+    response = client.get("/category/electronics/", HTTP_HOST="search.local")
+    assert response.status_code == 301
+    assert response["Location"].endswith("/products/electronics/")
+
+
+@pytest.mark.django_db
+def test_parse_attributes_or_within_attr():
+    parsed = ProductSearchService.parse_attributes("color:red,color:blue,size:m")
+    assert parsed == {"color": ["red", "blue"], "size": ["m"]}
+
+
+@pytest.mark.django_db
+def test_filter_options_scoped_to_category(store, catalog):
+    service = ProductSearchService()
+    clothing = service.get_filter_options(store, "clothing")
+    assert any(a["slug"] == "color" for a in clothing["attributes"])
+    electronics = service.get_filter_options(store, "electronics")
+    # Electronics catalog has no variants with color in fixture
+    assert not any(a["slug"] == "color" for a in electronics["attributes"])

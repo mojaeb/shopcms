@@ -7,6 +7,7 @@ from pathlib import Path
 
 from django.conf import settings
 
+from cms.services.cms import CMSService
 from core.cache import cache_manager
 from products.services.search import ProductSearchService
 from tenants.enums import StoreStatus
@@ -23,14 +24,17 @@ class MaintenanceService:
         self.cache = cache_manager
         self.store_service = StoreService()
         self.product_search = ProductSearchService()
+        self.cms = CMSService()
 
     def warm_store(self, store: Store) -> dict:
         self.store_service._cache_store(store)
         self.product_search.get_filter_options(store)
+        self.cms.get_storefront_context(store)
         return {
             "store_id": store.id,
             "store_slug": store.slug,
             "domains": list(store.domains.values_list("domain", flat=True)),
+            "warmed": ["store", "product_filters", "cms_storefront"],
         }
 
     def warm_active_stores(self, store_slug: str | None = None) -> dict:
@@ -48,7 +52,10 @@ class MaintenanceService:
         return self.cache.invalidate_store(store_id)
 
     def clear_all_cache(self) -> int:
-        return self.cache.delete_pattern(f"{self.cache.PREFIX}:*")
+        total = self.cache.delete_pattern(f"{self.cache.PREFIX}:*")
+        total += self.cache.delete_pattern("store:*")
+        total += self.cache.delete_pattern("cms:*")
+        return total
 
     def cleanup_temp_files(self, max_age_hours: int = 24) -> dict:
         cutoff = time.time() - (max_age_hours * 3600)

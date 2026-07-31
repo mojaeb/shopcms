@@ -1,0 +1,231 @@
+{% extends "base.html" %}
+{% block title %}{{ product.seo.meta_title|default:product.name }} - {{ store.name }}{% endblock %}
+{% block content %}
+<div class="ns-page ns-width">
+    <div class="ns-product-layout">
+        <div
+            class="ns-gallery"
+            x-data="vgGallery()"
+            x-init="initFromJson($refs.galleryData.textContent)"
+        >
+            {% if product.images %}
+            <script type="application/json" x-ref="galleryData">[
+                {% for img in product.images %}
+                {"url":"{{ img.image|escapejs }}","alt":"{{ img.alt_text|default:product.name|escapejs }}"}{% if not forloop.last %},{% endif %}
+                {% endfor %}
+            ]</script>
+            <div class="ns-gallery-main">
+                <template x-if="images.length">
+                    <img :src="images[index].url" :alt="images[index].alt" decoding="async">
+                </template>
+            </div>
+            <template x-if="images.length > 1">
+                <div class="ns-gallery-thumbs">
+                    <template x-for="(img, i) in images" :key="'thumb-' + i">
+                        <button
+                            type="button"
+                            class="ns-gallery-thumb"
+                            :class="{ 'is-active': index === i }"
+                            @click="set(i)"
+                            :aria-label="'تصویر ' + (i + 1)"
+                        >
+                            <img :src="img.url" :alt="img.alt" loading="lazy">
+                        </button>
+                    </template>
+                </div>
+            </template>
+            {% else %}
+            <script type="application/json" x-ref="galleryData">[]</script>
+            <div class="ns-gallery-main ns-gallery-empty">
+                <i data-lucide="image-off" aria-hidden="true"></i>
+                <span>تصویری ثبت نشده</span>
+            </div>
+            {% endif %}
+        </div>
+
+        <div
+            class="ns-product-info"
+            {% if product.product_type == 'variable' %}
+            x-data="vgProductVariants()"
+            x-init="boot()"
+            data-base-price="{{ product.base_price }}"
+            data-base-compare-price="{{ product.compare_price|default:'' }}"
+            {% endif %}
+        >
+            {% if product.product_type == 'variable' %}
+            {{ product.variants|json_script:"vg-product-variants" }}
+            {{ product.attribute_options|json_script:"vg-product-attribute-options" }}
+            {% endif %}
+
+            {% if product.brand %}
+            <p class="ns-product-brand">{{ product.brand }}</p>
+            {% endif %}
+            <div class="ns-product-badges">
+                {% if product.discount_percent %}
+                <span class="ns-badge ns-badge--sale">{{ product.discount_percent }}٪ تخفیف</span>
+                {% endif %}
+                {% if product.is_featured %}
+                <span class="ns-badge ns-badge--feat">ویژه</span>
+                {% endif %}
+                {% if product.in_stock %}
+                <span class="ns-badge ns-badge--success">موجود</span>
+                {% else %}
+                <span class="ns-badge ns-badge--muted">ناموجود</span>
+                {% endif %}
+            </div>
+            <h1 class="ns-page-title">{{ product.name }}</h1>
+
+            {% if product.product_type == 'variable' %}
+            <p class="ns-product-price-lg">
+                <span x-text="formatPrice(displayPrice())"></span>
+                <s x-show="displayComparePrice()" x-text="formatPrice(displayComparePrice())"></s>
+            </p>
+            {% else %}
+            <p class="ns-product-price-lg">
+                {% money product.base_price %}
+                {% if product.compare_price %}<s>{% money product.compare_price %}</s>{% endif %}
+            </p>
+            {% endif %}
+
+            {% if product.short_description %}
+            <p class="ns-product-short">{{ product.short_description }}</p>
+            {% endif %}
+
+            <div class="ns-product-trust">
+                <span><i data-lucide="shield-check"></i> پرداخت امن</span>
+                <span><i data-lucide="truck"></i> ارسال سریع</span>
+                <span><i data-lucide="rotate-ccw"></i> ضمانت اصالت</span>
+            </div>
+
+            {% if product.product_type == 'variable' %}
+            <div class="ns-variant-groups">
+                <template x-for="attr in visibleAttributes()" :key="'attr-' + attr.id">
+                    <div class="ns-variant-group">
+                        <div class="ns-variant-label">
+                            <span x-text="attr.name"></span>
+                            <span class="ns-variant-selected" x-show="selected[attr.id]" x-text="selectedLabel(attr.id)"></span>
+                        </div>
+                        <div class="ns-variant-options" x-show="isColor(attr)">
+                            <template x-for="val in getAvailableValues(attr.id)" :key="'color-' + val.id">
+                                <button
+                                    type="button"
+                                    class="ns-variant-swatch"
+                                    :class="{ 'is-active': isSelected(attr.id, val.id), 'is-multi': colorCodes(val).length > 1, 'is-oos': !isValueInStock(attr.id, val.id) }"
+                                    :style="swatchStyle(val)"
+                                    :title="val.value"
+                                    :aria-label="val.value"
+                                    @click="selectValue(attr.id, val.id)"
+                                ></button>
+                            </template>
+                        </div>
+                        <select
+                            class="ns-select"
+                            x-show="isList(attr)"
+                            :value="selected[attr.id] || ''"
+                            @change="selectValue(attr.id, Number($event.target.value))"
+                        >
+                            <option value="" disabled x-show="!selected[attr.id]">انتخاب کنید</option>
+                            <template x-for="val in getAvailableValues(attr.id)" :key="'list-' + val.id">
+                                <option :value="val.id" x-text="val.value"></option>
+                            </template>
+                        </select>
+                        <div class="ns-variant-options" x-show="isButton(attr)">
+                            <template x-for="val in getAvailableValues(attr.id)" :key="'btn-' + val.id">
+                                <button
+                                    type="button"
+                                    class="ns-variant-btn"
+                                    :class="{ 'is-active': isSelected(attr.id, val.id), 'is-oos': !isValueInStock(attr.id, val.id) }"
+                                    @click="selectValue(attr.id, val.id)"
+                                    x-text="val.value"
+                                ></button>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+                <p class="ns-variant-summary" x-show="selectedVariant" x-cloak>
+                    <i data-lucide="layers" aria-hidden="true"></i>
+                    <span x-text="variantSummary()"></span>
+                </p>
+            </div>
+            {% endif %}
+
+            <div class="ns-product-actions" {% if product.product_type != 'variable' %}x-data="vgQty(1)"{% endif %}>
+                <div class="ns-qty">
+                    {% if product.product_type == 'variable' %}
+                    <button type="button" class="ns-icon-btn" @click="decQty()" aria-label="کاهش"><i data-lucide="minus"></i></button>
+                    <span x-text="qty" class="ns-qty-val"></span>
+                    <button type="button" class="ns-icon-btn" @click="incQty()" aria-label="افزایش"><i data-lucide="plus"></i></button>
+                    {% else %}
+                    <button type="button" class="ns-icon-btn" @click="dec()" aria-label="کاهش"><i data-lucide="minus"></i></button>
+                    <span x-text="qty" class="ns-qty-val"></span>
+                    <button type="button" class="ns-icon-btn" @click="inc()" aria-label="افزایش"><i data-lucide="plus"></i></button>
+                    {% endif %}
+                </div>
+                {% if product.product_type == 'variable' %}
+                <button
+                    class="ns-btn"
+                    data-add-to-cart
+                    data-product="{{ product.slug }}"
+                    :data-variant="selectedVariant ? selectedVariant.id : ''"
+                    :disabled="!canAddToCart()"
+                    :class="{ 'is-disabled': !canAddToCart() }"
+                >
+                    <i data-lucide="shopping-bag"></i>
+                    <span x-text="canAddToCart() ? 'افزودن به سبد' : 'ناموجود'"></span>
+                </button>
+                {% elif product.in_stock %}
+                <button class="ns-btn" data-add-to-cart data-product="{{ product.slug }}">
+                    <i data-lucide="shopping-bag"></i> افزودن به سبد
+                </button>
+                {% else %}
+                <span class="ns-badge ns-badge--muted">ناموجود</span>
+                {% endif %}
+                <button
+                    type="button"
+                    class="ns-btn ns-btn--ghost ns-wishlist-btn"
+                    data-toggle-wishlist
+                    data-product="{{ product.slug }}"
+                    aria-pressed="false"
+                >
+                    <i data-lucide="heart"></i>
+                    <span data-wishlist-label data-idle-label="علاقه‌مندی">علاقه‌مندی</span>
+                </button>
+            </div>
+
+            <div x-data="vgTabs('info')">
+                <div class="ns-tabs">
+                    <button type="button" class="ns-tab" :class="{ 'is-active': active === 'info' }" @click="set('info')">شرح</button>
+                    <button type="button" class="ns-tab" :class="{ 'is-active': active === 'reviews' }" @click="set('reviews')">نظرات</button>
+                </div>
+                <div x-show="active === 'info'">
+                    <div class="ns-prose rich-content">{{ product.description|safe }}</div>
+                </div>
+                <div x-show="active === 'reviews'" x-cloak id="product-comments" data-product="{{ product.slug }}">
+                    <p id="comments-summary" class="muted"></p>
+                    <div id="comments-list" style="margin-top:1rem;">
+                        <div class="ns-empty">در حال بارگذاری نظرات...</div>
+                    </div>
+                    <div style="margin-top:1rem;display:grid;gap:0.65rem;">
+                        <h3>ثبت نظر</h3>
+                        <label>امتیاز
+                            <select id="review-rating" class="ns-select">
+                                <option value="5">۵</option>
+                                <option value="4">۴</option>
+                                <option value="3">۳</option>
+                                <option value="2">۲</option>
+                                <option value="1">۱</option>
+                            </select>
+                        </label>
+                        <textarea id="review-body" rows="4" class="ns-input" placeholder="نظر خود را بنویسید..."></textarea>
+                        <p id="review-message" class="muted"></p>
+                        <button type="button" class="ns-btn" id="submit-review">ارسال نظر</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="/static/js/comments.js"></script>
+{% endblock %}

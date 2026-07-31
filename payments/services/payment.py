@@ -100,7 +100,14 @@ class PaymentService:
             },
         )
 
-        result = provider.create_payment(txn, config, callback_url)
+        try:
+            result = provider.create_payment(txn, config, callback_url)
+        except (ValueError, NotImplementedError) as exc:
+            txn.status = PaymentStatus.FAILED
+            txn.error_message = str(exc)
+            txn.save(update_fields=["status", "error_message", "updated_at"])
+            raise PaymentError(str(exc)) from exc
+
         txn.authority = result.authority
         txn.payment_url = result.payment_url
         txn.status = PaymentStatus.REDIRECTED

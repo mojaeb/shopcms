@@ -7,6 +7,7 @@ from django.utils import timezone
 
 from blog.models import BlogCategory, BlogComment, BlogPost, BlogTag
 from cms.services.cms import CMSService
+from cms.services.shortcodes import expand_shortcodes
 from comments.enums import CommentStatus
 from tenants.models import StorePlugin
 
@@ -116,7 +117,14 @@ class BlogService:
             parent = BlogComment.objects.filter(pk=parent_id, store=store, post=post).first()
             if not parent:
                 raise BlogError("نظر والد یافت نشد")
-        return BlogComment.objects.create(store=store, post=post, user=user, parent=parent, body=body)
+        return BlogComment.objects.create(
+            store=store,
+            post=post,
+            user=user,
+            parent=parent,
+            body=body,
+            status=CommentStatus.PENDING,
+        )
 
     @transaction.atomic
     def moderate_comment(self, store, comment_id: int, status: str) -> BlogComment:
@@ -131,7 +139,20 @@ class BlogService:
         return comment
 
     def list_pending_comments(self, store):
-        return BlogComment.objects.filter(store=store, status=CommentStatus.PENDING).select_related("post", "user")
+        return (
+            BlogComment.objects.filter(store=store, status=CommentStatus.PENDING)
+            .select_related("post", "user", "parent")
+            .order_by("-created_at")
+        )
+
+    def list_store_comments(self, store, status: str | None = None):
+        qs = BlogComment.objects.filter(store=store).select_related("post", "user", "parent")
+        if status:
+            qs = qs.filter(status=status)
+        return qs.order_by("-created_at")
+
+    def get_pending_count(self, store) -> int:
+        return BlogComment.objects.filter(store=store, status=CommentStatus.PENDING).count()
 
     def serialize_post_list(self, post: BlogPost) -> dict:
         return {
@@ -147,10 +168,22 @@ class BlogService:
             "published_at": post.published_at.isoformat() if post.published_at else None,
         }
 
-    def serialize_post_detail(self, post: BlogPost) -> dict:
+    def serialize_post_detail(self, post: BlogPost, *, render_content: bool = True) -> dict:
+        content = post.content or ""
+        if render_content:
+            content = expand_shortcodes(content, post.store)
         return {
             **self.serialize_post_list(post),
-            "content": post.content,
+            "content": content,
+            "is_published": post.is_published,
+            "category_id": post.category_id,
+            "tag_ids": list(post.tags.values_list("id", flat=True)),
+            "meta_title": post.meta_title,
+            "meta_description": post.meta_description,
+            "meta_keywords": post.meta_keywords,
+            "og_image": post.og_image,
+            "canonical_url": post.canonical_url,
+            "robots": post.robots,
             "seo": self.cms.serialize_seo(post),
         }
 

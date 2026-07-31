@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block title %}{{ store.name }} - تسویه{% endblock %}
+{% block content %}
+<div class="ns-page ns-width ns-checkout" id="checkout-page" data-currency="{{ store.currency }}">
+    <header class="ns-page-head ns-checkout-head">
+        <a href="/cart/" class="ns-back-link">
+            <i data-lucide="arrow-right" aria-hidden="true"></i>
+            بازگشت به سبد
+        </a>
+        <h1 class="ns-page-title">تسویه حساب</h1>
+        <p class="ns-page-sub">آدرس، ارسال و پرداخت را در چند گام کوتاه تکمیل کنید.</p>
+    </header>
+
+    <div class="ns-checkout-trust" role="list" aria-label="اطمینان خرید">
+        <span role="listitem"><i data-lucide="shield-check" aria-hidden="true"></i> پرداخت امن</span>
+        <span role="listitem"><i data-lucide="truck" aria-hidden="true"></i> ارسال مطمئن</span>
+        <span role="listitem"><i data-lucide="lock" aria-hidden="true"></i> اطلاعات محفوظ</span>
+    </div>
+
+    <div class="ns-checkout-grid">
+        <div class="ns-checkout-main">
+            <section class="ns-panel ns-checkout-panel">
+                <h2>
+                    <span class="ns-checkout-step-icon" aria-hidden="true"><i data-lucide="map-pin"></i></span>
+                    آدرس تحویل
+                </h2>
+                <div id="checkout-address">
+                    <div class="ns-skeleton-stack" aria-busy="true" aria-label="بارگذاری آدرس">
+                        <div class="ns-skeleton ns-skeleton-line ns-skeleton-line--md"></div>
+                        <div class="ns-skeleton ns-skeleton-line"></div>
+                        <div class="ns-skeleton ns-skeleton-line ns-skeleton-line--sm"></div>
+                    </div>
+                </div>
+                <a href="/addresses/" class="ns-btn ns-btn--ghost ns-checkout-manage">
+                    <i data-lucide="map-pinned" aria-hidden="true"></i>
+                    مدیریت آدرس‌ها
+                </a>
+            </section>
+
+            <section class="ns-panel ns-checkout-panel">
+                <h2>
+                    <span class="ns-checkout-step-icon" aria-hidden="true"><i data-lucide="shopping-bag"></i></span>
+                    اقلام سفارش
+                </h2>
+                <div id="checkout-items" class="checkout-items ns-checkout-items">
+                    <div class="ns-skeleton-stack" aria-busy="true" aria-label="بارگذاری اقلام">
+                        <div class="ns-skeleton ns-skeleton-card" style="min-height:4.5rem;"></div>
+                        <div class="ns-skeleton ns-skeleton-line ns-skeleton-line--md"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="ns-panel ns-checkout-panel">
+                <h2>
+                    <span class="ns-checkout-step-icon" aria-hidden="true"><i data-lucide="truck"></i></span>
+                    روش ارسال
+                </h2>
+                <div id="shipping-options">
+                    <p class="muted">ابتدا آدرس را انتخاب کنید.</p>
+                </div>
+            </section>
+
+            <section class="ns-panel ns-checkout-panel">
+                <h2>
+                    <span class="ns-checkout-step-icon" aria-hidden="true"><i data-lucide="credit-card"></i></span>
+                    درگاه پرداخت
+                </h2>
+                <div id="payment-gateways">
+                    <div class="ns-skeleton-stack" aria-busy="true" aria-label="بارگذاری درگاه">
+                        <div class="ns-skeleton ns-skeleton-line"></div>
+                        <div class="ns-skeleton ns-skeleton-line ns-skeleton-line--sm"></div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <aside class="ns-panel ns-checkout-summary-card" aria-label="خلاصه سفارش">
+            <h2>
+                <span class="ns-checkout-step-icon" aria-hidden="true"><i data-lucide="receipt"></i></span>
+                خلاصه سفارش
+            </h2>
+            <div id="checkout-summary" class="ns-checkout-summary">
+                <p><span>سبد خرید</span> <span id="cart-subtotal" class="money-slot">—</span></p>
+                <p><span>هزینه ارسال</span> <span id="shipping-cost" class="money-slot">—</span></p>
+                <p id="tax-row" style="display:none;"><span>مالیات</span> <span id="tax-cost" class="money-slot">—</span></p>
+                <p class="ns-checkout-total">
+                    <span>جمع کل</span>
+                    <span id="checkout-total" class="money-slot">—</span>
+                </p>
+            </div>
+            <button type="button" class="ns-btn ns-checkout-pay" id="checkout-submit">
+                <i data-lucide="lock" aria-hidden="true"></i>
+                پرداخت امن
+            </button>
+            <p id="checkout-message" class="ns-checkout-msg muted" role="status" aria-live="polite"></p>
+            <p class="ns-checkout-note">
+                <i data-lucide="shield-check" aria-hidden="true"></i>
+                اطلاعات پرداخت شما رمزنگاری و امن منتقل می‌شود.
+            </p>
+        </aside>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="/static/js/checkout.js"></script>
+{% endblock %}

@@ -1,6 +1,44 @@
 {% extends "base.html" %}
 {% block title %}{{ store.name }} - ویرایش پروفایل{% endblock %}
 {% block content %}
-<h1 class="page-title">ویرایش پروفایل</h1>
-<div class="card empty-state">فرم ویرایش پروفایل — فاز ۲</div>
+<div class="ns-width" id="profile-edit-page" style="max-width:720px;margin:0 auto;">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;margin-bottom:1rem;">
+        <h1 class="page-title" style="margin:0;">ویرایش پروفایل</h1>
+        <a href="/profile/" class="btn btn-outline">بازگشت</a>
+    </div>
+
+    {% if user.is_authenticated %}
+    <div class="card">
+        <form id="profile-edit-form">
+            <div class="form-grid">
+                <label>نام
+                    <input type="text" name="first_name" maxlength="100" value="{{ user.first_name }}" required>
+                </label>
+                <label>نام خانوادگی
+                    <input type="text" name="last_name" maxlength="100" value="{{ user.last_name }}" required>
+                </label>
+                <label>موبایل
+                    <input type="tel" value="{{ user.phone }}" disabled readonly>
+                </label>
+                <label>ایمیل
+                    <input type="email" name="email" maxlength="254" value="{{ user.email }}" placeholder="name@example.com">
+                </label>
+            </div>
+            <p class="muted" style="margin-top:0.75rem;">شماره موبایل قابل تغییر نیست.</p>
+            <p id="profile-edit-message" class="muted" style="margin-top:0.5rem;" role="status"></p>
+            <div style="margin-top:1rem;display:flex;gap:0.5rem;flex-wrap:wrap;">
+                <button type="submit" class="btn" id="profile-save-btn">ذخیره تغییرات</button>
+                <a href="/profile/" class="btn btn-outline">انصراف</a>
+            </div>
+        </form>
+    </div>
+    {% else %}
+    <div class="card empty-state">لطفاً <a href="/login/?next=/profile/edit/">وارد شوید</a>.</div>
+    {% endif %}
+</div>
+{% endblock %}
+{% block extra_js %}
+{% if user.is_authenticated %}
+<script src="/static/js/profile.js"></script>
+{% endif %}
 {% endblock %}

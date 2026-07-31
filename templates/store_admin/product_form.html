@@ -1,359 +1,4 @@
 {% extends "store_admin/base.html" %}
-{% block extra_css %}
-<style>
-.sa-content { padding-bottom: 6rem; }
-.sa-editor {
-    display: grid;
-    gap: 1.25rem;
-    max-width: 960px;
-}
-.sa-editor-section {
-    background: var(--sa-surface);
-    border: 1px solid var(--sa-border);
-    border-radius: var(--sa-radius);
-    padding: 1.25rem 1.35rem;
-    box-shadow: var(--sa-shadow);
-}
-.sa-editor-section h2 {
-    margin: 0 0 0.35rem;
-    font-size: 1.05rem;
-}
-.sa-editor-section .sa-section-desc {
-    color: var(--sa-muted);
-    font-size: 0.85rem;
-    margin: 0 0 1rem;
-}
-.sa-editor-section-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 0.75rem;
-    margin-bottom: 0.25rem;
-}
-.sa-editor-section-head h2 { margin: 0; }
-.sa-editor .sa-form { max-width: none; gap: 0; }
-.sa-editor .sa-grid-2 { margin-top: 0.25rem; }
-.sa-editor label { margin-top: 0.85rem; }
-.sa-editor .sa-grid-2 > label { margin-top: 0; }
-.sa-check-inline {
-    display: flex !important;
-    flex-direction: row !important;
-    align-items: center;
-    gap: 0.5rem;
-    margin-top: 1rem !important;
-}
-.sa-check-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem 1rem;
-}
-.sa-check-row label {
-    flex-direction: row;
-    align-items: center;
-    gap: 0.4rem;
-    font-size: 0.85rem;
-    margin-top: 0 !important;
-}
-.sa-attr-card {
-    border: 1px solid var(--sa-border);
-    border-radius: 8px;
-    padding: 0.85rem 1rem;
-    margin-bottom: 0.65rem;
-    background: #fafbfc;
-}
-.sa-attr-card-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 0.5rem;
-}
-.sa-attr-chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.35rem;
-}
-.sa-chip-val {
-    display: inline-block;
-    padding: 0.2rem 0.55rem;
-    background: #fff;
-    border: 1px solid var(--sa-border);
-    border-radius: 6px;
-    font-size: 0.8rem;
-}
-
-.sa-variant-steps {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-    margin-top: 0.85rem;
-}
-.sa-variant-step {
-    border-top: 1px solid var(--sa-border);
-    padding-top: 1.1rem;
-}
-.sa-variant-step:first-child {
-    border-top: none;
-    padding-top: 0;
-}
-.sa-variant-step-label {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.45rem;
-    font-size: 0.82rem;
-    font-weight: 700;
-    color: var(--sa-accent);
-    margin-bottom: 0.65rem;
-}
-.sa-variant-step-num {
-    width: 1.4rem;
-    height: 1.4rem;
-    border-radius: 50%;
-    background: rgba(13, 148, 136, 0.15);
-    color: var(--sa-accent);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.75rem;
-}
-
-.sa-variant-row {
-    border: 1px solid var(--sa-border);
-    border-radius: 10px;
-    padding: 0;
-    margin-bottom: 0.75rem;
-    background: #fff;
-    overflow: hidden;
-}
-.sa-variant-row-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem 1rem;
-    background: #f8fafc;
-    border-bottom: 1px solid var(--sa-border);
-}
-.sa-variant-row-title {
-    font-size: 0.92rem;
-    font-weight: 700;
-    color: var(--sa-text);
-    margin: 0;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 0.35rem 0.5rem;
-}
-.sa-variant-row-title .sa-muted {
-    font-weight: 500;
-    font-size: 0.82rem;
-}
-.sa-variant-row-body { padding: 1rem; }
-.sa-variant-attrs {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 0.65rem;
-    margin-bottom: 0.85rem;
-}
-.sa-variant-attrs label {
-    margin-top: 0 !important;
-    font-size: 0.82rem;
-}
-.sa-variant-fields {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0.65rem;
-}
-.sa-variant-fields label {
-    margin-top: 0 !important;
-    font-size: 0.82rem;
-}
-.sa-variant-row-foot {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 0.5rem;
-    margin-top: 0.85rem;
-    padding-top: 0.75rem;
-    border-top: 1px dashed var(--sa-border);
-}
-.sa-variant-empty {
-    text-align: center;
-    padding: 1.5rem 1rem;
-    border: 1px dashed var(--sa-border);
-    border-radius: 8px;
-    color: var(--sa-muted);
-    font-size: 0.88rem;
-    background: #fafbfc;
-}
-.sa-attr-create-box {
-    border: 1px solid var(--sa-border);
-    border-radius: 8px;
-    padding: 1rem;
-    background: #fff;
-    margin-top: 0.75rem;
-}
-
-.sa-sticky-bar {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 240px;
-    z-index: 40;
-    background: rgba(255, 255, 255, 0.96);
-    border-top: 1px solid var(--sa-border);
-    box-shadow: 0 -4px 20px rgba(15, 23, 42, 0.08);
-    padding: 0.85rem 1.75rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 1rem;
-    backdrop-filter: blur(8px);
-}
-.sa-sticky-bar-meta {
-    display: flex;
-    flex-direction: column;
-    gap: 0.15rem;
-    min-width: 0;
-}
-.sa-sticky-bar-meta strong {
-    font-size: 0.95rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-.sa-sticky-bar-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    flex-shrink: 0;
-}
-
-.sa-picker-dialog {
-    max-width: 720px;
-    width: calc(100% - 2rem);
-    max-height: calc(100vh - 2rem);
-}
-.sa-picker-dialog .sa-picker-body {
-    padding: 1.25rem 1.5rem 1.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.85rem;
-    max-height: calc(100vh - 2rem);
-    overflow: hidden;
-}
-.sa-picker-toolbar {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    align-items: center;
-}
-.sa-picker-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 0.65rem;
-    overflow-y: auto;
-    flex: 1;
-    min-height: 200px;
-    max-height: 50vh;
-    padding: 0.15rem;
-}
-.sa-picker-item {
-    border: 2px solid var(--sa-border);
-    border-radius: 8px;
-    overflow: hidden;
-    cursor: pointer;
-    background: #fff;
-    padding: 0;
-    text-align: right;
-    font: inherit;
-}
-.sa-picker-item:hover,
-.sa-picker-item:focus {
-    border-color: var(--sa-accent);
-    outline: none;
-}
-.sa-picker-item img {
-    width: 100%;
-    aspect-ratio: 1;
-    object-fit: cover;
-    display: block;
-}
-.sa-picker-item span {
-    display: block;
-    padding: 0.35rem 0.45rem;
-    font-size: 0.72rem;
-    color: var(--sa-muted);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-.sa-url-row {
-    display: flex;
-    gap: 0.4rem;
-    align-items: stretch;
-}
-.sa-url-row .sa-input { flex: 1; }
-
-.sa-image-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 0.85rem;
-}
-.sa-image-card {
-    border: 1px solid var(--sa-border);
-    border-radius: 8px;
-    overflow: hidden;
-    background: #fff;
-    display: flex;
-    flex-direction: column;
-}
-.sa-image-preview {
-    aspect-ratio: 4 / 3;
-    background: #f1f5f9;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-}
-.sa-image-preview img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-.sa-image-preview-empty {
-    color: var(--sa-muted);
-    font-size: 0.8rem;
-    padding: 1rem;
-    text-align: center;
-}
-.sa-image-card-body {
-    padding: 0.75rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-.sa-image-card-body label { margin-top: 0 !important; font-size: 0.82rem; }
-.sa-image-card-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.35rem;
-    align-items: center;
-}
-
-@media (max-width: 860px) {
-    .sa-sticky-bar {
-        right: 0;
-        padding: 0.75rem 1rem;
-        flex-direction: column;
-        align-items: stretch;
-    }
-    .sa-sticky-bar-actions { justify-content: stretch; }
-    .sa-sticky-bar-actions .sa-btn { flex: 1; }
-    .sa-variant-fields { grid-template-columns: 1fr 1fr; }
-}
-</style>
-{% endblock %}
 {% block content %}
 <div
     id="sa-product-form"
@@ -365,9 +10,7 @@
         <a href="/manage/products/" class="sa-link-muted">← بازگشت به محصولات</a>
     </div>
 
-    <div id="product-form-loading" class="sa-loading"{% if not is_edit %} hidden{% endif %}>در حال بارگذاری...</div>
-
-    <form id="product-form" class="sa-form sa-editor"{% if is_edit %} hidden{% endif %}>
+    <form id="product-form" class="sa-form sa-editor">
         <input type="hidden" id="product-id" value="{{ product_id|default_if_none:'' }}">
 
         <section class="sa-editor-section">
@@ -427,6 +70,7 @@
             <label>توضیحات
                 <textarea id="product-description" class="sa-input" rows="5"></textarea>
             </label>
+            <p class="sa-muted sa-hint">از ادیتور و منوی «شورت‌کد» برای گرید و تصویر استفاده کنید.</p>
             <label>برچسب‌ها (با ویرگول)
                 <input type="text" id="product-tags" class="sa-input" placeholder="جدید، فروش ویژه">
             </label>
@@ -436,7 +80,7 @@
             <div class="sa-editor-section-head">
                 <div>
                     <h2>گالری تصاویر</h2>
-                    <p class="sa-section-desc" style="margin-bottom:0;">از کتابخانه رسانه انتخاب کنید یا آدرس را وارد کنید.</p>
+                    <p class="sa-section-desc is-tight">از کتابخانه رسانه انتخاب کنید یا آدرس را وارد کنید.</p>
                 </div>
                 <div class="sa-actions">
                     <button type="button" class="sa-btn sa-btn-ghost sa-btn-sm" id="product-pick-image">از رسانه</button>
@@ -444,14 +88,14 @@
                 </div>
             </div>
             <div id="product-images" class="sa-image-grid"></div>
-            <p id="product-images-empty" class="sa-muted" style="font-size:0.85rem;margin-top:0.75rem;">هنوز تصویری اضافه نشده.</p>
+            <p id="product-images-empty" class="sa-muted sa-hint-block">هنوز تصویری اضافه نشده.</p>
         </section>
 
         <section class="sa-editor-section" id="product-variants-section" hidden>
             <div class="sa-editor-section-head">
                 <div>
                     <h2>واریانت‌ها</h2>
-                    <p class="sa-section-desc" style="margin-bottom:0;">ابتدا ویژگی‌ها را تعریف کنید، سپس برای هر ترکیب موجود یک واریانت بسازید.</p>
+                    <p class="sa-section-desc is-tight">ابتدا ویژگی‌ها را تعریف کنید، سپس برای هر ترکیب موجود یک واریانت بسازید.</p>
                 </div>
             </div>
 
@@ -461,8 +105,8 @@
                         <span class="sa-variant-step-num">۱</span>
                         ویژگی‌ها (رنگ، حافظه و …)
                     </div>
-                    <div class="sa-editor-section-head" style="margin-bottom:0.5rem;">
-                        <p class="sa-muted" style="margin:0;font-size:0.85rem;">هر ویژگی چند مقدار دارد و در فروشگاه به مشتری نشان داده می‌شود.</p>
+                    <div class="sa-editor-section-head is-spaced">
+                        <p class="sa-muted sa-variant-step-hint">هر ویژگی چند مقدار دارد و در فروشگاه به مشتری نشان داده می‌شود.</p>
                         <button type="button" class="sa-btn sa-btn-ghost sa-btn-sm" id="attr-toggle-form">+ ویژگی جدید</button>
                     </div>
                     <div id="attributes-list"></div>
@@ -482,18 +126,19 @@
                                     <option value="select">انتخاب (legacy)</option>
                                 </select>
                             </label>
-                            <label id="attr-button-style-wrap" style="display:none;">سبک دکمه
+                            <label id="attr-button-style-wrap" class="sa-hidden">سبک دکمه
                                 <select id="attr-button-style" class="sa-input">
                                     <option value="text">فقط متن</option>
                                     <option value="icon">فقط آیکون</option>
                                     <option value="icon_text">آیکون + متن</option>
                                 </select>
                             </label>
-                            <label style="grid-column:1 / -1;">مقادیر (با ویرگول جدا کنید)
-                                <input type="text" id="attr-values" class="sa-input" placeholder="قرمز، آبی، سبز">
+                            <label class="sa-attr-values">مقادیر
+                                <textarea id="attr-values" class="sa-input" rows="3" placeholder="قرمز، آبی، سبز"></textarea>
+                                <span class="sa-muted sa-field-hint" id="attr-values-hint">با ویرگول جدا کنید.</span>
                             </label>
                         </div>
-                        <div class="sa-form-actions" style="margin-top:0.75rem;">
+                        <div class="sa-form-actions">
                             <button type="button" class="sa-btn sa-btn-sm" id="attr-save">ثبت ویژگی</button>
                             <button type="button" class="sa-btn sa-btn-ghost sa-btn-sm" id="attr-cancel">انصراف</button>
                         </div>
@@ -505,8 +150,8 @@
                         <span class="sa-variant-step-num">۲</span>
                         ترکیب‌های موجود
                     </div>
-                    <div class="sa-editor-section-head" style="margin-bottom:0.65rem;">
-                        <p class="sa-muted" style="margin:0;font-size:0.85rem;">فقط ترکیب‌هایی که واقعاً می‌فروشید را اضافه کنید.</p>
+                    <div class="sa-editor-section-head is-spaced-lg">
+                        <p class="sa-muted sa-variant-step-hint">فقط ترکیب‌هایی که واقعاً می‌فروشید را اضافه کنید.</p>
                         <button type="button" class="sa-btn sa-btn-sm" id="product-add-variant">+ افزودن واریانت</button>
                     </div>
                     <div id="product-variants"></div>
@@ -538,7 +183,7 @@
         </section>
     </form>
 
-    <div class="sa-sticky-bar" id="product-sticky-bar"{% if is_edit %} hidden{% endif %}>
+    <div class="sa-sticky-bar" id="product-sticky-bar">
         <div class="sa-sticky-bar-meta">
             <strong id="sticky-title">{% if is_edit %}ویرایش محصول{% else %}محصول جدید{% endif %}</strong>
             <span id="sticky-status" class="sa-badge sa-badge-warn">پیش‌نویس</span>
@@ -552,13 +197,13 @@
     <dialog id="media-picker" class="sa-dialog sa-picker-dialog">
         <div class="sa-picker-body">
             <div class="sa-editor-section-head">
-                <h2 style="margin:0;font-size:1.05rem;">انتخاب از رسانه</h2>
+                <h2 class="sa-picker-title">انتخاب از رسانه</h2>
                 <button type="button" class="sa-btn sa-btn-ghost sa-btn-sm" id="picker-close">بستن</button>
             </div>
             <div class="sa-picker-toolbar">
                 <button type="button" class="sa-btn sa-btn-sm" id="picker-upload-btn">آپلود تصویر</button>
                 <input type="file" id="picker-file-input" accept="image/*" hidden>
-                <span class="sa-muted" style="font-size:0.82rem;">روی تصویر کلیک کنید تا انتخاب شود.</span>
+                <span class="sa-muted sa-text-sm">روی تصویر کلیک کنید تا انتخاب شود.</span>
             </div>
             <div id="picker-grid" class="sa-picker-grid">
                 <div class="sa-loading">در حال بارگذاری...</div>
@@ -579,7 +224,7 @@
                     <input type="text" name="alt_text" class="sa-input">
                 </label>
                 <div class="sa-image-card-actions">
-                    <label class="sa-check-inline" style="margin:0 !important;">
+                    <label class="sa-check-inline sa-mt-0">
                         <input type="checkbox" name="is_primary"> اصلی
                     </label>
                     <button type="button" class="sa-btn sa-btn-ghost sa-btn-sm js-pick-row">رسانه</button>
@@ -616,7 +261,7 @@
                     </label>
                 </div>
                 <div class="sa-variant-row-foot">
-                    <label class="sa-check-inline" style="margin:0 !important;">
+                    <label class="sa-check-inline sa-mt-0">
                         <input type="checkbox" name="is_active" checked> فعال در فروشگاه
                     </label>
                 </div>
@@ -626,5 +271,6 @@
 </div>
 {% endblock %}
 {% block extra_js %}
+<script src="/static/js/store_admin/richtext.js"></script>
 <script src="/static/js/store_admin/product_form.js"></script>
 {% endblock %}

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}صفحه پیدا نشد - {{ store.name }}{% endblock %}
+{% block content %}
+<div class="ns-page ns-width">
+    <div class="ns-404">
+        <div class="ns-404-visual" aria-hidden="true"><i data-lucide="map"></i></div>
+        <h1>۴۰۴</h1>
+        <p class="ns-page-sub">این آدرس در فروشگاه وجود ندارد یا جابه‌جا شده است.</p>
+        <div class="ns-404-actions">
+            <a href="/" class="ns-btn">بازگشت به خانه</a>
+            <a href="/products/" class="ns-btn ns-btn--ghost">مشاهده محصولات</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

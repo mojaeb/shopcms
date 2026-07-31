@@ -71,8 +71,10 @@ class CommentService:
             .order_by("-created_at")
         )
 
-    def list_store_comments(self, store, status: str | None = None):
-        qs = Comment.objects.filter(store=store, parent__isnull=True).select_related("user", "product")
+    def list_store_comments(self, store, status: str | None = None, *, top_level_only: bool = False):
+        qs = Comment.objects.filter(store=store).select_related("user", "product", "parent")
+        if top_level_only:
+            qs = qs.filter(parent__isnull=True)
         if status:
             qs = qs.filter(status=status)
         return qs.order_by("-created_at")
@@ -104,6 +106,7 @@ class CommentService:
                 raise CommentError("نظر والد یافت نشد")
             if parent.parent_id:
                 raise CommentError("فقط یک سطح پاسخ مجاز است")
+            # Replies to pending parents are fine; both need moderation.
             rating = None
         elif rating is not None and (rating < 1 or rating > 5):
             raise CommentError("امتیاز باید بین ۱ تا ۵ باشد")
@@ -118,7 +121,7 @@ class CommentService:
             status=CommentStatus.PENDING,
             is_verified_purchase=self._has_purchased(user, store, product),
         )
-        logger.info("Comment created: product=%s user=%s", product.slug, user.pk)
+        logger.info("Comment created: product=%s user=%s status=pending", product.slug, user.pk)
         return comment
 
     @transaction.atomic
@@ -145,7 +148,9 @@ class CommentService:
             raise CommentError("وضعیت نامعتبر است")
 
         try:
-            comment = Comment.objects.get(pk=comment_id, store=store, parent__isnull=True)
+            comment = Comment.objects.select_related("user", "product", "parent").get(
+                pk=comment_id, store=store
+            )
         except Comment.DoesNotExist:
             raise CommentError("نظر یافت نشد")
 
@@ -154,14 +159,22 @@ class CommentService:
         return comment
 
     def get_pending_count(self, store) -> int:
-        return Comment.objects.filter(store=store, parent__isnull=True, status=CommentStatus.PENDING).count()
+        return Comment.objects.filter(store=store, status=CommentStatus.PENDING).count()
 
-    def serialize_comment(self, comment: Comment, user=None, include_replies: bool = True) -> dict:
+    def serialize_comment(
+        self,
+        comment: Comment,
+        user=None,
+        include_replies: bool = True,
+        *,
+        for_admin: bool = False,
+    ) -> dict:
         data = {
             "id": comment.id,
             "product_id": comment.product_id,
-            "product_name": comment.product.name if hasattr(comment, "product") else "",
-            "product_slug": comment.product.slug if hasattr(comment, "product") else "",
+            "product_name": comment.product.name if getattr(comment, "product", None) else "",
+            "product_slug": comment.product.slug if getattr(comment, "product", None) else "",
+            "parent_id": comment.parent_id,
             "user": {
                 "id": comment.user_id,
                 "full_name": comment.user.full_name or comment.user.phone,
@@ -181,8 +194,13 @@ class CommentService:
             data["liked_by_me"] = CommentLike.objects.filter(comment=comment, user=user).exists()
 
         if include_replies:
-            replies = comment.replies.filter(status=CommentStatus.APPROVED).select_related("user")
-            data["replies"] = [self.serialize_comment(r, user, include_replies=False) for r in replies]
+            replies = comment.replies.select_related("user").order_by("created_at")
+            if not for_admin:
+                replies = replies.filter(status=CommentStatus.APPROVED)
+            data["replies"] = [
+                self.serialize_comment(r, user, include_replies=False, for_admin=for_admin)
+                for r in replies
+            ]
 
         return data
 

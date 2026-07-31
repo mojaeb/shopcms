@@ -1,8 +1,9 @@
 """Route order: specific paths before slug."""
 
 from ninja import Router, Schema
-from ninja.pagination import PageNumberPagination, paginate
 
+from core.cache import cache_manager
+from core.cache.keys import product_detail, product_list
 from products.enums import ProductSortOrder
 from products.models import Category
 from products.services.product import ProductService
@@ -12,6 +13,9 @@ from tenants.context import get_current_store
 router = Router()
 service = ProductService()
 search_service = ProductSearchService()
+
+PRODUCT_PAGE_SIZE = 20
+PRODUCT_MAX_PAGE_SIZE = 100
 
 
 class ProductListSchema(Schema):
@@ -38,6 +42,12 @@ def _get_store(request):
     if not store:
         return None
     return store
+
+
+def _clamp_page(page: int, page_size: int) -> tuple[int, int]:
+    page = max(1, page or 1)
+    page_size = min(max(page_size or PRODUCT_PAGE_SIZE, 1), PRODUCT_MAX_PAGE_SIZE)
+    return page, page_size
 
 
 @router.get("/filters")
@@ -67,8 +77,7 @@ def list_brands(request):
     return [{"id": b.id, "name": b.name, "slug": b.slug, "logo": b.logo} for b in brands]
 
 
-@router.get("/", response=list[ProductListSchema])
-@paginate(PageNumberPagination, page_size=20)
+@router.get("/", response={200: dict})
 def list_products(
     request,
     search: str = "",
@@ -82,34 +91,72 @@ def list_products(
     in_stock: bool | None = None,
     featured: bool | None = None,
     sort: str = ProductSortOrder.NEWEST,
+    page: int = 1,
+    page_size: int = PRODUCT_PAGE_SIZE,
 ):
     store = _get_store(request)
     if not store:
         return 404, {"detail": "فروشگاه یافت نشد"}
+
+    page, page_size = _clamp_page(page, page_size)
     brand_slugs = search_service.parse_brand_list(brand, brands)
     attr_map = search_service.parse_attributes(attributes)
-    products = service.list_products(
-        store,
-        search=search,
-        category_slug=category,
-        brand_slugs=brand_slugs or None,
-        min_price=min_price,
-        max_price=max_price,
-        attributes=attr_map or None,
-        tag_slug=tag,
-        in_stock=in_stock,
-        featured=featured,
-        sort=sort,
-    )
-    return [service.serialize_product_list(p) for p in products]
+    params = {
+        "search": search,
+        "category": category,
+        "brand_slugs": brand_slugs,
+        "min_price": min_price,
+        "max_price": max_price,
+        "attributes": attr_map,
+        "tag": tag,
+        "in_stock": in_stock,
+        "featured": featured,
+        "sort": sort,
+        "page": page,
+        "page_size": page_size,
+    }
+    cache_key = product_list(store.id, cache_manager.hash_params(params))
+
+    def factory():
+        qs = service.list_products(
+            store,
+            search=search,
+            category_slug=category,
+            brand_slugs=brand_slugs or None,
+            min_price=min_price,
+            max_price=max_price,
+            attributes=attr_map or None,
+            tag_slug=tag,
+            in_stock=in_stock,
+            featured=featured,
+            sort=sort,
+        )
+        count = qs.count()
+        offset = (page - 1) * page_size
+        items = [service.serialize_product_list(p) for p in qs[offset : offset + page_size]]
+        return {"items": items, "count": count}
+
+    return cache_manager.get_or_set(cache_key, factory, ttl="products")
 
 
 @router.get("/{slug}")
-def product_detail(request, slug: str):
+def product_detail_view(request, slug: str):
     store = _get_store(request)
     if not store:
         return 404, {"detail": "فروشگاه یافت نشد"}
+
+    cache_key = product_detail(store.id, slug)
+    cached = cache_manager.get(cache_key)
+    if cached is not None:
+        if cached == "__missing__":
+            return 404, {"detail": "محصول یافت نشد"}
+        return cached
+
     product = service.get_product(store, slug)
     if not product:
+        cache_manager.set(cache_key, "__missing__", ttl="short")
         return 404, {"detail": "محصول یافت نشد"}
-    return service.serialize_product_detail(product)
+
+    payload = service.serialize_product_detail(product)
+    cache_manager.set(cache_key, payload, ttl="products")
+    return payload

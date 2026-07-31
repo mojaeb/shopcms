@@ -103,6 +103,79 @@ def test_products_public_api(client, store, product_data):
 
 
 @pytest.mark.django_db
+def test_product_list_paginates_and_caches(client, store):
+    from django.core.cache import cache
+
+    from core.cache import cache_manager
+    from core.cache.keys import product_list
+    from products.enums import ProductStatus
+
+    for i in range(25):
+        Product.objects.create(
+            store=store,
+            name=f"Item {i}",
+            slug=f"item-{i}",
+            status=ProductStatus.ACTIVE,
+            base_price=1000 + i,
+        )
+
+    response = client.get("/api/v1/products/?page=1&page_size=20", HTTP_HOST="products.local")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["count"] == 25
+    assert len(data["items"]) == 20
+
+    page2 = client.get("/api/v1/products/?page=2&page_size=20", HTTP_HOST="products.local")
+    assert page2.status_code == 200
+    assert len(page2.json()["items"]) == 5
+
+    # Second hit should come from cache (tamper cache and re-fetch)
+    params_hash = cache_manager.hash_params(
+        {
+            "search": "",
+            "category": None,
+            "brand_slugs": [],
+            "min_price": None,
+            "max_price": None,
+            "attributes": {},
+            "tag": None,
+            "in_stock": None,
+            "featured": None,
+            "sort": "newest",
+            "page": 1,
+            "page_size": 20,
+        }
+    )
+    key = product_list(store.id, params_hash)
+    cache.set(key, {"items": [{"slug": "from-cache"}], "count": 1}, 60)
+    cached = client.get("/api/v1/products/?page=1&page_size=20", HTTP_HOST="products.local")
+    assert cached.json()["items"][0]["slug"] == "from-cache"
+
+
+@pytest.mark.django_db
+def test_product_detail_cache_invalidates_on_save(client, store, product_data):
+    from django.core.cache import cache
+
+    from core.cache.keys import product_detail
+
+    first = client.get("/api/v1/products/galaxy-s24", HTTP_HOST="products.local")
+    assert first.status_code == 200
+    assert first.json()["name"] == "Galaxy S24"
+
+    key = product_detail(store.id, "galaxy-s24")
+    cache.set(key, {"name": "Cached Name", "slug": "galaxy-s24"}, 60)
+    second = client.get("/api/v1/products/galaxy-s24", HTTP_HOST="products.local")
+    assert second.json()["name"] == "Cached Name"
+
+    product = product_data["product"]
+    product.name = "Galaxy S24 Ultra"
+    product.save()
+
+    third = client.get("/api/v1/products/galaxy-s24", HTTP_HOST="products.local")
+    assert third.json()["name"] == "Galaxy S24 Ultra"
+
+
+@pytest.mark.django_db
 def test_products_admin_api(client, store, products_token):
     response = client.post(
         "/api/v1/store-admin/products/categories",

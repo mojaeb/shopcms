@@ -73,8 +73,8 @@
                 }).then(({ ok, data }) => {
                     if (ok) {
                         btn.textContent = `${data.liked ? "♥" : "♡"} ${data.likes_count}`;
-                    } else if (data.detail) {
-                        alert(data.detail);
+                    } else if (data.detail && window.ShopToast) {
+                        window.ShopToast.error(data.detail);
                     }
                 });
             });
@@ -103,8 +103,8 @@
                     if (ok) {
                         textarea.value = "";
                         loadProductComments(productSlug);
-                    } else {
-                        alert(data.detail || "خطا");
+                    } else if (window.ShopToast) {
+                        window.ShopToast.error(data.detail || "خطا");
                     }
                 });
             });
@@ -141,11 +141,19 @@
 
         apiFetch("/mine").then(({ ok, status, data }) => {
             if (status === 401) {
-                list.innerHTML = '<div class="empty-state card">برای مشاهده نظرات <a href="/login/">وارد شوید</a>.</div>';
+                list.innerHTML =
+                    '<div class="ns-empty"><div class="ns-empty-icon" aria-hidden="true"><i data-lucide="log-in"></i></div>' +
+                    "<strong>ورود لازم است</strong><p>برای مشاهده نظرات وارد شوید.</p>" +
+                    '<a class="ns-btn" href="/login/?next=/comments/">ورود</a></div>';
+                if (window.lucide) window.lucide.createIcons();
                 return;
             }
             if (!ok || !data.length) {
-                list.innerHTML = '<div class="empty-state card">نظری ثبت نکرده‌اید.</div>';
+                list.innerHTML =
+                    '<div class="ns-empty"><div class="ns-empty-icon" aria-hidden="true"><i data-lucide="message-square"></i></div>' +
+                    "<strong>هنوز نظری ثبت نکرده‌اید</strong><p>پس از خرید می‌توانید تجربه خود را بنویسید.</p>" +
+                    '<a class="ns-btn ns-btn--ghost" href="/products/">مشاهده محصولات</a></div>';
+                if (window.lucide) window.lucide.createIcons();
                 return;
             }
             list.innerHTML = data.map((c) => renderComment(c, { showReply: false, showLike: false })).join("");

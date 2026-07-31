@@ -2,14 +2,12 @@
 {% block content %}
 <div id="sa-orders" class="sa-page">
     <div class="sa-toolbar">
-        <select id="order-status-filter" class="sa-input">
+        <select id="order-status-filter" class="sa-input sa-input-auto">
             <option value="">همه وضعیت‌ها</option>
         </select>
         <button type="button" class="sa-btn sa-btn-ghost" id="orders-refresh">بروزرسانی</button>
     </div>
-    <div id="orders-table-wrap">
-        <div class="sa-loading">در حال بارگذاری...</div>
-    </div>
+    <div id="orders-table-wrap" class="sa-loading-host"></div>
 </div>
 {% endblock %}
 {% block extra_js %}

@@ -54,7 +54,10 @@
         const list = document.getElementById("address-list");
         if (!list) return;
         if (!addresses.length) {
-            list.innerHTML = '<div class="empty-state card">آدرسی ثبت نشده است.</div>';
+            list.innerHTML =
+                '<div class="ns-empty"><div class="ns-empty-icon" aria-hidden="true"><i data-lucide="map-pin"></i></div>' +
+                "<strong>آدرسی ثبت نشده</strong><p>یک آدرس تحویل اضافه کنید تا تسویه سریع‌تر انجام شود.</p></div>";
+            if (window.lucide) window.lucide.createIcons();
             return;
         }
         list.innerHTML = addresses.map(renderAddressCard).join("");
@@ -108,7 +111,10 @@
         apiFetch("/").then(({ ok, status, data }) => {
             if (status === 401) {
                 document.getElementById("address-list").innerHTML =
-                    '<div class="empty-state card">برای مدیریت آدرس‌ها وارد شوید.</div>';
+                    '<div class="ns-empty"><div class="ns-empty-icon" aria-hidden="true"><i data-lucide="log-in"></i></div>' +
+                    "<strong>ورود لازم است</strong><p>برای مدیریت آدرس‌ها وارد شوید.</p>" +
+                    '<a class="ns-btn" href="/login/?next=/addresses/">ورود</a></div>';
+                if (window.lucide) window.lucide.createIcons();
                 return;
             }
             if (ok) renderList(data);

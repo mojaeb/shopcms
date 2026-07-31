@@ -1,0 +1,71 @@
+{% if cms_slider and cms_slider.slides %}
+<div class="ns-slider swiper" data-ns-hero aria-label="اسلایدر">
+    <div class="swiper-wrapper">
+        {% for slide in cms_slider.slides %}
+        <div class="swiper-slide ns-slider-slide">
+            {% if slide.link %}<a href="{{ slide.link }}" class="ns-slider-link">{% endif %}
+            {% if slide.image %}
+            <img src="{{ slide.image }}" alt="{{ slide.title|default:store.name }}" {% if not forloop.first %}loading="lazy"{% endif %}>
+            {% else %}
+            <div class="ns-slider-fallback"></div>
+            {% endif %}
+            {% if slide.title or slide.subtitle %}
+            <div class="ns-slider-caption">
+                {% if slide.title %}<strong>{{ slide.title }}</strong>{% endif %}
+                {% if slide.subtitle %}<span>{{ slide.subtitle }}</span>{% endif %}
+            </div>
+            {% endif %}
+            {% if slide.link %}</a>{% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% if cms_slider.slides|length > 1 %}
+    <div class="ns-slider-nav">
+        <button type="button" class="ns-slider-prev" aria-label="قبلی"><i data-lucide="chevron-right"></i></button>
+        <button type="button" class="ns-slider-next" aria-label="بعدی"><i data-lucide="chevron-left"></i></button>
+    </div>
+    <div class="swiper-pagination ns-slider-dots"></div>
+    {% endif %}
+</div>
+{% elif theme_settings.hero.slides %}
+<div class="ns-slider swiper" data-ns-hero aria-label="اسلایدر">
+    <div class="swiper-wrapper">
+        {% for slide in theme_settings.hero.slides %}
+        <div class="swiper-slide ns-slider-slide" style="background:{{ slide.background_color|default:'#dbeafe' }}">
+            {% if slide.button_link %}<a href="{{ slide.button_link }}" class="ns-slider-link">{% endif %}
+            {% if slide.image %}
+            <img src="{{ slide.image }}" alt="{{ slide.title|default:store.name }}" {% if not forloop.first %}loading="lazy"{% endif %}>
+            {% endif %}
+            {% if slide.title or slide.text %}
+            <div class="ns-slider-caption">
+                {% if slide.title %}<strong>{{ slide.title }}</strong>{% endif %}
+                {% if slide.text %}<span>{{ slide.text }}</span>{% endif %}
+                {% if slide.button_text %}
+                <span class="ns-slider-cta">{{ slide.button_text }} <i data-lucide="arrow-left"></i></span>
+                {% endif %}
+            </div>
+            {% endif %}
+            {% if slide.button_link %}</a>{% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% if theme_settings.hero.slides|length > 1 %}
+    <div class="ns-slider-nav">
+        <button type="button" class="ns-slider-prev" aria-label="قبلی"><i data-lucide="chevron-right"></i></button>
+        <button type="button" class="ns-slider-next" aria-label="بعدی"><i data-lucide="chevron-left"></i></button>
+    </div>
+    <div class="swiper-pagination ns-slider-dots"></div>
+    {% endif %}
+</div>
+{% else %}
+<div class="ns-slider ns-slider--fallback" aria-label="معرفی فروشگاه">
+    <div class="ns-slider-slide" style="display:block; position:relative; height:100%;">
+        <div class="ns-slider-fallback"></div>
+        <div class="ns-slider-caption ns-slider-caption--center">
+            <strong>{{ store.name }}</strong>
+            <span>خرید آنلاین با ارسال سریع و پرداخت امن</span>
+            <a href="/products/" class="ns-slider-cta">مشاهده محصولات <i data-lucide="arrow-left"></i></a>
+        </div>
+    </div>
+</div>
+{% endif %}

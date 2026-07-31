@@ -248,3 +248,33 @@ class ContentBlock(TimeStampedModel):
 
     def __str__(self):
         return self.title or f"Block {self.id}"
+
+
+class Shortcode(TimeStampedModel):
+    """Store-defined shortcode template (overrides builtins when names match)."""
+
+    store = models.ForeignKey(
+        Store,
+        on_delete=models.CASCADE,
+        related_name="shortcodes",
+        verbose_name="فروشگاه",
+    )
+    name = models.SlugField(max_length=50, verbose_name="نام shortcode")
+    label = models.CharField(max_length=100, verbose_name="برچسب")
+    description = models.CharField(max_length=500, blank=True, verbose_name="توضیحات")
+    html_template = models.TextField(
+        verbose_name="قالب HTML",
+        help_text="از {{content}} و {{نام_ویژگی}} استفاده کنید",
+    )
+    is_self_closing = models.BooleanField(default=False, verbose_name="بدون تگ پایانی")
+    example = models.TextField(blank=True, verbose_name="مثال")
+    is_active = models.BooleanField(default=True, verbose_name="فعال")
+
+    class Meta:
+        verbose_name = "شورت‌کد"
+        verbose_name_plural = "شورت‌کدها"
+        unique_together = [("store", "name")]
+        ordering = ["name"]
+
+    def __str__(self):
+        return f"[{self.name}]"

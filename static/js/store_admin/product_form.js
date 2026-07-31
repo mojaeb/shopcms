@@ -2,6 +2,7 @@
     const root = document.getElementById("sa-product-form");
     if (!root || !window.StoreAdminApi) return;
     const api = window.StoreAdminApi;
+    const rte = window.StoreAdminRichText;
 
     const productIdAttr = root.getAttribute("data-product-id") || "";
     const isEdit = root.getAttribute("data-is-edit") === "1";
@@ -11,7 +12,6 @@
     if (!api.requireAuth(authPath)) return;
 
     const form = document.getElementById("product-form");
-    const loadingEl = document.getElementById("product-form-loading");
     const stickyBar = document.getElementById("product-sticky-bar");
     const imagesEl = document.getElementById("product-images");
     const imagesEmpty = document.getElementById("product-images-empty");
@@ -36,6 +36,84 @@
             .replace(/[^a-z0-9\-]+/g, "")
             .replace(/-+/g, "-")
             .replace(/^-|-$/g, "");
+    }
+
+    function defaultAttrSlug(name) {
+        const n = String(name || "").trim();
+        if (n === "رنگ" || n.toLowerCase() === "color") return "color";
+        return slugify(n) || "attr";
+    }
+
+    function parseAttributeValues(raw, displayType) {
+        const text = String(raw || "").trim();
+        if (!text) return [];
+        if (displayType === "color" && (text.includes("\n") || text.includes("|") || text.includes(":"))) {
+            return text
+                .split(/[|\n]+/)
+                .map(function (line) {
+                    return line.trim();
+                })
+                .filter(Boolean)
+                .map(function (line, idx) {
+                    const colon = line.indexOf(":");
+                    let label = line;
+                    let colorCode = "";
+                    if (colon > 0) {
+                        label = line.slice(0, colon).trim();
+                        colorCode = line
+                            .slice(colon + 1)
+                            .trim()
+                            .replace(/\s+/g, "");
+                    }
+                    return {
+                        value: label,
+                        slug: slugify(label) || "c-" + idx,
+                        color_code: colorCode,
+                    };
+                });
+        }
+        return text
+            .split(/[,،]/)
+            .map(function (v) {
+                return v.trim();
+            })
+            .filter(Boolean)
+            .map(function (v, idx) {
+                return { value: v, slug: slugify(v) || "v-" + idx };
+            });
+    }
+
+    function colorChipHtml(v) {
+        const codes = Array.isArray(v.color_codes) && v.color_codes.length
+            ? v.color_codes
+            : String(v.color_code || "")
+                  .split(/[,،/\s]+/)
+                  .map(function (p) {
+                      return p.trim();
+                  })
+                  .filter(Boolean);
+        let swatch = "";
+        if (codes.length) {
+            const bg =
+                codes.length === 1
+                    ? codes[0]
+                    : "conic-gradient(from 135deg, " +
+                      codes
+                          .map(function (c, i) {
+                              const a = ((i / codes.length) * 100).toFixed(2);
+                              const b = (((i + 1) / codes.length) * 100).toFixed(2);
+                              return c + " " + a + "% " + b + "%";
+                          })
+                          .join(", ") +
+                      ")";
+            swatch =
+                '<span class="sa-color-dot" style="background:' +
+                bg +
+                '" title="' +
+                api.escapeHtml(codes.join(", ")) +
+                '"></span>';
+        }
+        return '<span class="sa-chip-val">' + swatch + api.escapeHtml(v.value) + "</span>";
     }
 
     function statusLabel(status) {
@@ -152,14 +230,14 @@
         const el = document.getElementById("attributes-list");
         if (!attributes.length) {
             el.innerHTML =
-                '<div class="sa-variant-empty" style="margin:0;">هنوز ویژگی‌ای تعریف نشده. با دکمه «ویژگی جدید» شروع کنید.</div>';
+                '<div class="sa-variant-empty sa-mt-0">هنوز ویژگی‌ای تعریف نشده. با دکمه «ویژگی جدید» شروع کنید.</div>';
             return;
         }
         el.innerHTML = attributes
             .map(function (a) {
                 const chips = (a.values || [])
                     .map(function (v) {
-                        return '<span class="sa-chip-val">' + api.escapeHtml(v.value) + "</span>";
+                        return a.display_type === "color" ? colorChipHtml(v) : '<span class="sa-chip-val">' + api.escapeHtml(v.value) + "</span>";
                     })
                     .join("");
                 return (
@@ -184,7 +262,7 @@
         container.innerHTML = "";
         if (!attributes.length) {
             container.innerHTML =
-                '<p class="sa-muted" style="margin:0;font-size:0.85rem;grid-column:1/-1;">ابتدا یک ویژگی در مرحله ۱ بسازید.</p>';
+                '<p class="sa-muted sa-variant-step-hint sa-attr-values">ابتدا یک ویژگی در مرحله ۱ بسازید.</p>';
             return;
         }
         attributes.forEach(function (attr) {
@@ -348,7 +426,11 @@
             product.stock != null ? product.stock : product.available || 0;
         document.getElementById("product-featured").checked = !!product.is_featured;
         document.getElementById("product-short").value = product.short_description || "";
-        document.getElementById("product-description").value = product.description || "";
+        if (rte) {
+            rte.setContent("#product-description", product.description || "");
+        } else {
+            document.getElementById("product-description").value = product.description || "";
+        }
         document.getElementById("product-tags").value = (product.tags || []).join("، ");
         document.getElementById("product-meta-title").value = product.meta_title || "";
         document.getElementById("product-meta-description").value = product.meta_description || "";
@@ -368,9 +450,9 @@
     }
 
     function showForm() {
-        loadingEl.hidden = true;
         form.hidden = false;
         stickyBar.hidden = false;
+        api.setPageLoading(root, false);
     }
 
     function thumbUrl(file) {
@@ -416,7 +498,7 @@
     }
 
     function loadPickerFiles() {
-        pickerGrid.innerHTML = '<div class="sa-loading">در حال بارگذاری...</div>';
+        pickerGrid.innerHTML = api.loadingHtml(null, { compact: true });
         api.apiFetch("/api/v1/store-admin/files?file_type=image&page=1").then(function ({ ok, data }) {
             if (!ok) {
                 pickerGrid.innerHTML =
@@ -475,7 +557,8 @@
     function initEdit(id) {
         api.apiFetch("/api/v1/store-admin/products/" + id).then(function ({ ok, data }) {
             if (!ok) {
-                loadingEl.textContent = (data && data.detail) || "محصول یافت نشد";
+                api.setPageLoading(root, false);
+                api.flash((data && data.detail) || "محصول یافت نشد", true);
                 return;
             }
             resetForm();
@@ -523,14 +606,23 @@
     });
     document.getElementById("attr-name").addEventListener("input", function (e) {
         const slugEl = document.getElementById("attr-slug");
-        if (!slugEl.dataset.touched) slugEl.value = slugify(e.target.value) || "attr";
+        if (!slugEl.dataset.touched) slugEl.value = defaultAttrSlug(e.target.value);
     });
     document.getElementById("attr-slug").addEventListener("input", function () {
         this.dataset.touched = "1";
     });
     document.getElementById("attr-display").addEventListener("change", function () {
-        document.getElementById("attr-button-style-wrap").style.display =
-            this.value === "button" ? "" : "none";
+        document.getElementById("attr-button-style-wrap").classList.toggle("sa-hidden", this.value !== "button");
+        const hint = document.getElementById("attr-values-hint");
+        const valuesEl = document.getElementById("attr-values");
+        if (this.value === "color") {
+            valuesEl.placeholder = "مشکی:#111111,#2a2a2a\nسفید:#f5f5f5\nآبی:#3b82f6,#60a5fa";
+            hint.textContent =
+                "هر خط یک رنگ: نام یا نام:#hex — برای چندرنگ داخل یک گزینه چند hex با ویرگول بنویسید.";
+        } else {
+            valuesEl.placeholder = "قرمز، آبی، سبز";
+            hint.textContent = "با ویرگول جدا کنید.";
+        }
     });
     document.getElementById("attr-save").addEventListener("click", function () {
         const name = document.getElementById("attr-name").value.trim();
@@ -538,30 +630,25 @@
             api.flash("نام ویژگی الزامی است", true);
             return;
         }
-        const values = document
-            .getElementById("attr-values")
-            .value.split(/[,،]/)
-            .map(function (v) {
-                return v.trim();
-            })
-            .filter(Boolean)
-            .map(function (v) {
-                return { value: v, slug: slugify(v) || v };
-            });
+        const displayType = document.getElementById("attr-display").value;
+        const values = parseAttributeValues(document.getElementById("attr-values").value, displayType);
         const payload = {
             name: name,
-            slug: document.getElementById("attr-slug").value.trim() || slugify(name),
-            display_type: document.getElementById("attr-display").value,
+            slug: document.getElementById("attr-slug").value.trim() || defaultAttrSlug(name),
+            display_type: displayType,
             button_style:
-                document.getElementById("attr-display").value === "button"
+                displayType === "button"
                     ? document.getElementById("attr-button-style").value
                     : "",
             values: values,
         };
+        const saveAttrBtn = document.getElementById("attr-save");
+        api.setBusy(saveAttrBtn, true, "در حال ثبت...");
         api.apiFetch("/api/v1/store-admin/products/attributes", {
             method: "POST",
             body: JSON.stringify(payload),
         }).then(function ({ ok, data }) {
+            api.setBusy(saveAttrBtn, false);
             if (!ok) {
                 api.flash(data.detail || "ثبت ویژگی ناموفق", true);
                 return;
@@ -586,17 +673,20 @@
     pickerFileInput.addEventListener("change", function () {
         const file = pickerFileInput.files && pickerFileInput.files[0];
         if (!file) return;
+        const uploadBtn = document.getElementById("picker-upload-btn");
         const fd = new FormData();
         fd.append("file", file);
         fd.append("folder", "products");
         fd.append("title", file.name);
         fd.append("alt_text", "");
         fd.append("is_public", "true");
+        api.setBusy(uploadBtn, true, "آپلود...");
         api.flash("در حال آپلود...");
         api.apiFetch("/api/v1/store-admin/files/upload", { method: "POST", body: fd }).then(function ({
             ok,
             data,
         }) {
+            api.setBusy(uploadBtn, false);
             pickerFileInput.value = "";
             if (!ok) {
                 api.flash((data && data.detail) || "آپلود ناموفق", true);
@@ -632,7 +722,7 @@
             sku: document.getElementById("product-sku").value.trim(),
             status: document.getElementById("product-status").value,
             short_description: document.getElementById("product-short").value.trim(),
-            description: document.getElementById("product-description").value.trim(),
+            description: rte ? rte.getContent("#product-description") : document.getElementById("product-description").value.trim(),
             category_id: categoryVal ? Number(categoryVal) : null,
             brand_id: brandVal ? Number(brandVal) : null,
             is_featured: document.getElementById("product-featured").checked,
@@ -663,9 +753,11 @@
             method = "PUT";
         }
 
-        saveBtn.disabled = true;
+        api.setBusy(saveBtn, true, "در حال ذخیره...");
+        api.setPageLoading(root, true, "در حال ذخیره...");
         api.apiFetch(path, { method: method, body: JSON.stringify(payload) }).then(function ({ ok, data }) {
-            saveBtn.disabled = false;
+            api.setBusy(saveBtn, false);
+            api.setPageLoading(root, false);
             if (!ok) {
                 api.flash((data && data.detail) || "ذخیره ناموفق", true);
                 return;
@@ -679,11 +771,19 @@
         });
     });
 
+    api.setPageLoading(root, true);
     loadMeta().then(function () {
-        if (isEdit && productIdAttr) {
-            initEdit(productIdAttr);
-        } else {
-            initCreate();
-        }
+        const ready = rte
+            ? rte.loadShortcodes(api).then(function (shortcodes) {
+                return rte.init("#product-description", { shortcodes: shortcodes, height: 320 });
+            })
+            : Promise.resolve();
+        return ready.then(function () {
+            if (isEdit && productIdAttr) {
+                initEdit(productIdAttr);
+            } else {
+                initCreate();
+            }
+        });
     });
 })();

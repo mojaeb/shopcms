@@ -39,7 +39,7 @@
                         p.id +
                         '/edit/"><strong>' +
                         api.escapeHtml(p.name) +
-                        '</strong></a><div class="sa-muted" style="font-size:0.8rem;">' +
+                        '</strong></a><div class="sa-muted sa-text-sm">' +
                         api.escapeHtml(p.slug) +
                         "</div></td>" +
                         "<td>" +
@@ -71,11 +71,13 @@
             btn.addEventListener("click", function () {
                 if (!confirm("این محصول حذف شود؟")) return;
                 const id = btn.getAttribute("data-delete");
+                api.setBusy(btn, true, "حذف...");
                 api.apiFetch("/api/v1/store-admin/products/" + id, { method: "DELETE" }).then(function ({
                     ok,
                     data,
                 }) {
                     if (!ok) {
+                        api.setBusy(btn, false);
                         api.flash(data.detail || "حذف ناموفق", true);
                         return;
                     }
@@ -89,8 +91,9 @@
     function loadProducts() {
         const q = (searchInput.value || "").trim();
         const qs = q ? "?search=" + encodeURIComponent(q) : "";
-        wrap.innerHTML = '<div class="sa-loading">در حال بارگذاری...</div>';
+        api.setPageLoading(wrap, true);
         api.apiFetch("/api/v1/store-admin/products/" + qs).then(function ({ ok, data }) {
+            api.setPageLoading(wrap, false);
             if (!ok) {
                 wrap.innerHTML = '<div class="sa-empty">خطا در بارگذاری محصولات</div>';
                 return;

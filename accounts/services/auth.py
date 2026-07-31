@@ -239,3 +239,39 @@ class AuthService:
         )
 
         return user, membership
+
+    def update_profile(
+        self,
+        user: User,
+        *,
+        first_name: str | None = None,
+        last_name: str | None = None,
+        email: str | None = None,
+    ) -> User:
+        """Update editable profile fields for the authenticated user."""
+        update_fields: list[str] = []
+
+        if first_name is not None:
+            user.first_name = first_name.strip()[:100]
+            update_fields.append("first_name")
+        if last_name is not None:
+            user.last_name = last_name.strip()[:100]
+            update_fields.append("last_name")
+        if email is not None:
+            email = email.strip()
+            if email:
+                from django.core.exceptions import ValidationError
+                from django.core.validators import validate_email
+
+                try:
+                    validate_email(email)
+                except ValidationError as e:
+                    raise AuthError("ایمیل معتبر نیست") from e
+            user.email = email
+            update_fields.append("email")
+
+        if update_fields:
+            update_fields.append("updated_at")
+            user.save(update_fields=update_fields)
+
+        return user

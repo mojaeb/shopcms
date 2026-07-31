@@ -80,6 +80,28 @@ def test_cms_public_api(client, store, cms_data):
 
 
 @pytest.mark.django_db
+def test_cms_page_payload_cached(store, cms_data):
+    from core.cache.keys import cms_page
+    from django.core.cache import cache
+
+    cms = CMSService()
+    first = cms.get_published_page_payload(store, "about")
+    assert first["title"] == "About"
+
+    key = cms_page(store.id, "about")
+    cache.set(key, {"id": 1, "title": "Cached About", "slug": "about", "content": "", "blocks": [], "seo": {}}, 60)
+    second = cms.get_published_page_payload(store, "about")
+    assert second["title"] == "Cached About"
+
+    # Saving page invalidates cache
+    page = cms_data["page"]
+    page.title = "About Updated"
+    page.save()
+    third = cms.get_published_page_payload(store, "about")
+    assert third["title"] == "About Updated"
+
+
+@pytest.mark.django_db
 def test_cms_page_view(client, store, cms_data):
     response = client.get("/page/about/", HTTP_HOST="cms.local")
     assert response.status_code == 200

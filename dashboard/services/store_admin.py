@@ -36,6 +36,7 @@ class StoreAdminService:
         staff = memberships.filter(role__codename__in=self.STAFF_ROLES)
         enabled_plugins = StorePlugin.objects.filter(store=store, is_enabled=True).count()
         order_stats = self._get_order_stats(store)
+        pending_comments = self._get_pending_comments_count(store)
 
         return {
             "store_name": store.name,
@@ -49,9 +50,10 @@ class StoreAdminService:
             "enabled_plugins": enabled_plugins,
             "tax_enabled": store.tax_enabled,
             "currency": store.currency,
-            "total_products": 0,
+            "total_products": self._get_product_count(store),
             "total_orders": order_stats["total_orders"],
             "pending_orders": order_stats["pending_orders"],
+            "pending_comments": pending_comments,
             "total_revenue": order_stats["total_revenue"],
             "orders_today": order_stats["orders_today"],
             "new_customers_today": customers.filter(
@@ -204,6 +206,30 @@ class StoreAdminService:
         from orders.services.order import OrderService
 
         return OrderService().get_store_order_stats(store)
+
+    def _get_product_count(self, store: Store) -> int:
+        try:
+            from products.models import Product
+
+            return Product.objects.filter(store=store).count()
+        except Exception:
+            return 0
+
+    def _get_pending_comments_count(self, store: Store) -> int:
+        pending = 0
+        try:
+            from comments.services.comment import CommentService
+
+            pending += CommentService().get_pending_count(store)
+        except Exception:
+            pass
+        try:
+            from blog.services.blog import BlogService
+
+            pending += BlogService().get_pending_count(store)
+        except Exception:
+            pass
+        return pending
 
     def get_module_stub(self, module: str) -> dict:
         stubs = {

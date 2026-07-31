@@ -18,6 +18,7 @@ class DashboardStatsSchema(Schema):
     total_products: int
     total_orders: int
     pending_orders: int
+    pending_comments: int = 0
     total_revenue: int
     orders_today: int
     new_customers_today: int

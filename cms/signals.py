@@ -3,8 +3,21 @@
 from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 
-from cms.models import Banner, ContentBlock, LayoutSettings, Menu, MenuItem, Page, Slide, Slider, Widget
+from cms.models import (
+    Banner,
+    ContentBlock,
+    LayoutSettings,
+    Menu,
+    MenuItem,
+    Page,
+    Shortcode,
+    Slide,
+    Slider,
+    Widget,
+)
 from cms.services.cache import CMSCacheService
+from cms.services.shortcodes import invalidate_shortcode_cache
+from core.cache import cache_manager
 
 
 def _invalidate_store(store):
@@ -35,3 +48,13 @@ def invalidate_on_slide(sender, instance, **kwargs):
 @receiver([post_save, post_delete], sender=ContentBlock)
 def invalidate_on_block(sender, instance, **kwargs):
     _invalidate_store(instance.page.store)
+
+
+@receiver([post_save, post_delete], sender=Shortcode)
+def invalidate_on_shortcode(sender, instance, **kwargs):
+    store = instance.store
+    invalidate_shortcode_cache(store)
+    CMSCacheService().invalidate_store(store)
+    # Shortcodes can appear in product descriptions and blog posts.
+    cache_manager.invalidate_blog(store.id)
+    cache_manager.invalidate_products(store.id)

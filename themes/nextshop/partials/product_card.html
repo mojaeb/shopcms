@@ -1,0 +1,31 @@
+<a href="/product/{{ product.slug }}/" class="ns-card">
+    <div class="ns-card-media">
+        {% if product.image %}
+        <img src="{{ product.image }}" alt="{{ product.name }}" loading="lazy">
+        {% else %}
+        <div class="ns-card-placeholder"><i data-lucide="package"></i></div>
+        {% endif %}
+        {% if product.discount_percent %}
+        <span class="ns-badge ns-badge--sale ns-card-badge">{{ product.discount_percent }}٪</span>
+        {% elif product.is_featured %}
+        <span class="ns-badge ns-badge--feat ns-card-badge">ویژه</span>
+        {% endif %}
+    </div>
+    <div class="ns-card-body">
+        <span class="ns-card-cat">{% if product.category %}{{ product.category }}{% else %}&nbsp;{% endif %}</span>
+        <h3 class="ns-card-title">{{ product.name }}</h3>
+        <div class="ns-card-meta">
+            <div class="ns-price">
+                {% if product.discount_percent and product.compare_price %}
+                <s>{% money product.compare_price %}</s>
+                {% else %}
+                <span class="ns-price-was ns-price-was--empty" aria-hidden="true">&nbsp;</span>
+                {% endif %}
+                <strong>{% money product.base_price %}</strong>
+            </div>
+        </div>
+    </div>
+    {% if not product.in_stock %}
+    <div class="ns-card-oos"><span>ناموجود</span></div>
+    {% endif %}
+</a>

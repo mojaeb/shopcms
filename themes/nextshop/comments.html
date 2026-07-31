@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}{{ store.name }} - نظرات{% endblock %}
+{% block content %}
+<div class="ns-account ns-width">
+    {% include "partials/account_nav.html" with active="comments" %}
+    <div class="ns-account-main" id="my-comments-page">
+        <h1 class="page-title">نظرات من</h1>
+        <div id="my-comments-list">
+            <div class="ns-loading-panel" aria-busy="true" aria-label="در حال بارگذاری نظرات">
+                <div class="ns-skeleton-stack">
+                    <div class="ns-skeleton ns-skeleton-card"></div>
+                    <div class="ns-skeleton ns-skeleton-line ns-skeleton-line--md"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="/static/js/comments.js"></script>
+{% endblock %}

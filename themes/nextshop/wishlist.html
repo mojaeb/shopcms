@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}{{ store.name }} - علاقه‌مندی‌ها{% endblock %}
+{% block content %}
+<div class="ns-account ns-width">
+    {% include "partials/account_nav.html" with active="wishlist" %}
+    <div class="ns-account-main" id="wishlist-page" data-currency="{{ store.currency }}">
+        <h1 class="page-title">لیست علاقه‌مندی‌ها</h1>
+        <div id="wishlist-container">
+            <div class="ns-loading-panel" aria-busy="true" aria-label="در حال بارگذاری علاقه‌مندی‌ها">
+                <div class="ns-skeleton-stack">
+                    <div class="ns-skeleton ns-skeleton-card"></div>
+                    <div class="ns-skeleton ns-skeleton-line ns-skeleton-line--md"></div>
+                    <div class="ns-skeleton ns-skeleton-line ns-skeleton-line--sm"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="/static/js/wishlist.js"></script>
+{% endblock %}

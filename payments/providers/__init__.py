@@ -1,4 +1,4 @@
-"""Payment gateway implementations (sandbox-ready)."""
+"""Payment gateway implementations."""
 
 import secrets
 from decimal import Decimal
@@ -11,6 +11,9 @@ from payments.providers.base import (
     PaymentVerifyResult,
 )
 from payments.providers.registry import register
+
+# Register first-class gateways (import side-effect).
+from payments.providers.zarinpal import ZarinpalGateway  # noqa: F401
 
 
 class SandboxGateway(PaymentGateway):
@@ -53,12 +56,6 @@ class SandboxGateway(PaymentGateway):
         if self._sandbox(config):
             return PaymentRefundResult(success=True, refunded_amount=amount, message="Sandbox refund OK")
         return PaymentRefundResult(success=False, message="Live refund not configured")
-
-
-@register
-class ZarinpalGateway(SandboxGateway):
-    codename = "zarinpal"
-    label = "زرین‌پال"
 
 
 @register

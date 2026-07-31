@@ -1,4 +1,4 @@
-"""Currency / money display helpers (toman icon + thousand separators)."""
+"""Currency / money display helpers (toman icon + Persian digits)."""
 
 from decimal import Decimal, InvalidOperation
 
@@ -14,17 +14,25 @@ TOMAN_SVG = (
     '<use href="#toman" xlink:href="#toman"></use></svg>'
 )
 
+_PERSIAN_DIGITS = str.maketrans("0123456789", "۰۱۲۳۴۵۶۷۸۹")
+
+
+def to_persian_digits(value: str) -> str:
+    return str(value).translate(_PERSIAN_DIGITS)
+
 
 def format_amount(value) -> str:
     if value is None or value == "":
-        return "0"
+        return "۰"
     try:
         amount = Decimal(str(value).replace(",", "").replace("٬", "").strip())
     except (InvalidOperation, ValueError, TypeError):
-        return str(value)
+        return to_persian_digits(value)
     if amount == amount.to_integral_value():
-        return f"{int(amount):,}"
-    return f"{amount:,.2f}"
+        western = f"{int(amount):,}"
+    else:
+        western = f"{amount:,.2f}"
+    return to_persian_digits(western.replace(",", "٬"))
 
 
 def is_toman_currency(currency: str | None) -> bool:
@@ -44,7 +52,7 @@ def money_html(amount, currency: str | None = None) -> str:
 
 @register.simple_tag(takes_context=True)
 def money(context, amount, currency=None):
-    """Render amount with thousand separators + toman icon (or currency code)."""
+    """Render amount with Persian digits + toman icon (or currency code)."""
     store = context.get("store")
     cur = currency
     if cur is None and store is not None:
@@ -54,5 +62,11 @@ def money(context, amount, currency=None):
 
 @register.filter(name="money_format")
 def money_format(value) -> str:
-    """Format number with thousand separators only (no currency glyph)."""
+    """Format number with Persian digits and thousand separators only."""
     return format_amount(value)
+
+
+@register.filter(name="persian_digits")
+def persian_digits(value) -> str:
+    """Convert any string/number digits to Persian numerals."""
+    return to_persian_digits(value)

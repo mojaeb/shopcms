@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page.seo.meta_title|default:page.title }} - {{ store.name }}{% endblock %}
+
+{% block content %}
+{% if page.slug == 'about' or page.slug == 'contact' %}
+<div class="ns-cms-band ns-cms-band--{{ page.slug }}">
+    <header class="ns-cms-hero ns-width">
+        <nav class="ns-breadcrumb" aria-label="مسیر">
+            <a href="/">خانه</a>
+            <span aria-hidden="true">/</span>
+            <span>{{ page.title }}</span>
+        </nav>
+        <p class="ns-cms-kicker">{% if page.slug == 'about' %}داستان فروشگاه{% else %}ارتباط با فروشگاه{% endif %}</p>
+        <h1 class="ns-cms-hero-title">{{ page.title }}</h1>
+    </header>
+
+    <article class="ns-page ns-width ns-cms ns-cms--{{ page.slug }}">
+        <div class="ns-cms-body page-content">
+            {{ page.content|safe }}
+        </div>
+
+        {% for block in page.blocks %}
+        <section class="ns-cms-block">
+            {% if block.title %}<h2>{{ block.title }}</h2>{% endif %}
+            {% if block.type == "html" %}{{ block.content.html|default:""|safe }}
+            {% elif block.type == "text" %}<p>{{ block.content.text|default:"" }}</p>
+            {% else %}<pre>{{ block.content }}</pre>{% endif %}
+        </section>
+        {% endfor %}
+    </article>
+</div>
+{% else %}
+<div class="ns-cms-band">
+<article class="ns-page ns-width ns-cms">
+    <header class="ns-page-head ns-cms-head">
+        <nav class="ns-breadcrumb" aria-label="مسیر">
+            <a href="/">خانه</a>
+            <span aria-hidden="true">/</span>
+            <span>{{ page.title }}</span>
+        </nav>
+        <h1 class="ns-page-title">{{ page.title }}</h1>
+        {% if page.seo.meta_description %}
+        <p class="ns-page-sub">{{ page.seo.meta_description }}</p>
+        {% endif %}
+    </header>
+
+    <div class="ns-cms-panel">
+        <div class="ns-cms-body ns-prose rich-content page-content">
+            {{ page.content|safe }}
+        </div>
+
+        {% for block in page.blocks %}
+        <section class="ns-cms-block">
+            {% if block.title %}<h2>{{ block.title }}</h2>{% endif %}
+            {% if block.type == "html" %}{{ block.content.html|default:""|safe }}
+            {% elif block.type == "text" %}<p>{{ block.content.text|default:"" }}</p>
+            {% else %}<pre>{{ block.content }}</pre>{% endif %}
+        </section>
+        {% endfor %}
+    </div>
+</article>
+</div>
+{% endif %}
+{% endblock %}

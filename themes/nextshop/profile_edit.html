@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}{{ store.name }} - ویرایش پروفایل{% endblock %}
+{% block content %}
+<div class="ns-account ns-width">
+    {% include "partials/account_nav.html" with active="profile" %}
+    <div class="ns-account-main" id="profile-edit-page">
+        <div class="ns-account-toolbar">
+            <h1 class="page-title">ویرایش پروفایل</h1>
+            <a href="/profile/" class="ns-btn ns-btn--ghost">بازگشت</a>
+        </div>
+
+        {% if user.is_authenticated %}
+        <div class="ns-panel">
+            <h2>اطلاعات شخصی</h2>
+            <form id="profile-edit-form">
+                <div class="form-grid">
+                    <label>نام
+                        <input class="ns-input" type="text" name="first_name" maxlength="100" value="{{ user.first_name }}" required autocomplete="given-name">
+                    </label>
+                    <label>نام خانوادگی
+                        <input class="ns-input" type="text" name="last_name" maxlength="100" value="{{ user.last_name }}" required autocomplete="family-name">
+                    </label>
+                    <label>موبایل
+                        <input class="ns-input" type="tel" value="{{ user.phone }}" disabled readonly>
+                    </label>
+                    <label>ایمیل
+                        <input class="ns-input" type="email" name="email" maxlength="254" value="{{ user.email }}" placeholder="name@example.com" autocomplete="email">
+                    </label>
+                </div>
+                <p class="ns-field-hint" style="margin-top:0.75rem;">شماره موبایل قابل تغییر نیست؛ برای ورود به حساب استفاده می‌شود.</p>
+                <p id="profile-edit-message" class="muted" style="margin-top:0.5rem;" role="status" aria-live="polite"></p>
+                <div style="margin-top:1rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
+                    <button type="submit" class="ns-btn" id="profile-save-btn">ذخیره تغییرات</button>
+                    <a href="/profile/" class="ns-btn ns-btn--ghost">انصراف</a>
+                </div>
+            </form>
+        </div>
+        {% else %}
+        <div class="ns-empty">
+            <div class="ns-empty-icon" aria-hidden="true"><i data-lucide="log-in"></i></div>
+            <strong>ورود لازم است</strong>
+            <p>برای ویرایش پروفایل وارد شوید.</p>
+            <a href="/login/?next=/profile/edit/" class="ns-btn">ورود</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+{% if user.is_authenticated %}
+<script src="/static/js/profile.js"></script>
+{% endif %}
+{% endblock %}

@@ -83,14 +83,51 @@ class CacheManager:
 
     def delete_pattern(self, pattern: str) -> int:
         deleted = 0
+
+        # django-redis handles key versioning / prefixes correctly.
+        try:
+            delete_fn = getattr(cache, "delete_pattern", None)
+            if callable(delete_fn):
+                deleted = int(delete_fn(pattern) or 0)
+                if deleted:
+                    prefix = pattern.rstrip("*")
+                    registry = cache.get(self.REGISTRY_KEY, [])
+                    matched = [key for key in registry if key.startswith(prefix)]
+                    self._unregister_keys(matched)
+                    return deleted
+        except Exception:
+            logger.debug("django-redis delete_pattern failed for %s", pattern)
+
         try:
             from django_redis import get_redis_connection
 
             conn = get_redis_connection("default")
-            matched = list(conn.scan_iter(match=pattern, count=500))
-            if matched:
-                deleted = conn.delete(*matched)
-                self._unregister_keys([key.decode() if isinstance(key, bytes) else str(key) for key in matched])
+            # Match both logical keys and versioned keys (:1:shopcms:...)
+            patterns = [pattern]
+            if not pattern.startswith(":"):
+                patterns.append(f"*:{pattern}")
+            matched_raw = []
+            for pat in patterns:
+                matched_raw.extend(list(conn.scan_iter(match=pat, count=500)))
+            # Deduplicate
+            seen = set()
+            unique = []
+            for key in matched_raw:
+                marker = key if isinstance(key, bytes) else str(key).encode()
+                if marker in seen:
+                    continue
+                seen.add(marker)
+                unique.append(key)
+            if unique:
+                deleted = conn.delete(*unique)
+                logical = []
+                for key in unique:
+                    text = key.decode() if isinstance(key, bytes) else str(key)
+                    # Strip django-redis version prefix like ":1:"
+                    if text.startswith(":") and text.count(":") >= 2:
+                        text = text.split(":", 2)[-1]
+                    logical.append(text)
+                self._unregister_keys(logical)
                 return deleted
         except Exception:
             logger.debug("Pattern delete skipped for %s", pattern)
@@ -109,10 +146,29 @@ class CacheManager:
             cache_keys.store_namespace(store_id),
             f"shopcms:products:{store_id}:*",
             f"shopcms:reports:{store_id}:*",
+            f"shopcms:cms:{store_id}:*",
+            f"shopcms:blog:{store_id}:*",
         ]
         total = 0
         for pattern in patterns:
             total += self.delete_pattern(pattern)
+
+        # Bridge older namespaces (store:* / cms:*) used by tenant & CMS services.
+        try:
+            from cms.services.cache import CMSCacheService
+            from cms.services.shortcodes import invalidate_shortcode_cache
+            from tenants.models import Store
+            from tenants.services.cache import StoreCacheService
+
+            store = Store.objects.filter(pk=store_id).prefetch_related("domains").first()
+            if store:
+                CMSCacheService().invalidate_store(store)
+                StoreCacheService().invalidate_store(store)
+                invalidate_shortcode_cache(store)
+                total += 1
+        except Exception:
+            logger.debug("Legacy store/cms cache invalidate failed for store %s", store_id)
+
         return total
 
     def invalidate_products(self, store_id: int) -> int:
@@ -120,6 +176,25 @@ class CacheManager:
 
     def invalidate_reports(self, store_id: int) -> int:
         return self.delete_pattern(f"shopcms:reports:{store_id}:*")
+
+    def invalidate_cms(self, store_id: int) -> int:
+        total = self.delete_pattern(f"shopcms:cms:{store_id}:*")
+        try:
+            from cms.services.cache import CMSCacheService
+            from cms.services.shortcodes import invalidate_shortcode_cache
+            from tenants.models import Store
+
+            store = Store.objects.filter(pk=store_id).first()
+            if store:
+                CMSCacheService().invalidate_store(store)
+                invalidate_shortcode_cache(store)
+                total += 1
+        except Exception:
+            logger.debug("CMS cache invalidate failed for store %s", store_id)
+        return total
+
+    def invalidate_blog(self, store_id: int) -> int:
+        return self.delete_pattern(f"shopcms:blog:{store_id}:*")
 
     def backend_info(self) -> dict:
         backend = settings.CACHES.get("default", {}).get("BACKEND", "")

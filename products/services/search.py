@@ -1,11 +1,12 @@
 """Product search and filter service."""
 
-from django.db.models import F, Max, Min, Prefetch, Q
+from django.db.models import Exists, F, Max, Min, OuterRef, Prefetch, Q
 
 from core.cache import cache_manager
 from core.cache.keys import product_filter_options
 from products.enums import ProductSortOrder, ProductStatus, ProductType
 from products.models import Brand, Category, Product, ProductAttribute, ProductVariant
+from products.utils import parse_color_codes
 
 
 class ProductSearchService:
@@ -30,7 +31,7 @@ class ProductSearchService:
         brand_slugs: list[str] | None = None,
         min_price: float | None = None,
         max_price: float | None = None,
-        attributes: dict[str, str] | None = None,
+        attributes: dict[str, list[str]] | dict[str, str] | None = None,
         tag_slug: str | None = None,
         in_stock: bool | None = None,
         featured: bool | None = None,
@@ -73,9 +74,25 @@ class ProductSearchService:
             store=store,
             is_active=True,
             products__status=ProductStatus.ACTIVE,
+            products__in=base_qs,
         ).distinct().order_by("name")
 
-        attrs = ProductAttribute.objects.filter(store=store).prefetch_related("values").order_by("sort_order")
+        # Only attribute values actually used by active variants of in-scope products
+        used_value_ids = (
+            ProductVariant.objects.filter(
+                product__in=base_qs,
+                is_active=True,
+            )
+            .values_list("attributes__id", flat=True)
+            .distinct()
+        )
+        attrs = (
+            ProductAttribute.objects.filter(store=store, values__id__in=used_value_ids)
+            .prefetch_related("values")
+            .distinct()
+            .order_by("sort_order", "name")
+        )
+        used_ids = set(used_value_ids)
         attributes = []
         for attr in attrs:
             values = [
@@ -83,10 +100,12 @@ class ProductSearchService:
                     "id": v.id,
                     "value": v.value,
                     "slug": v.slug,
-                    "color_code": v.color_code,
+                    "color_code": (parse_color_codes(v.color_code) or [v.color_code or ""])[0],
+                    "color_codes": parse_color_codes(v.color_code),
                     "icon": v.icon,
                 }
                 for v in attr.values.all()
+                if v.id in used_ids
             ]
             if values:
                 attributes.append({
@@ -113,17 +132,23 @@ class ProductSearchService:
         }
 
     @staticmethod
-    def parse_attributes(raw: str | None) -> dict[str, str]:
+    def parse_attributes(raw: str | None) -> dict[str, list[str]]:
+        """Parse `attr:value,attr:value2` into {attr: [value, value2]} (OR within attr)."""
         if not raw:
             return {}
-        result = {}
+        result: dict[str, list[str]] = {}
         for part in raw.split(","):
             part = part.strip()
             if ":" not in part:
                 continue
             attr_slug, value_slug = part.split(":", 1)
-            if attr_slug and value_slug:
-                result[attr_slug.strip()] = value_slug.strip()
+            attr_slug = attr_slug.strip()
+            value_slug = value_slug.strip()
+            if not attr_slug or not value_slug:
+                continue
+            bucket = result.setdefault(attr_slug, [])
+            if value_slug not in bucket:
+                bucket.append(value_slug)
         return result
 
     @staticmethod
@@ -142,6 +167,22 @@ class ProductSearchService:
             Prefetch("variants", queryset=ProductVariant.objects.filter(is_active=True)),
         )
 
+    def _normalize_attributes(
+        self,
+        attributes: dict[str, list[str]] | dict[str, str] | None,
+    ) -> dict[str, list[str]]:
+        if not attributes:
+            return {}
+        normalized: dict[str, list[str]] = {}
+        for attr_slug, value in attributes.items():
+            if isinstance(value, (list, tuple, set)):
+                vals = [str(v).strip() for v in value if str(v).strip()]
+            else:
+                vals = [str(value).strip()] if str(value).strip() else []
+            if vals:
+                normalized[attr_slug] = list(dict.fromkeys(vals))
+        return normalized
+
     def _apply_filters(
         self,
         qs,
@@ -151,7 +192,7 @@ class ProductSearchService:
         brand_slugs: list[str] | None = None,
         min_price: float | None = None,
         max_price: float | None = None,
-        attributes: dict[str, str] | None = None,
+        attributes: dict[str, list[str]] | dict[str, str] | None = None,
         tag_slug: str | None = None,
         in_stock: bool | None = None,
         featured: bool | None = None,
@@ -182,14 +223,21 @@ class ProductSearchService:
             qs = qs.filter(tags__slug=tag_slug)
         if featured is not None:
             qs = qs.filter(is_featured=featured)
-        if attributes:
-            for attr_slug, value_slug in attributes.items():
-                qs = qs.filter(
-                    variants__is_active=True,
-                    variants__attributes__slug=value_slug,
-                    variants__attributes__attribute__slug=attr_slug,
+
+        attr_map = self._normalize_attributes(attributes)
+        if attr_map:
+            # One active variant must satisfy all attributes (AND across attrs, OR within attr)
+            variant_match = ProductVariant.objects.filter(
+                product_id=OuterRef("pk"),
+                is_active=True,
+            )
+            for attr_slug, value_slugs in attr_map.items():
+                variant_match = variant_match.filter(
+                    attributes__attribute__slug=attr_slug,
+                    attributes__slug__in=value_slugs,
                 )
-            qs = qs.distinct()
+            qs = qs.filter(Exists(variant_match)).distinct()
+
         if in_stock is True:
             qs = qs.filter(self._in_stock_q()).distinct()
         elif in_stock is False:

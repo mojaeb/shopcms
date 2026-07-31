@@ -11,6 +11,7 @@ from products.api.public import ProductListSchema
 from products.enums import ProductStatus, ProductType
 from products.models import Brand, Category, Product, ProductAttribute
 from products.services.product import ProductService
+from products.utils import parse_color_codes
 from tenants.context import get_current_store
 
 router = Router(auth=store_products_auth)
@@ -94,6 +95,21 @@ class CategoryCreateSchema(Schema):
     slug: str
     parent_id: int | None = None
     description: str = ""
+    image: str = ""
+    sort_order: int = 0
+    is_custom: bool = False
+    is_active: bool = True
+
+
+class CategoryUpdateSchema(Schema):
+    name: str | None = None
+    slug: str | None = None
+    parent_id: int | None = None
+    description: str | None = None
+    image: str | None = None
+    sort_order: int | None = None
+    is_custom: bool | None = None
+    is_active: bool | None = None
 
 
 class BrandCreateSchema(Schema):
@@ -135,7 +151,8 @@ def _attr_payload(attr: ProductAttribute) -> dict:
                 "id": v.id,
                 "value": v.value,
                 "slug": v.slug,
-                "color_code": v.color_code,
+                "color_code": (parse_color_codes(v.color_code) or [v.color_code or ""])[0],
+                "color_codes": parse_color_codes(v.color_code),
                 "icon": v.icon,
             }
             for v in attr.values.all()
@@ -146,8 +163,21 @@ def _attr_payload(attr: ProductAttribute) -> dict:
 @router.get("/categories/list")
 def list_categories(request):
     store = _store(request)
-    cats = Category.objects.filter(store=store).order_by("sort_order")
-    return [{"id": c.id, "name": c.name, "slug": c.slug, "parent_id": c.parent_id} for c in cats]
+    cats = Category.objects.filter(store=store).order_by("sort_order", "name")
+    return [
+        {
+            "id": c.id,
+            "name": c.name,
+            "slug": c.slug,
+            "parent_id": c.parent_id,
+            "description": c.description,
+            "image": c.image,
+            "sort_order": c.sort_order,
+            "is_active": c.is_active,
+            "is_custom": c.is_custom,
+        }
+        for c in cats
+    ]
 
 
 @router.post("/categories")
@@ -162,8 +192,44 @@ def create_category(request, payload: CategoryCreateSchema):
         name=payload.name,
         slug=payload.slug,
         description=payload.description,
+        image=payload.image,
+        sort_order=payload.sort_order,
+        is_custom=payload.is_custom,
+        is_active=payload.is_active,
     )
-    return {"id": cat.id, "slug": cat.slug}
+    return {
+        "id": cat.id,
+        "slug": cat.slug,
+        "name": cat.name,
+        "is_custom": cat.is_custom,
+    }
+
+
+@router.patch("/categories/{category_id}")
+def update_category(request, category_id: int, payload: CategoryUpdateSchema):
+    store = _store(request)
+    try:
+        cat = Category.objects.get(pk=category_id, store=store)
+    except Category.DoesNotExist:
+        raise HttpError(404, "دسته‌بندی یافت نشد")
+
+    data = payload.dict(exclude_unset=True)
+    if "parent_id" in data:
+        parent_id = data.pop("parent_id")
+        if parent_id:
+            cat.parent = Category.objects.get(pk=parent_id, store=store)
+        else:
+            cat.parent = None
+    for key, value in data.items():
+        setattr(cat, key, value)
+    cat.save()
+    return {
+        "id": cat.id,
+        "slug": cat.slug,
+        "name": cat.name,
+        "is_custom": cat.is_custom,
+        "is_active": cat.is_active,
+    }
 
 
 @router.get("/brands/list")

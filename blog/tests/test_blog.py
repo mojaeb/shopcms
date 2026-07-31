@@ -103,6 +103,49 @@ def test_public_posts_api(client, store, published_post):
 
 
 @pytest.mark.django_db
+def test_blog_list_and_detail_cache(client, store, published_post):
+    from django.core.cache import cache
+
+    from core.cache.keys import blog_detail
+
+    first = client.get("/api/v1/blog/posts/hello", HTTP_HOST="blog.local")
+    assert first.status_code == 200
+
+    key = blog_detail(store.id, "hello")
+    cache.set(key, {**first.json(), "title": "Cached Hello"}, 60)
+    second = client.get("/api/v1/blog/posts/hello", HTTP_HOST="blog.local")
+    assert second.json()["title"] == "Cached Hello"
+
+    published_post.title = "Hello Updated"
+    published_post.save()
+    third = client.get("/api/v1/blog/posts/hello", HTTP_HOST="blog.local")
+    assert third.json()["title"] == "Hello Updated"
+
+
+@pytest.mark.django_db
+def test_blog_list_paginates(client, store, user, category):
+    for i in range(15):
+        BlogPost.objects.create(
+            store=store,
+            title=f"Post {i}",
+            slug=f"post-{i}",
+            content="Body",
+            author=user,
+            category=category,
+            is_published=True,
+            published_at=timezone.now(),
+        )
+
+    page1 = client.get("/api/v1/blog/posts?page=1&page_size=12", HTTP_HOST="blog.local")
+    assert page1.status_code == 200
+    assert page1.json()["count"] == 15
+    assert len(page1.json()["items"]) == 12
+
+    page2 = client.get("/api/v1/blog/posts?page=2&page_size=12", HTTP_HOST="blog.local")
+    assert len(page2.json()["items"]) == 3
+
+
+@pytest.mark.django_db
 def test_post_detail_api(client, store, published_post):
     response = client.get("/api/v1/blog/posts/hello", HTTP_HOST="blog.local")
     assert response.status_code == 200

@@ -16,6 +16,8 @@ from products.models import (
     Tag,
 )
 from products.services.search import ProductSearchService
+from cms.services.shortcodes import expand_shortcodes
+from products.utils import normalize_color_code, parse_color_codes
 
 PRODUCT_SCALAR_FIELDS = {
     "name",
@@ -69,6 +71,7 @@ class ProductService:
             "videos",
             "tags",
             "variants__attributes",
+            "variants__attributes__attribute",
             "variants__inventory",
             "inventory_items",
         )
@@ -93,6 +96,14 @@ class ProductService:
 
     def serialize_product_list(self, product: Product) -> dict:
         inv = self._get_product_inventory(product)
+        compare = product.compare_price
+        base = product.base_price
+        discount_percent = None
+        if compare is not None and base is not None and compare > base:
+            # Percent off the compare (list) price; only surface meaningful discounts.
+            pct = int(((compare - base) / compare) * 100)
+            if pct >= 5:
+                discount_percent = pct
         return {
             "id": product.id,
             "name": product.name,
@@ -100,8 +111,10 @@ class ProductService:
             "short_description": product.short_description,
             "base_price": str(product.base_price),
             "compare_price": str(product.compare_price) if product.compare_price else None,
+            "discount_percent": discount_percent,
             "image": product.primary_image,
             "category": product.category.name if product.category else None,
+            "category_slug": product.category.slug if product.category else None,
             "category_id": product.category_id,
             "brand": product.brand.name if product.brand else None,
             "brand_id": product.brand_id,
@@ -115,9 +128,12 @@ class ProductService:
     def serialize_product_detail(self, product: Product, *, for_admin: bool = False) -> dict:
         inv = self._get_product_inventory(product)
         variants_qs = product.variants.all() if for_admin else product.variants.filter(is_active=True)
+        description = product.description or ""
+        if not for_admin:
+            description = expand_shortcodes(description, product.store)
         detail = {
             **self.serialize_product_list(product),
-            "description": product.description,
+            "description": description,
             "sku": product.sku,
             "images": [
                 {
@@ -159,18 +175,7 @@ class ProductService:
             "price": str(variant.price),
             "compare_price": str(variant.compare_price) if variant.compare_price else None,
             "attributes": [
-                {
-                    "id": av.id,
-                    "attribute_id": av.attribute_id,
-                    "name": av.attribute.name,
-                    "slug": av.attribute.slug,
-                    "display_type": av.attribute.display_type,
-                    "button_style": av.attribute.button_style or None,
-                    "value": av.value,
-                    "value_slug": av.slug,
-                    "color_code": av.color_code,
-                    "icon": av.icon,
-                }
+                self._serialize_variant_attribute(av)
                 for av in variant.attributes.select_related("attribute").all()
             ],
             "in_stock": inv.is_in_stock if inv else True,
@@ -182,12 +187,30 @@ class ProductService:
             data["stock"] = inv.quantity if inv else 0
         return data
 
+    def _serialize_variant_attribute(self, av: ProductAttributeValue) -> dict:
+        codes = parse_color_codes(av.color_code)
+        return {
+            "id": av.id,
+            "attribute_id": av.attribute_id,
+            "name": av.attribute.name,
+            "slug": av.attribute.slug,
+            "display_type": av.attribute.display_type,
+            "button_style": av.attribute.button_style or None,
+            "value": av.value,
+            "value_slug": av.slug,
+            "color_code": codes[0] if codes else (av.color_code or ""),
+            "color_codes": codes,
+            "icon": av.icon,
+        }
+
     def _serialize_attribute_value(self, av: ProductAttributeValue) -> dict:
+        codes = parse_color_codes(av.color_code)
         return {
             "id": av.id,
             "value": av.value,
             "slug": av.slug,
-            "color_code": av.color_code,
+            "color_code": codes[0] if codes else (av.color_code or ""),
+            "color_codes": codes,
             "icon": av.icon,
         }
 
@@ -451,7 +474,7 @@ class ProductService:
                 attribute=attr,
                 value=value,
                 slug=raw.get("slug") or slugify(value, allow_unicode=True) or f"v-{idx}",
-                color_code=raw.get("color_code") or "",
+                color_code=normalize_color_code(raw.get("color_code") or ""),
                 icon=raw.get("icon") or "",
                 sort_order=int(raw.get("sort_order") or idx),
             )
@@ -471,7 +494,7 @@ class ProductService:
                 slug=slug,
                 defaults={
                     "value": value,
-                    "color_code": raw.get("color_code") or "",
+                    "color_code": normalize_color_code(raw.get("color_code") or ""),
                     "icon": raw.get("icon") or "",
                     "sort_order": int(raw.get("sort_order") or idx),
                 },

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}جستجو{% if query %}: {{ query }}{% endif %} - {{ store.name }}{% endblock %}
+{% block content %}
+<div class="ns-page">
+    <div class="ns-page-head ns-width">
+        <h1 class="ns-page-title">جستجو</h1>
+        {% if query %}
+        <p class="ns-page-sub">نتایج برای «{{ query }}»</p>
+        {% else %}
+        <p class="ns-page-sub">نام محصول، برند یا دسته را جستجو کنید.</p>
+        {% endif %}
+    </div>
+    <div id="product-catalog"
+         data-api-base="/api/v1/products/"
+         data-currency="{{ store.currency }}"
+         data-category="{{ category_slug|default:'' }}">
+        {% include "partials/product_catalog.html" %}
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="/static/js/product-filters.js"></script>
+{% endblock %}

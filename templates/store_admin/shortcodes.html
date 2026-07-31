@@ -1,0 +1,62 @@
+{% extends "store_admin/base.html" %}
+{% block content %}
+<div id="sa-shortcodes" class="sa-page">
+    <div class="sa-toolbar">
+        <p class="sa-muted sa-toolbar-hint">شورت‌کدهای سیستمی همیشه در دسترس‌اند. می‌توانید شورت‌کد سفارشی بسازید یا جایگزین سیستمی کنید.</p>
+        <button type="button" class="sa-btn" id="sc-new">شورت‌کد جدید</button>
+    </div>
+
+    <div class="sa-table-wrap sa-loading-host" id="sc-table-host">
+        <table class="sa-table">
+            <thead>
+                <tr>
+                    <th>نام</th>
+                    <th>برچسب</th>
+                    <th>نوع</th>
+                    <th>مثال</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="sc-tbody"></tbody>
+        </table>
+    </div>
+
+    <dialog id="sc-dialog" class="sa-dialog">
+        <form method="dialog" id="sc-form" class="sa-form">
+            <h2 id="sc-dialog-title">شورت‌کد جدید</h2>
+            <input type="hidden" id="sc-id">
+            <label>نام (انگلیسی)
+                <input type="text" id="sc-name" class="sa-input" dir="ltr" required placeholder="my-box">
+            </label>
+            <label>برچسب
+                <input type="text" id="sc-label" class="sa-input" required>
+            </label>
+            <label>توضیحات
+                <input type="text" id="sc-description" class="sa-input">
+            </label>
+            <label class="sa-check-inline">
+                <input type="checkbox" id="sc-self-closing">
+                بدون تگ پایانی (مثل image)
+            </label>
+            <label>قالب HTML
+                <textarea id="sc-template" class="sa-input" rows="5" dir="ltr" required placeholder='&lt;div class="x"&gt;{{content}}&lt;/div&gt;'></textarea>
+            </label>
+            <p class="sa-muted sa-text-sm">از <code>{{content}}</code> و ویژگی‌ها مثل <code>{{src}}</code> استفاده کنید.</p>
+            <label>مثال درج در ادیتور
+                <textarea id="sc-example" class="sa-input" rows="3" dir="ltr" placeholder='[my-box]متن[/my-box]'></textarea>
+            </label>
+            <label class="sa-check-inline">
+                <input type="checkbox" id="sc-active" checked>
+                فعال
+            </label>
+            <div class="sa-form-actions">
+                <button type="submit" class="sa-btn" value="save">ذخیره</button>
+                <button type="button" class="sa-btn sa-btn-ghost" id="sc-cancel">انصراف</button>
+            </div>
+        </form>
+    </dialog>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="/static/js/store_admin/shortcodes.js"></script>
+{% endblock %}

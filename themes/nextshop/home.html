@@ -1,0 +1,241 @@
+{% extends "base.html" %}
+
+{% block title %}{{ store.name }} - خانه{% endblock %}
+
+{% block content %}
+<div class="ns-home">
+    <div class="ns-hero-band">
+        <div class="ns-width">
+            <div class="ns-hero-grid">
+                {% include "partials/slider.html" %}
+
+                <div class="ns-banners">
+                    {% if cms_banners.home_top %}
+                        {% for banner in cms_banners.home_top|slice:":2" %}
+                        <a href="{{ banner.link|default:'/products/' }}"
+                           class="ns-banner {% if forloop.first %}ns-banner--primary{% else %}ns-banner--accent{% endif %}"
+                           {% if banner.image %}style="background-image:linear-gradient(120deg,rgba(15,23,42,.55),rgba(15,23,42,.2)),url('{{ banner.image }}'); background-size:cover;"{% endif %}>
+                            <div class="ns-banner-inner">
+                                <strong>{{ banner.title }}</strong>
+                                {% if banner.subtitle %}<p>{{ banner.subtitle }}</p>{% endif %}
+                                <div class="ns-banner-cta">
+                                    <span class="ns-btn ns-btn--white">مشاهده <i data-lucide="arrow-left"></i></span>
+                                </div>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    {% else %}
+                        <a href="/products/mobile/" class="ns-banner ns-banner--primary">
+                            <div class="ns-banner-inner">
+                                <strong>موبایل و تبلت</strong>
+                                <p>جدیدترین گوشی‌ها و تبلت‌های روز</p>
+                                <div class="ns-banner-cta">
+                                    <span class="ns-btn ns-btn--white">مشاهده <i data-lucide="arrow-left"></i></span>
+                                </div>
+                            </div>
+                        </a>
+                        <a href="/products/powerbank/" class="ns-banner ns-banner--accent">
+                            <div class="ns-banner-inner">
+                                <strong>لوازم جانبی</strong>
+                                <p>پاوربانک، شارژر، هندزفری و قاب</p>
+                                <div class="ns-banner-cta">
+                                    <span class="ns-btn ns-btn--white">مشاهده <i data-lucide="arrow-left"></i></span>
+                                </div>
+                            </div>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if home_categories %}
+            <div class="ns-cat-strip" aria-label="دسته‌بندی‌ها">
+                {% for cat in home_categories %}
+                <a href="/products/{{ cat.slug }}/" class="ns-cat-chip">
+                    {% if cat.image %}
+                    <img src="{{ cat.image }}" alt="{{ cat.name }}" loading="lazy">
+                    {% else %}
+                    <span class="ns-cat-chip-fallback" aria-hidden="true">{{ cat.name|truncatechars:1 }}</span>
+                    {% endif %}
+                    <span>{{ cat.name }}</span>
+                </a>
+                {% endfor %}
+                <a href="/products/" class="ns-cat-chip ns-cat-chip--all">
+                    <span class="ns-cat-chip-fallback" aria-hidden="true"><i data-lucide="layout-grid"></i></span>
+                    <span>همه محصولات</span>
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if home_deals %}
+    <section class="ns-discount-strip" aria-label="پیشنهادهای ویژه">
+        <div class="ns-width ns-discount-inner">
+            <div class="ns-discount-copy">
+                <div>
+                    <span class="ns-discount-kicker">پیشنهاد روز</span>
+                    <h2>{% if home_deals.0.discount_percent %}تخفیف‌های واقعی{% else %}منتخب فروشگاه{% endif %}</h2>
+                    <p>کالاهای منتخب لونا سنتر با قیمت رقابتی</p>
+                </div>
+                <a href="/products/" class="ns-btn ns-btn--white">
+                    مشاهده همه
+                    <i data-lucide="arrow-left"></i>
+                </a>
+            </div>
+            <div class="ns-carousel ns-carousel--on-blue">
+                <div class="ns-carousel-nav">
+                    <button type="button" class="ns-carousel-btn ns-carousel-prev" aria-label="قبلی"><i data-lucide="chevron-right"></i></button>
+                    <button type="button" class="ns-carousel-btn ns-carousel-next" aria-label="بعدی"><i data-lucide="chevron-left"></i></button>
+                </div>
+                <div class="swiper" data-ns-carousel>
+                    <div class="swiper-wrapper">
+                        {% for p in home_deals %}
+                        <div class="swiper-slide">
+                            {% include "partials/product_card.html" with product=p %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    {% if home_sections %}
+    <div class="ns-width">
+        {% for section in home_sections %}
+        <section class="ns-section">
+            <div class="ns-section-head">
+                <div>
+                    <h2>{{ section.name }}</h2>
+                    <p class="ns-section-sub">منتخب این دسته‌بندی</p>
+                </div>
+                <a class="ns-section-link" href="/products/{{ section.slug }}/">
+                    مشاهده همه
+                    <i data-lucide="arrow-left"></i>
+                </a>
+            </div>
+            <div class="ns-carousel">
+                <div class="swiper" data-ns-carousel>
+                    <div class="swiper-wrapper">
+                        {% for p in section.products %}
+                        <div class="swiper-slide">
+                            {% include "partials/product_card.html" with product=p %}
+                        </div>
+                        {% empty %}
+                        <div class="swiper-slide ns-carousel-empty">محصولی در این دسته نیست.</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </section>
+        {% endfor %}
+    </div>
+    {% elif home_products %}
+    <section class="ns-section">
+        <div class="ns-width">
+            <div class="ns-section-head">
+                <div>
+                    <h2>تازه‌ها</h2>
+                    <p class="ns-section-sub">آخرین محصولات اضافه‌شده</p>
+                </div>
+                <a class="ns-section-link" href="/products/">مشاهده همه <i data-lucide="arrow-left"></i></a>
+            </div>
+            <div class="ns-products-grid">
+                {% for p in home_products %}
+                {% include "partials/product_card.html" with product=p %}
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    {% if cms_banners.home_middle %}
+    <section class="ns-mid-banners">
+        <div class="ns-width ns-mid-banners-grid">
+            {% for banner in cms_banners.home_middle %}
+            <a href="{{ banner.link|default:'#' }}" class="ns-banner ns-banner--primary ns-banner--mid"
+               style="{% if banner.image %}background-image:linear-gradient(120deg,rgba(15,118,110,.8),rgba(15,23,42,.35)),url('{{ banner.image }}');background-size:cover;{% endif %}">
+                <div class="ns-banner-inner">
+                    <strong>{{ banner.title }}</strong>
+                    {% if banner.subtitle %}<p>{{ banner.subtitle }}</p>{% endif %}
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    {% if home_blog_posts %}
+    <section class="ns-section ns-home-blog" aria-label="آخرین مطالب وبلاگ">
+        <div class="ns-width">
+            <div class="ns-section-head">
+                <div>
+                    <h2>آخرین مطالب</h2>
+                    <p class="ns-section-sub">راهنماها و اخبار فروشگاه</p>
+                </div>
+                <a class="ns-section-link" href="/blog/">
+                    مشاهده همه
+                    <i data-lucide="arrow-left"></i>
+                </a>
+            </div>
+            <div class="ns-blog-grid">
+                {% for post in home_blog_posts %}
+                <a href="/blog/{{ post.slug }}/" class="ns-blog-card">
+                    {% if post.featured_image %}
+                    <span class="ns-blog-card-media">
+                        <img src="{{ post.featured_image }}" alt="" loading="lazy">
+                    </span>
+                    {% else %}
+                    <span class="ns-blog-card-media ns-blog-card-media--empty" aria-hidden="true"></span>
+                    {% endif %}
+                    <span class="ns-blog-card-body">
+                        <span class="ns-blog-card-meta">
+                            {% if post.category %}<span>{{ post.category }}</span>{% endif %}
+                            {% if post.published_label %}<time datetime="{{ post.published_at }}">{{ post.published_label }}</time>{% endif %}
+                        </span>
+                        <h3 class="ns-blog-card-title">{{ post.title }}</h3>
+                        {% if post.excerpt %}<p class="ns-blog-card-excerpt">{{ post.excerpt }}</p>{% endif %}
+                        <span class="ns-blog-card-more">ادامه مطلب <i data-lucide="arrow-left"></i></span>
+                    </span>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    <section class="ns-trust" aria-label="چرا از ما بخرید">
+        <div class="ns-width ns-trust-grid">
+            <div class="ns-trust-item">
+                <span class="ns-trust-icon" aria-hidden="true"><i data-lucide="truck"></i></span>
+                <div>
+                    <strong>ارسال سراسری</strong>
+                    <p>پست و تیپاکس به سراسر کشور</p>
+                </div>
+            </div>
+            <div class="ns-trust-item">
+                <span class="ns-trust-icon" aria-hidden="true"><i data-lucide="shield-check"></i></span>
+                <div>
+                    <strong>پرداخت امن</strong>
+                    <p>درگاه معتبر و اتصال رمزنگاری‌شده</p>
+                </div>
+            </div>
+            <div class="ns-trust-item">
+                <span class="ns-trust-icon" aria-hidden="true"><i data-lucide="badge-check"></i></span>
+                <div>
+                    <strong>اصالت کالا</strong>
+                    <p>موبایل و لوازم جانبی با گارانتی معتبر</p>
+                </div>
+            </div>
+            <div class="ns-trust-item">
+                <span class="ns-trust-icon" aria-hidden="true"><i data-lucide="headphones"></i></span>
+                <div>
+                    <strong>پشتیبانی خرید</strong>
+                    <p>راهنمایی قبل و بعد از سفارش</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

@@ -1,14 +1,14 @@
-"""Seed sample shipping methods."""
+"""Seed fixed-price Post and Tipax shipping methods."""
 
 from django.core.management.base import BaseCommand
 
 from shipping.enums import CalculationMode, ShippingProviderType
-from shipping.models import ShippingMethod, ShippingPrice, ShippingZone
+from shipping.models import ShippingMethod, ShippingZone
 from tenants.models import Store, StoreSetting
 
 
 class Command(BaseCommand):
-    help = "Seed sample shipping methods for development"
+    help = "Seed fixed-price Post and Tipax shipping methods for development"
 
     def handle(self, *args, **options):
         store = Store.objects.filter(slug="shop1").first()
@@ -20,20 +20,56 @@ class Command(BaseCommand):
             store=store,
             group="shipping",
             key="origin",
-            defaults={"value": {"origin_city": "مشهد", "origin_province": "خراسان رضوی", "free_shipping_threshold": 5000000}},
+            defaults={
+                "value": {
+                    "origin_city": "مشهد",
+                    "origin_province": "خراسان رضوی",
+                    "free_shipping_threshold": 0,
+                },
+            },
+        )
+        StoreSetting.objects.update_or_create(
+            store=store,
+            group="shipping",
+            key="providers",
+            defaults={"value": ["post", "tipax"]},
+        )
+        StoreSetting.objects.update_or_create(
+            store=store,
+            group="shipping",
+            key="default_provider",
+            defaults={"value": "post"},
+        )
+        StoreSetting.objects.update_or_create(
+            store=store,
+            group="shipping",
+            key="post",
+            defaults={"value": {"mode": "fixed", "fixed_price": 80000}},
+        )
+        StoreSetting.objects.update_or_create(
+            store=store,
+            group="shipping",
+            key="tipax",
+            defaults={"value": {"mode": "fixed", "fixed_price": 120000}},
+        )
+        StoreSetting.objects.update_or_create(
+            store=store,
+            group="shipping",
+            key="free_shipping_threshold",
+            defaults={"value": 0},
         )
 
-        zone, _ = ShippingZone.objects.get_or_create(
+        zone, _ = ShippingZone.objects.update_or_create(
             store=store,
             name="سراسر کشور",
             defaults={"provinces": [], "cities": [], "is_active": True},
         )
 
-        post, _ = ShippingMethod.objects.get_or_create(
+        ShippingMethod.objects.update_or_create(
             store=store,
             slug="post-fixed",
             defaults={
-                "name": "پست - هزینه ثابت",
+                "name": "پست",
                 "provider": ShippingProviderType.POST,
                 "calculation_mode": CalculationMode.FIXED,
                 "config": {"fixed_price": 80000, "origin_city": "مشهد"},
@@ -41,82 +77,32 @@ class Command(BaseCommand):
                 "is_active": True,
                 "sort_order": 1,
                 "estimated_days": 5,
+                "min_order_amount": 0,
             },
         )
 
-        tipax, _ = ShippingMethod.objects.get_or_create(
+        ShippingMethod.objects.update_or_create(
             store=store,
-            slug="tipax-distance",
+            slug="tipax-fixed",
             defaults={
-                "name": "تیپاکس - بر اساس مسافت",
+                "name": "تیپاکس",
                 "provider": ShippingProviderType.TIPAX,
-                "calculation_mode": CalculationMode.DISTANCE,
-                "config": {"origin_city": "مشهد", "fixed_price": 120000},
+                "calculation_mode": CalculationMode.FIXED,
+                "config": {"fixed_price": 120000, "origin_city": "مشهد"},
                 "zone": zone,
                 "is_active": True,
                 "sort_order": 2,
                 "estimated_days": 3,
+                "min_order_amount": 0,
             },
         )
 
-        ShippingPrice.objects.get_or_create(
-            method=tipax,
-            from_city="مشهد",
-            to_city="تهران",
-            defaults={"price": 180000},
-        )
-        ShippingPrice.objects.get_or_create(
-            method=tipax,
-            from_city="مشهد",
-            to_city="اصفهان",
-            defaults={"price": 150000},
-        )
-
-        weight_method, _ = ShippingMethod.objects.get_or_create(
+        # Keep checkout clean: disable older sample methods if present.
+        ShippingMethod.objects.filter(
             store=store,
-            slug="post-weight",
-            defaults={
-                "name": "پست - بر اساس وزن",
-                "provider": ShippingProviderType.POST,
-                "calculation_mode": CalculationMode.WEIGHT,
-                "config": {"origin_city": "مشهد", "fixed_price": 100000},
-                "zone": zone,
-                "is_active": True,
-                "sort_order": 3,
-                "estimated_days": 4,
-            },
-        )
-        ShippingPrice.objects.get_or_create(
-            method=weight_method,
-            from_city="",
-            to_city="",
-            weight_min_kg=0,
-            weight_max_kg=2,
-            defaults={"price": 90000},
-        )
-        ShippingPrice.objects.get_or_create(
-            method=weight_method,
-            from_city="",
-            to_city="",
-            weight_min_kg=2,
-            weight_max_kg=5,
-            defaults={"price": 150000},
-        )
+            slug__in=["tipax-distance", "post-weight", "free-shipping"],
+        ).update(is_active=False)
 
-        ShippingMethod.objects.get_or_create(
-            store=store,
-            slug="free-shipping",
-            defaults={
-                "name": "ارسال رایگان",
-                "provider": ShippingProviderType.FREE,
-                "calculation_mode": CalculationMode.FIXED,
-                "config": {"fallback_price": 0},
-                "free_shipping_threshold": 5000000,
-                "zone": zone,
-                "is_active": True,
-                "sort_order": 0,
-                "estimated_days": 5,
-            },
-        )
-
-        self.stdout.write(self.style.SUCCESS("Shipping methods seeded successfully."))
+        self.stdout.write(self.style.SUCCESS(
+            "Shipping seeded: post-fixed (80000) and tipax-fixed (120000)."
+        ))

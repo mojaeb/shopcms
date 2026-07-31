@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}{{ store.name }} - آدرس‌ها{% endblock %}
+{% block content %}
+<div class="ns-account ns-width">
+    {% include "partials/account_nav.html" with active="addresses" %}
+    <div class="ns-account-main" id="addresses-page">
+        <div class="ns-account-toolbar">
+            <h1 class="page-title">آدرس‌های من</h1>
+            <button type="button" class="ns-btn" id="add-address-btn">
+                <i data-lucide="plus" aria-hidden="true"></i>
+                افزودن آدرس
+            </button>
+        </div>
+
+        <div id="address-list">
+            <div class="ns-loading-panel" aria-busy="true" aria-label="در حال بارگذاری آدرس‌ها">
+                <div class="ns-skeleton-stack">
+                    <div class="ns-skeleton ns-skeleton-card"></div>
+                    <div class="ns-skeleton ns-skeleton-line ns-skeleton-line--md"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="address-form-panel" class="ns-panel" style="display:none; margin-top:1rem;">
+            <h2 id="form-title">افزودن آدرس</h2>
+            <form id="address-form">
+                <div class="form-grid">
+                    <label>نام و نام خانوادگی<input class="ns-input" type="text" name="full_name" required autocomplete="name"></label>
+                    <label>موبایل<input class="ns-input" type="tel" name="phone" required placeholder="09123456789" autocomplete="tel"></label>
+                    <label>استان<input class="ns-input" type="text" name="province" required></label>
+                    <label>شهر<input class="ns-input" type="text" name="city" required></label>
+                    <label>کد پستی<input class="ns-input" type="text" name="postal_code" required maxlength="10" inputmode="numeric"></label>
+                    <label>پلاک<input class="ns-input" type="text" name="building_no"></label>
+                    <label>واحد<input class="ns-input" type="text" name="unit"></label>
+                    <label>برچسب (اختیاری)<input class="ns-input" type="text" name="label" placeholder="خانه، محل کار"></label>
+                </div>
+                <label style="display:block; margin-top:0.85rem;">آدرس کامل<textarea class="ns-input" name="address_line" rows="3" required></textarea></label>
+                <label class="ns-filter-check" style="margin-top:0.85rem;">
+                    <input type="checkbox" name="is_default"> آدرس پیش‌فرض
+                </label>
+                <p id="form-message" class="muted" style="margin-top:0.5rem;" role="status" aria-live="polite"></p>
+                <div style="margin-top:1rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
+                    <button type="submit" class="ns-btn">ذخیره</button>
+                    <button type="button" class="ns-btn ns-btn--ghost" id="cancel-address-btn">انصراف</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="/static/js/addresses.js"></script>
+{% endblock %}

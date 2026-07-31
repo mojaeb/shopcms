@@ -163,10 +163,11 @@
                                     class="vg-variant-swatch"
                                     :class="{
                                         'is-active': isSelected(attr.id, val.id),
+                                        'is-multi': colorCodes(val).length > 1,
                                         'is-disabled': !isValueInStock(attr.id, val.id),
                                         'is-out': isValueCompatible(attr.id, val.id) && !isValueInStock(attr.id, val.id)
                                     }"
-                                    :style="{ '--swatch': val.color_code || '#ccc' }"
+                                    :style="swatchStyle(val)"
                                     :title="val.value"
                                     :aria-label="val.value"
                                     :disabled="!isValueCompatible(attr.id, val.id)"
@@ -257,8 +258,15 @@
                 {% else %}
                 <span class="vg-pill">ناموجود</span>
                 {% endif %}
-                <button type="button" class="vg-btn vg-btn--ghost" data-toggle-wishlist data-product="{{ product.slug }}">
-                    <i data-lucide="heart"></i> علاقه‌مندی
+                <button
+                    type="button"
+                    class="vg-btn vg-btn--ghost"
+                    data-toggle-wishlist
+                    data-product="{{ product.slug }}"
+                    aria-pressed="false"
+                >
+                    <i data-lucide="heart"></i>
+                    <span data-wishlist-label data-idle-label="علاقه‌مندی">علاقه‌مندی</span>
                 </button>
             </div>
 
@@ -268,7 +276,7 @@
                     <button type="button" class="vg-tab" :class="{ 'is-active': active === 'reviews' }" @click="set('reviews')">نظرات</button>
                 </div>
                 <div class="vg-tab-panel" x-show="active === 'info'">
-                    <div class="vg-prose">{{ product.description|linebreaksbr }}</div>
+                    <div class="vg-prose rich-content">{{ product.description|safe }}</div>
                 </div>
                 <div class="vg-tab-panel" x-show="active === 'reviews'" x-cloak id="product-comments" data-product="{{ product.slug }}">
                     <p id="comments-summary" class="muted"></p>

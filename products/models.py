@@ -40,6 +40,11 @@ class Category(TimeStampedModel):
     image = models.URLField(blank=True, verbose_name="تصویر")
     sort_order = models.IntegerField(default=0, verbose_name="ترتیب")
     is_active = models.BooleanField(default=True, verbose_name="فعال")
+    is_custom = models.BooleanField(
+        default=False,
+        verbose_name="دسته سفارشی",
+        help_text="در نوار/خانه تم Pulse به‌صورت دستهٔ سفارشی برجسته می‌شود.",
+    )
 
     class Meta:
         verbose_name = "دسته‌بندی"
@@ -107,7 +112,12 @@ class ProductAttributeValue(TimeStampedModel):
     )
     value = models.CharField(max_length=100, verbose_name="مقدار")
     slug = models.SlugField(max_length=100, verbose_name="شناسه")
-    color_code = models.CharField(max_length=20, blank=True, verbose_name="کد رنگ")
+    color_code = models.CharField(
+        max_length=120,
+        blank=True,
+        verbose_name="کد رنگ",
+        help_text="یک یا چند رنگ با ویرگول؛ مثال: #111111,#c0c0c0",
+    )
     icon = models.URLField(blank=True, verbose_name="آیکون")
     sort_order = models.IntegerField(default=0, verbose_name="ترتیب")
 
@@ -119,6 +129,12 @@ class ProductAttributeValue(TimeStampedModel):
 
     def __str__(self):
         return f"{self.attribute.name}: {self.value}"
+
+    @property
+    def color_codes(self) -> list[str]:
+        from products.utils import parse_color_codes
+
+        return parse_color_codes(self.color_code)
 
 
 class Product(TimeStampedModel, SeoFieldsMixin):

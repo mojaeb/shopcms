@@ -4,6 +4,7 @@ from ninja import Router, Schema
 from ninja.errors import HttpError
 from ninja.pagination import PageNumberPagination, paginate
 
+from blog.models import BlogPost
 from blog.services.blog import BlogError, BlogService
 from dashboard.authentication_store import store_content_auth
 from tenants.context import get_current_store
@@ -93,6 +94,18 @@ def list_posts(request):
     ]
 
 
+@router.get("/posts/{post_id}")
+def get_post(request, post_id: int):
+    store = _store(request)
+    try:
+        post = BlogPost.objects.select_related("category", "author").prefetch_related("tags").get(
+            pk=post_id, store=store
+        )
+    except BlogPost.DoesNotExist:
+        raise HttpError(404, "مقاله یافت نشد")
+    return service.serialize_post_detail(post, render_content=False)
+
+
 @router.post("/posts")
 def create_post(request, payload: PostCreateSchema):
     store = _store(request)
@@ -101,7 +114,7 @@ def create_post(request, payload: PostCreateSchema):
     tag_ids = data.pop("tag_ids", [])
     try:
         post = service.create_post(store, user, {**data, "tag_ids": tag_ids})
-        return service.serialize_post_detail(post)
+        return service.serialize_post_detail(post, render_content=False)
     except BlogError as e:
         raise HttpError(400, str(e))
 
@@ -112,7 +125,7 @@ def update_post(request, post_id: int, payload: PostUpdateSchema):
     data = {k: v for k, v in payload.dict().items() if v is not None}
     try:
         post = service.update_post(store, post_id, data)
-        return service.serialize_post_detail(post)
+        return service.serialize_post_detail(post, render_content=False)
     except BlogError as e:
         raise HttpError(400, str(e))
 
@@ -160,10 +173,33 @@ def pending_comments(request):
     return [
         {
             "id": c.id,
+            "source": "blog",
             "post_title": c.post.title,
             "post_slug": c.post.slug,
+            "parent_id": c.parent_id,
             "user": c.user.full_name or c.user.phone,
             "body": c.body,
+            "status": c.status,
+            "created_at": c.created_at.isoformat(),
+        }
+        for c in comments
+    ]
+
+
+@router.get("/comments")
+def list_comments(request, status: str | None = None):
+    store = _store(request)
+    comments = service.list_store_comments(store, status=status)
+    return [
+        {
+            "id": c.id,
+            "source": "blog",
+            "post_title": c.post.title,
+            "post_slug": c.post.slug,
+            "parent_id": c.parent_id,
+            "user": c.user.full_name or c.user.phone,
+            "body": c.body,
+            "status": c.status,
             "created_at": c.created_at.isoformat(),
         }
         for c in comments

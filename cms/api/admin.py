@@ -4,8 +4,9 @@ from ninja import Router, Schema
 from ninja.errors import HttpError
 
 from cms.enums import BannerPosition, MenuLocation
-from cms.models import Banner, ContentBlock, LayoutSettings, Menu, MenuItem, Page, Slide, Slider, Widget
+from cms.models import Banner, LayoutSettings, Menu, MenuItem, Page, Shortcode, Slide, Slider
 from cms.services.cms import CMSService
+from cms.services.shortcodes import invalidate_shortcode_cache, list_shortcodes_for_admin
 from dashboard.authentication_store import store_admin_auth
 from tenants.context import get_current_store
 
@@ -27,6 +28,15 @@ class PageCreateSchema(Schema):
     is_published: bool = True
     meta_title: str = ""
     meta_description: str = ""
+
+
+class PageUpdateSchema(Schema):
+    title: str | None = None
+    slug: str | None = None
+    content: str | None = None
+    is_published: bool | None = None
+    meta_title: str | None = None
+    meta_description: str | None = None
 
 
 class MenuItemCreateSchema(Schema):
@@ -69,11 +79,47 @@ class LayoutUpdateSchema(Schema):
     use_custom_footer: bool = False
 
 
+class ShortcodeCreateSchema(Schema):
+    name: str
+    label: str
+    description: str = ""
+    html_template: str
+    is_self_closing: bool = False
+    example: str = ""
+    is_active: bool = True
+
+
+class ShortcodeUpdateSchema(Schema):
+    name: str | None = None
+    label: str | None = None
+    description: str | None = None
+    html_template: str | None = None
+    is_self_closing: bool | None = None
+    example: str | None = None
+    is_active: bool | None = None
+
+
+def _normalize_shortcode_name(name: str) -> str:
+    cleaned = (name or "").strip().lower().replace(" ", "-")
+    if not cleaned or not cleaned[0].isalpha():
+        raise HttpError(400, "نام shortcode باید با حرف شروع شود")
+    allowed = set("abcdefghijklmnopqrstuvwxyz0123456789-_")
+    if any(ch not in allowed for ch in cleaned):
+        raise HttpError(400, "نام shortcode فقط حروف، عدد، - و _")
+    return cleaned
+
+
 @router.get("/pages")
 def list_pages(request):
     store = _store(request)
     return [
-        {"id": p.id, "title": p.title, "slug": p.slug, "is_published": p.is_published}
+        {
+            "id": p.id,
+            "title": p.title,
+            "slug": p.slug,
+            "is_published": p.is_published,
+            "updated_at": p.updated_at.isoformat() if p.updated_at else None,
+        }
         for p in cms.list_pages(store)
     ]
 
@@ -81,6 +127,8 @@ def list_pages(request):
 @router.post("/pages")
 def create_page(request, payload: PageCreateSchema):
     store = _store(request)
+    if Page.objects.filter(store=store, slug=payload.slug).exists():
+        raise HttpError(400, "این شناسه قبلاً استفاده شده")
     page = Page.objects.create(
         store=store,
         title=payload.title,
@@ -90,7 +138,119 @@ def create_page(request, payload: PageCreateSchema):
         meta_title=payload.meta_title,
         meta_description=payload.meta_description,
     )
-    return {"id": page.id, "slug": page.slug}
+    return cms.serialize_page(page, render_content=False)
+
+
+@router.get("/pages/{page_id}")
+def get_page(request, page_id: int):
+    store = _store(request)
+    try:
+        page = Page.objects.prefetch_related("blocks").get(pk=page_id, store=store)
+    except Page.DoesNotExist:
+        raise HttpError(404, "صفحه یافت نشد")
+    return cms.serialize_page(page, render_content=False)
+
+
+@router.put("/pages/{page_id}")
+def update_page(request, page_id: int, payload: PageUpdateSchema):
+    store = _store(request)
+    try:
+        page = Page.objects.get(pk=page_id, store=store)
+    except Page.DoesNotExist:
+        raise HttpError(404, "صفحه یافت نشد")
+    data = {k: v for k, v in payload.dict().items() if v is not None}
+    if "slug" in data and Page.objects.filter(store=store, slug=data["slug"]).exclude(pk=page.id).exists():
+        raise HttpError(400, "این شناسه قبلاً استفاده شده")
+    for field, value in data.items():
+        setattr(page, field, value)
+    page.save()
+    return cms.serialize_page(page, render_content=False)
+
+
+@router.delete("/pages/{page_id}")
+def delete_page(request, page_id: int):
+    store = _store(request)
+    deleted, _ = Page.objects.filter(pk=page_id, store=store).delete()
+    if not deleted:
+        raise HttpError(404, "صفحه یافت نشد")
+    return {"success": True}
+
+
+@router.get("/shortcodes")
+def list_shortcodes(request):
+    store = _store(request)
+    return list_shortcodes_for_admin(store)
+
+
+@router.post("/shortcodes")
+def create_shortcode(request, payload: ShortcodeCreateSchema):
+    store = _store(request)
+    name = _normalize_shortcode_name(payload.name)
+    if Shortcode.objects.filter(store=store, name=name).exists():
+        raise HttpError(400, "این shortcode از قبل وجود دارد")
+    if not (payload.html_template or "").strip():
+        raise HttpError(400, "قالب HTML الزامی است")
+    sc = Shortcode.objects.create(
+        store=store,
+        name=name,
+        label=payload.label.strip() or name,
+        description=payload.description,
+        html_template=payload.html_template,
+        is_self_closing=payload.is_self_closing,
+        example=payload.example,
+        is_active=payload.is_active,
+    )
+    invalidate_shortcode_cache(store)
+    return {
+        "id": sc.id,
+        "name": sc.name,
+        "label": sc.label,
+        "description": sc.description,
+        "html_template": sc.html_template,
+        "is_self_closing": sc.is_self_closing,
+        "example": sc.example,
+        "is_active": sc.is_active,
+        "is_system": False,
+    }
+
+
+@router.put("/shortcodes/{shortcode_id}")
+def update_shortcode(request, shortcode_id: int, payload: ShortcodeUpdateSchema):
+    store = _store(request)
+    try:
+        sc = Shortcode.objects.get(pk=shortcode_id, store=store)
+    except Shortcode.DoesNotExist:
+        raise HttpError(404, "شورت‌کد یافت نشد")
+    data = {k: v for k, v in payload.dict().items() if v is not None}
+    if "name" in data:
+        data["name"] = _normalize_shortcode_name(data["name"])
+        if Shortcode.objects.filter(store=store, name=data["name"]).exclude(pk=sc.id).exists():
+            raise HttpError(400, "این shortcode از قبل وجود دارد")
+    for field, value in data.items():
+        setattr(sc, field, value)
+    sc.save()
+    invalidate_shortcode_cache(store)
+    return {
+        "id": sc.id,
+        "name": sc.name,
+        "label": sc.label,
+        "description": sc.description,
+        "html_template": sc.html_template,
+        "is_self_closing": sc.is_self_closing,
+        "example": sc.example,
+        "is_active": sc.is_active,
+        "is_system": False,
+    }
+
+
+@router.delete("/shortcodes/{shortcode_id}")
+def delete_shortcode(request, shortcode_id: int):
+    store = _store(request)
+    deleted, _ = Shortcode.objects.filter(pk=shortcode_id, store=store).delete()
+    if not deleted:
+        raise HttpError(404, "شورت‌کد یافت نشد")
+    invalidate_shortcode_cache(store)
+    return {"success": True}
 
 
 @router.get("/menus")

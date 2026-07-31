@@ -31,6 +31,10 @@ class OTPSendSchema(Schema):
     purpose: str
 
 
+class PhoneLookupSchema(Schema):
+    phone: str
+
+
 class OTPVerifySchema(Schema):
     phone: str
     code: str
@@ -96,6 +100,12 @@ class MeResponseSchema(Schema):
     is_2fa_enabled: bool = False
 
 
+class UpdateProfileSchema(Schema):
+    first_name: str | None = None
+    last_name: str | None = None
+    email: str | None = None
+
+
 class DeviceSchema(Schema):
     id: int
     name: str
@@ -140,21 +150,62 @@ def _token_response(user, tokens, membership, store):
     )
 
 
+def _normalize_lookup_phone(raw_phone: str) -> str:
+    try:
+        phone = otp_service._normalize_phone(raw_phone)
+    except Exception as e:
+        raise HttpError(400, str(e) or "شماره موبایل نامعتبر است") from e
+
+    if not phone or not str(phone).startswith("09"):
+        raise HttpError(400, "شماره موبایل نامعتبر است")
+    return phone
+
+
+def _resolve_otp_purpose(phone: str, purpose: str | None) -> str:
+    """Map OTP purpose to login/register.
+
+    Accepts OTPPurpose values, plus the legacy storefront alias ``auth``
+    (older Pulse pages forwarded data-mode as purpose). Empty/None uses the
+    same phone-existence rule as /phone/lookup.
+    """
+    if purpose in OTPPurpose.values:
+        return purpose
+
+    # Legacy unified-storefront alias — same decision as /phone/lookup
+    if purpose in ("auth", "", None):
+        exists = User.objects.filter(phone=phone, is_active=True).exists()
+        return OTPPurpose.LOGIN if exists else OTPPurpose.REGISTER
+
+    raise HttpError(400, "هدف نامعتبر است")
+
+
+@router.post("/phone/lookup")
+def phone_lookup(request, payload: PhoneLookupSchema):
+    """Resolve whether a phone should login or register (no SMS sent)."""
+    phone = _normalize_lookup_phone(payload.phone)
+    exists = User.objects.filter(phone=phone, is_active=True).exists()
+    return {
+        "phone": phone,
+        "exists": exists,
+        "purpose": str(OTPPurpose.LOGIN if exists else OTPPurpose.REGISTER),
+    }
+
+
 @router.post("/otp/send", throttle=OTPSendRateThrottle())
 def send_otp(request, payload: OTPSendSchema):
     """Send OTP code for login or register."""
-    if payload.purpose not in (OTPPurpose.LOGIN, OTPPurpose.REGISTER):
-        raise HttpError(400, "هدف نامعتبر است")
+    phone = _normalize_lookup_phone(payload.phone)
+    purpose = _resolve_otp_purpose(phone, payload.purpose)
 
     store = get_current_store() or getattr(request, "store", None)
 
-    if payload.purpose == OTPPurpose.REGISTER and not store:
+    if purpose == OTPPurpose.REGISTER and not store:
         raise HttpError(400, "فروشگاه مشخص نیست")
 
     try:
         result = otp_service.send_otp(
-            phone=payload.phone,
-            purpose=payload.purpose,
+            phone=phone,
+            purpose=purpose,
             store=store,
             ip_address=get_client_ip(request),
         )
@@ -163,7 +214,7 @@ def send_otp(request, payload: OTPSendSchema):
             request=request,
             store=store,
             outcome=AuditOutcome.SUCCESS,
-            metadata={"phone": result["phone"], "purpose": payload.purpose},
+            metadata={"phone": result["phone"], "purpose": purpose},
         )
         return result
     except OTPRateLimitError as e:
@@ -338,6 +389,24 @@ def logout(request, payload: LogoutSchema):
     return {"detail": "خروج موفق"}
 
 
+def _resolve_request_user(request):
+    """Resolve user from Bearer JWT or Django session (storefront-friendly)."""
+    auth_header = request.META.get("HTTP_AUTHORIZATION", "")
+    if auth_header.startswith("Bearer "):
+        from accounts.services.jwt import JWTService
+
+        payload = JWTService().verify_access_token(auth_header[7:])
+        if payload:
+            user = User.objects.filter(pk=int(payload["sub"]), is_active=True).first()
+            if user:
+                return user
+
+    if getattr(request, "user", None) and request.user.is_authenticated:
+        return request.user
+
+    return None
+
+
 @router.get("/me", response=MeResponseSchema, auth=jwt_auth)
 def me(request):
     """Get current authenticated user profile."""
@@ -362,6 +431,25 @@ def me(request):
         permissions=permissions,
         is_2fa_enabled=two_factor_service.is_enabled(user),
     )
+
+
+@router.patch("/me", response=UserSchema)
+def update_me(request, payload: UpdateProfileSchema):
+    """Update current user profile (name / email). Phone is not editable."""
+    user = _resolve_request_user(request)
+    if not user:
+        raise HttpError(401, "ورود الزامی است")
+
+    data = {k: v for k, v in payload.dict().items() if v is not None}
+    if not data:
+        raise HttpError(400, "فیلدی برای به‌روزرسانی ارسال نشده است")
+
+    try:
+        user = auth_service.update_profile(user, **data)
+    except AuthError as e:
+        raise HttpError(400, str(e)) from e
+
+    return _user_to_schema(user)
 
 
 @router.post("/2fa/setup", auth=jwt_auth)

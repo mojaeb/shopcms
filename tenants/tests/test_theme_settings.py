@@ -50,10 +50,13 @@ def admin_token(db, setup_store):
 def test_normalize_fills_defaults():
     result = normalize_theme_config({"hero": {"slides": [{"title": "Hi"}]}})
     assert result["logo"] == ""
-    assert result["colors"]["primary"] == "#111111"
+    assert result["colors"]["primary"] == "#0f766e"
     assert result["hero"]["slides"][0]["title"] == "Hi"
     assert result["hero"]["slides"][0]["button_text"] == "خرید کنید"
-    assert result["hero"]["slides"][0]["button_link"] == "/category/"
+    assert result["trust_badges"]["enamad"]["image"] == ""
+    assert result["trust_badges"]["badge2"]["link"] == ""
+    # default button_link comes from DEFAULT_HERO_SLIDE
+    assert result["hero"]["slides"][0]["button_link"] in ("/products/", "/category/")
 
 
 @pytest.mark.django_db

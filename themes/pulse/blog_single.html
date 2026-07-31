@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}{{ store.name }} - وبلاگ{% endblock %}
+{% block content %}
+<div class="ps-page ps-width" id="blog-single-page" data-slug="{{ blog_slug }}">
+    <div id="blog-post-content">
+        <div class="ps-empty">در حال بارگذاری...</div>
+    </div>
+
+    <section id="blog-comments-section" class="ps-blog-comments" style="display:none;" aria-label="نظرات">
+        <h2 class="ps-blog-comments-title">نظرات</h2>
+        <div id="blog-comments-list"></div>
+        <div class="ps-surface ps-blog-comment-form">
+            <h3>ثبت نظر</h3>
+            <textarea id="blog-comment-body" class="ps-textarea" rows="4" placeholder="نظر شما..."></textarea>
+            <p id="blog-comment-message" class="ps-page-sub" style="margin-top:0.5rem;"></p>
+            <button type="button" class="ps-btn" id="submit-blog-comment" style="margin-top:0.75rem;">ارسال نظر</button>
+        </div>
+    </section>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="/static/js/blog.js"></script>
+{% endblock %}

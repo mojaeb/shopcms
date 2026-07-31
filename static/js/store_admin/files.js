@@ -169,9 +169,10 @@
     }
 
     function loadFiles() {
-        wrap.innerHTML = '<div class="sa-loading">در حال بارگذاری...</div>';
+        api.setPageLoading(wrap, true);
         // Ninja list route is /files (no trailing slash); /files/ returns 404
         api.apiFetch("/api/v1/store-admin/files?" + queryParams()).then(function ({ ok, data }) {
+            api.setPageLoading(wrap, false);
             if (!ok) {
                 wrap.innerHTML =
                     '<div class="sa-empty">' +
@@ -248,6 +249,9 @@
         const files = Array.from(fileList || []);
         if (!files.length || uploading) return;
         uploading = true;
+        const pickBtn = document.getElementById("file-pick");
+        api.setBusy(pickBtn, true, "در حال آپلود...");
+        zone.classList.add("is-busy");
         api.flash("در حال آپلود...");
         const title = document.getElementById("upload-title").value.trim();
         const folder = document.getElementById("upload-folder").value.trim();
@@ -283,6 +287,8 @@
 
         chain.finally(function () {
             uploading = false;
+            zone.classList.remove("is-busy");
+            api.setBusy(pickBtn, false);
             fileInput.value = "";
             page = 1;
             loadFiles();
@@ -349,15 +355,18 @@
         e.preventDefault();
         const id = document.getElementById("file-id").value;
         if (!id) return;
+        const saveBtn = form.querySelector('button[type="submit"]');
         const payload = {
             title: document.getElementById("detail-title").value.trim(),
             alt_text: document.getElementById("detail-alt").value.trim(),
             folder: document.getElementById("detail-folder").value.trim(),
         };
+        api.setBusy(saveBtn, true, "در حال ذخیره...");
         api.apiFetch("/api/v1/store-admin/files/" + id, {
             method: "PUT",
             body: JSON.stringify(payload),
         }).then(function ({ ok, data }) {
+            api.setBusy(saveBtn, false);
             if (!ok) {
                 api.flash((data && data.detail) || "ذخیره ناموفق", true);
                 return;
@@ -370,11 +379,14 @@
 
     document.getElementById("file-delete").addEventListener("click", function () {
         const id = document.getElementById("file-id").value;
+        const btn = this;
         if (!id || !confirm("این فایل حذف شود؟")) return;
+        api.setBusy(btn, true, "حذف...");
         api.apiFetch("/api/v1/store-admin/files/" + id, { method: "DELETE" }).then(function ({
             ok,
             data,
         }) {
+            api.setBusy(btn, false);
             if (!ok) {
                 api.flash((data && data.detail) || "حذف ناموفق", true);
                 return;

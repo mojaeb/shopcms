@@ -62,3 +62,6 @@ htmlcov/
 # Celery
 celerybeat-schedule
 celerybeat.pid
+
+
+_temp

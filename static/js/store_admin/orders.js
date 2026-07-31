@@ -70,8 +70,9 @@
         function loadOrders() {
             const status = filter.value;
             const qs = status ? "?status=" + encodeURIComponent(status) : "";
-            wrap.innerHTML = '<div class="sa-loading">در حال بارگذاری...</div>';
-            api.apiFetch("/api/v1/store-admin/orders/" + qs).then(function ({ ok, data }) {
+            api.setPageLoading(wrap, true);
+            return api.apiFetch("/api/v1/store-admin/orders/" + qs).then(function ({ ok, data }) {
+                api.setPageLoading(wrap, false);
                 if (!ok) {
                     wrap.innerHTML = '<div class="sa-empty">خطا در بارگذاری سفارشات</div>';
                     return;
@@ -81,7 +82,13 @@
         }
 
         filter.addEventListener("change", loadOrders);
-        document.getElementById("orders-refresh").addEventListener("click", loadOrders);
+        document.getElementById("orders-refresh").addEventListener("click", function () {
+            const btn = this;
+            api.setBusy(btn, true, "بارگذاری...");
+            loadOrders().finally(function () {
+                api.setBusy(btn, false);
+            });
+        });
         loadStatuses().then(loadOrders);
         return;
     }
@@ -101,9 +108,19 @@
     function renderDetail(order) {
         const itemsHtml = (order.items || [])
             .map(function (it) {
+                const name = api.escapeHtml(it.name || it.product_name || it.title || "—");
+                const variant = it.variant_label
+                    ? '<div class="sa-variant-label">' + api.escapeHtml(it.variant_label) + "</div>"
+                    : "";
+                const sku = it.sku
+                    ? '<div class="sa-muted sa-order-sku">SKU: ' + api.escapeHtml(it.sku) + "</div>"
+                    : "";
                 return (
-                    "<tr><td>" +
-                    api.escapeHtml(it.name || it.product_name || it.title || "—") +
+                    "<tr><td><strong>" +
+                    name +
+                    "</strong>" +
+                    variant +
+                    sku +
                     "</td><td>" +
                     api.formatNumber(it.quantity) +
                     "</td><td>" +
@@ -131,52 +148,56 @@
             .join("");
 
         const shipment = order.shipment || {};
+        const body = document.getElementById("order-detail-body") || detailRoot;
 
-        detailRoot.innerHTML =
-            '<p class="sa-back"><a href="/manage/orders/">← بازگشت به لیست</a></p>' +
+        body.innerHTML =
+            '<div class="sa-order-panel">' +
             '<div class="sa-grid-2">' +
             '<div class="sa-card">' +
-            '<h2 style="margin-bottom:0.75rem;">سفارش ' +
+            "<h2>سفارش " +
             api.escapeHtml(order.order_number) +
             "</h2>" +
             "<p>وضعیت: " +
             statusBadge(order.status_label || order.status) +
             "</p>" +
-            '<p class="sa-muted" style="margin-top:0.5rem;">تاریخ: ' +
+            '<p class="sa-muted sa-order-meta">تاریخ: ' +
             api.escapeHtml((order.created_at || "").replace("T", " ").slice(0, 19)) +
             "</p>" +
-            '<p style="margin-top:0.5rem;">مبلغ کل: <strong>' +
+            '<p class="sa-order-meta">مبلغ کل: <strong>' +
             api.formatNumber(order.total) +
             "</strong></p>" +
             (order.customer_note
-                ? '<p class="sa-muted" style="margin-top:0.75rem;">یادداشت مشتری: ' +
+                ? '<p class="sa-muted sa-order-note">یادداشت مشتری: ' +
                   api.escapeHtml(order.customer_note) +
                   "</p>"
                 : "") +
             "</div>" +
-            '<div class="sa-card">' +
-            '<h3 style="margin-bottom:0.75rem;">تغییر وضعیت</h3>' +
+            '<div class="sa-card sa-field-gap">' +
+            "<h3>تغییر وضعیت</h3>" +
             '<label>وضعیت جدید<select id="order-status" class="sa-input">' +
             statusOptions +
             "</select></label>" +
-            '<label style="margin-top:0.75rem;display:block;">یادداشت<input type="text" id="order-note" class="sa-input" placeholder="اختیاری"></label>' +
-            '<button type="button" class="sa-btn" id="save-status" style="margin-top:0.75rem;">ذخیره وضعیت</button>' +
-            '<h3 style="margin:1.25rem 0 0.75rem;">ارسال</h3>' +
+            '<label>یادداشت<input type="text" id="order-note" class="sa-input" placeholder="اختیاری"></label>' +
+            '<button type="button" class="sa-btn" id="save-status">ذخیره وضعیت</button>' +
+            '<h3 class="sa-subhead">ارسال</h3>' +
             '<label>کد رهگیری<input type="text" id="tracking-code" class="sa-input" value="' +
             api.escapeHtml(shipment.tracking_code || "") +
             '"></label>' +
-            '<label style="margin-top:0.75rem;display:block;">حامل<input type="text" id="carrier" class="sa-input" value="' +
+            '<label>حامل<input type="text" id="carrier" class="sa-input" value="' +
             api.escapeHtml(shipment.carrier || "") +
             '"></label>' +
-            '<button type="button" class="sa-btn sa-btn-ghost" id="save-shipment" style="margin-top:0.75rem;">ذخیره ارسال</button>' +
+            '<button type="button" class="sa-btn sa-btn-ghost" id="save-shipment">ذخیره ارسال</button>' +
             "</div></div>" +
-            '<div class="sa-card" style="margin-top:1rem;">' +
-            '<h3 style="margin-bottom:0.75rem;">اقلام</h3>' +
+            '<div class="sa-card sa-order-items">' +
+            "<h3>اقلام</h3>" +
             '<div class="sa-table-wrap"><table class="sa-table"><thead><tr><th>محصول</th><th>تعداد</th><th>قیمت</th><th>جمع</th></tr></thead><tbody>' +
             (itemsHtml || '<tr><td colspan="4" class="sa-muted">موردی نیست</td></tr>') +
-            "</tbody></table></div></div>";
+            "</tbody></table></div></div></div>";
 
         document.getElementById("save-status").addEventListener("click", function () {
+            const btn = this;
+            api.setBusy(btn, true, "در حال ذخیره...");
+            api.setPageLoading(detailRoot, true, "در حال ذخیره...");
             api.apiFetch("/api/v1/store-admin/orders/" + orderId + "/status", {
                 method: "PUT",
                 body: JSON.stringify({
@@ -184,7 +205,9 @@
                     note: document.getElementById("order-note").value.trim(),
                 }),
             }).then(function ({ ok, data }) {
+                api.setBusy(btn, false);
                 if (!ok) {
+                    api.setPageLoading(detailRoot, false);
                     api.flash(data.detail || "به‌روزرسانی وضعیت ناموفق", true);
                     return;
                 }
@@ -194,6 +217,9 @@
         });
 
         document.getElementById("save-shipment").addEventListener("click", function () {
+            const btn = this;
+            api.setBusy(btn, true, "در حال ذخیره...");
+            api.setPageLoading(detailRoot, true, "در حال ذخیره...");
             api.apiFetch("/api/v1/store-admin/orders/" + orderId + "/shipment", {
                 method: "PUT",
                 body: JSON.stringify({
@@ -201,7 +227,9 @@
                     carrier: document.getElementById("carrier").value.trim(),
                 }),
             }).then(function ({ ok, data }) {
+                api.setBusy(btn, false);
                 if (!ok) {
+                    api.setPageLoading(detailRoot, false);
                     api.flash(data.detail || "ذخیره ارسال ناموفق", true);
                     return;
                 }
@@ -212,10 +240,12 @@
     }
 
     function loadDetail() {
+        api.setPageLoading(detailRoot, true);
         api.apiFetch("/api/v1/store-admin/orders/" + orderId).then(function ({ ok, data }) {
+            api.setPageLoading(detailRoot, false);
+            const body = document.getElementById("order-detail-body") || detailRoot;
             if (!ok) {
-                detailRoot.innerHTML =
-                    '<p class="sa-back"><a href="/manage/orders/">← بازگشت</a></p><div class="sa-empty">سفارش یافت نشد</div>';
+                body.innerHTML = '<div class="sa-empty">سفارش یافت نشد</div>';
                 return;
             }
             renderDetail(data);

@@ -263,6 +263,38 @@
                     return attr.display_type === "color";
                 },
 
+                colorCodes: function (val) {
+                    if (val && Array.isArray(val.color_codes) && val.color_codes.length) {
+                        return val.color_codes;
+                    }
+                    var raw = (val && val.color_code) || "";
+                    return String(raw)
+                        .split(/[,،/\s]+/)
+                        .map(function (p) { return p.trim(); })
+                        .filter(Boolean)
+                        .map(function (p) { return p.charAt(0) === "#" ? p : "#" + p; });
+                },
+
+                swatchStyle: function (val) {
+                    var codes = this.colorCodes(val);
+                    if (!codes.length) {
+                        return { "--swatch": "#ccc" };
+                    }
+                    if (codes.length === 1) {
+                        return { "--swatch": codes[0] };
+                    }
+                    var n = codes.length;
+                    var stops = codes.map(function (c, i) {
+                        var a = ((i / n) * 100).toFixed(2);
+                        var b = (((i + 1) / n) * 100).toFixed(2);
+                        return c + " " + a + "% " + b + "%";
+                    }).join(", ");
+                    return {
+                        "--swatch": codes[0],
+                        "--swatch-multi": "conic-gradient(from 135deg, " + stops + ")",
+                    };
+                },
+
                 isList: function (attr) {
                     return attr.display_type === "list" || attr.display_type === "select";
                 },

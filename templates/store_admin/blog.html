@@ -1,0 +1,25 @@
+{% extends "store_admin/base.html" %}
+{% block content %}
+<div id="sa-blog" class="sa-page">
+    <div class="sa-toolbar">
+        <input type="search" id="blog-q" class="sa-input" placeholder="جستجوی مقاله...">
+        <a href="/manage/blog/new/" class="sa-btn">مقاله جدید</a>
+    </div>
+    <div class="sa-table-wrap sa-loading-host" id="blog-table-host">
+        <table class="sa-table">
+            <thead>
+                <tr>
+                    <th>عنوان</th>
+                    <th>دسته</th>
+                    <th>وضعیت</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="blog-tbody"></tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="/static/js/store_admin/blog.js"></script>
+{% endblock %}
