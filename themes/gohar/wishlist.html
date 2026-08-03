@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}{{ store.name }} - علاقه‌مندی‌ها{% endblock %}
+{% block content %}
+<div class="ps-account ps-width">
+    {% include "partials/account_nav.html" with active="wishlist" %}
+    <div class="ps-account-main" id="wishlist-page" data-currency="{{ store.currency }}">
+        <header class="ps-account-head">
+            <h1 class="ps-account-title">لیست علاقه‌مندی‌ها</h1>
+            <p class="ps-account-sub">محصولاتی که برای خرید بعدی ذخیره کرده‌اید.</p>
+        </header>
+        <div id="wishlist-container">
+            <div class="ps-empty" aria-busy="true">در حال بارگذاری علاقه‌مندی‌ها...</div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="/static/js/wishlist.js"></script>
+{% endblock %}

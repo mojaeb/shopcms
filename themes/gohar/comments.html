@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}{{ store.name }} - نظرات{% endblock %}
+{% block content %}
+<div class="ps-account ps-width">
+    {% include "partials/account_nav.html" with active="comments" %}
+    <div class="ps-account-main" id="my-comments-page">
+        <header class="ps-account-head">
+            <h1 class="ps-account-title">نظرات من</h1>
+            <p class="ps-account-sub">نظرها و امتیازهایی که ثبت کرده‌اید.</p>
+        </header>
+        <div id="my-comments-list">
+            <div class="ps-empty" aria-busy="true">در حال بارگذاری نظرات...</div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="/static/js/comments.js"></script>
+{% endblock %}

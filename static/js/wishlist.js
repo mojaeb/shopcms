@@ -100,7 +100,8 @@
         if (!container) return;
         const isPolished =
             document.body.classList.contains("theme-nextshop") ||
-            document.body.classList.contains("theme-pulse");
+            document.body.classList.contains("theme-pulse") ||
+            document.body.classList.contains("theme-gohar");
 
         if (!items.length) {
             container.innerHTML = isPolished
@@ -180,7 +181,8 @@
             if (!container) return;
             const isPolished =
                 document.body.classList.contains("theme-nextshop") ||
-                document.body.classList.contains("theme-pulse");
+                document.body.classList.contains("theme-pulse") ||
+                document.body.classList.contains("theme-gohar");
             if (status === 401) {
                 container.innerHTML = isPolished
                     ? '<div class="ns-empty"><div class="ns-empty-icon" aria-hidden="true"><i data-lucide="log-in"></i></div><strong>ورود لازم است</strong><p>برای مشاهده علاقه‌مندی‌ها وارد شوید.</p><a class="ns-btn" href="/login/?next=/wishlist/">ورود</a></div>'

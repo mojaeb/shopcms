@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}{% if category %}{{ category.name }}{% else %}مجموعه محصولات{% endif %} | {{ store.name }}{% endblock %}
+{% block content %}
+<div class="ps-page">
+    <div class="gh-width">
+        <p data-hero class="gh-kicker" style="letter-spacing:0.4em;margin-bottom:1.25rem;">COLLECTION</p>
+        <h1 data-hero class="ps-page-title">{% if category %}{{ category.name }}{% else %}مجموعه محصولات{% endif %}</h1>
+        <p data-hero class="ps-page-sub">
+            {% if category and category.description %}
+            {{ category.description }}
+            {% else %}
+            مجموعه‌ای از زیباترین قطعات دست‌ساز گوهر را کاوش کنید. برای یافتن قطعه‌ی دلخواه، دسته‌بندی مورد نظر را انتخاب کنید.
+            {% endif %}
+        </p>
+
+        {% if categories %}
+        <div class="gh-filter-bar" data-hero>
+            <a href="/products/" class="gh-filter-btn {% if not category %}is-active{% endif %}">همه</a>
+            {% for cat in categories %}
+            <a href="/products/{{ cat.slug }}/" class="gh-filter-btn {% if category and category.slug == cat.slug %}is-active{% endif %}">{{ cat.name }}</a>
+            {% endfor %}
+        </div>
+        {% elif home_categories %}
+        <div class="gh-filter-bar" data-hero>
+            <a href="/products/" class="gh-filter-btn {% if not category %}is-active{% endif %}">همه</a>
+            {% for cat in home_categories %}
+            <a href="/products/{{ cat.slug }}/" class="gh-filter-btn {% if category and category.slug == cat.slug %}is-active{% endif %}">{{ cat.name }}</a>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if categories and not category %}
+        <div class="ps-cat-browse" style="margin-top:2.5rem;" aria-label="دسته‌بندی‌ها">
+            {% for cat in categories %}
+            <a href="/products/{{ cat.slug }}/" class="ps-cat-tile card-hover">
+                <span class="ps-cat-tile-media">
+                    {% if cat.image %}
+                    <img src="{{ cat.image }}" alt="" loading="lazy">
+                    {% else %}
+                    <span class="ps-cat-tile-fallback">{{ cat.name|truncatechars:1 }}</span>
+                    {% endif %}
+                </span>
+                <span>
+                    <strong>{{ cat.name }}</strong>
+                    <span style="display:block;color:var(--color-muted);font-size:0.85rem;margin-top:0.25rem;">
+                        {% if cat.description %}{{ cat.description|truncatechars:48 }}{% else %}مشاهده مجموعه{% endif %}
+                    </span>
+                </span>
+            </a>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div style="margin-top:3rem;"
+             id="product-catalog"
+             data-api-base="/api/v1/products/"
+             data-currency="{{ store.currency }}"
+             data-category="{{ category_slug|default:'' }}">
+            {% include "partials/product_catalog.html" %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="/static/js/product-filters.js"></script>
+{% endblock %}

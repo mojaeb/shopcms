@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}{{ page.seo.meta_title|default:page.title }} | {{ store.name }}{% endblock %}
+{% block content %}
+{% if page.slug == 'about' or page.slug == 'contact' %}
+{# Full-bleed reference layouts seeded as HTML #}
+<div class="gh-cms-page gh-cms-page--{{ page.slug }}">
+    {% if page.content %}
+    <div class="gh-cms-raw rich-content page-content">
+        {{ page.content|safe }}
+    </div>
+    {% endif %}
+    {% for block in page.blocks %}
+    <section class="gh-width" style="padding:2rem 0;">
+        {% if block.title %}<h2 class="gh-title">{{ block.title }}</h2>{% endif %}
+        {% if block.type == "html" %}
+            {{ block.content.html|default:""|safe }}
+        {% elif block.type == "text" %}
+            <p>{{ block.content.text|default:"" }}</p>
+        {% endif %}
+    </section>
+    {% endfor %}
+</div>
+{% else %}
+<div class="ps-page">
+    <div class="gh-width">
+        <nav class="ps-breadcrumb" aria-label="مسیر">
+            <a href="/">خانه</a>
+            <span aria-hidden="true">/</span>
+            <span>{{ page.title }}</span>
+        </nav>
+        <h1 class="ps-page-title">{{ page.title }}</h1>
+        {% if page.seo.meta_description or page.meta_description %}
+        <p class="ps-page-sub">{{ page.seo.meta_description|default:page.meta_description }}</p>
+        {% endif %}
+
+        <div class="ps-cms-panel" style="margin-top:2rem;">
+            {% if page.content %}
+            <div class="ps-prose rich-content page-content">{{ page.content|safe }}</div>
+            {% endif %}
+            {% for block in page.blocks %}
+            <section class="ps-cms-block">
+                {% if block.title %}<h2>{{ block.title }}</h2>{% endif %}
+                {% if block.type == "html" %}
+                    {{ block.content.html|default:""|safe }}
+                {% elif block.type == "text" %}
+                    <p>{{ block.content.text|default:"" }}</p>
+                {% endif %}
+            </section>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

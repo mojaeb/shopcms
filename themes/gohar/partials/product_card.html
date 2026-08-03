@@ -1,0 +1,35 @@
+{% load money_tags %}
+<a href="/product/{{ product.slug }}/" class="ps-card card-hover" data-stagger-item>
+    <div class="ps-card-media">
+        {% if product.image %}
+        <img src="{{ product.image }}" alt="{{ product.name }}" loading="lazy">
+        {% else %}
+        <div class="ps-card-placeholder"><i data-lucide="package"></i></div>
+        {% endif %}
+        {% if product.discount_percent %}
+        <span class="ps-badge ps-badge--sale ps-card-badge">{{ product.discount_percent|money_format }}٪</span>
+        {% elif product.category %}
+        <span class="ps-badge ps-badge--feat ps-card-badge">{{ product.category }}</span>
+        {% elif product.is_featured %}
+        <span class="ps-badge ps-badge--feat ps-card-badge">ویژه</span>
+        {% endif %}
+    </div>
+    <div class="ps-card-body">
+        <span class="ps-card-cat">{% if product.category %}{{ product.category }}{% else %}&nbsp;{% endif %}</span>
+        <h3 class="ps-card-title">{{ product.name }}</h3>
+        {% if product.short_description %}
+        <p style="color:var(--color-muted);font-size:0.875rem;line-height:1.7;margin:0 0 1rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">{{ product.short_description }}</p>
+        {% endif %}
+        <div class="ps-price">
+            <strong class="ps-price-now">{% money product.base_price %}</strong>
+            {% if product.discount_percent and product.compare_price %}
+            <s class="ps-price-was">{% money product.compare_price %}</s>
+            {% else %}
+            <span style="font-size:0.7rem;letter-spacing:0.15em;color:rgb(244 239 230 / 0.55);text-transform:uppercase;">مشاهده ←</span>
+            {% endif %}
+        </div>
+    </div>
+    {% if not product.in_stock %}
+    <div class="ps-card-oos"><span>ناموجود</span></div>
+    {% endif %}
+</a>

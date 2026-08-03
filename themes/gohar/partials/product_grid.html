@@ -1,0 +1,7 @@
+<div class="ps-products-grid">
+    {% for product in products %}
+    {% include "partials/product_card.html" %}
+    {% empty %}
+    <div class="ps-empty" style="grid-column:1/-1;">محصولی یافت نشد.</div>
+    {% endfor %}
+</div>

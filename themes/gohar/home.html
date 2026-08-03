@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}{{ store.name }} | جواهرات لوکس دست‌ساز{% endblock %}
+
+{% block content %}
+{% include "partials/slider.html" %}
+
+<section class="gh-marquee" aria-label="برچسب‌های مجموعه">
+    <div data-marquee class="marquee-track">
+        <div class="marquee-group">
+            <span class="mx-8">الماس</span><span class="mx-8 text-gold">·</span>
+            <span class="mx-8">طلای ۱۸ عیار</span><span class="mx-8 text-gold">·</span>
+            <span class="mx-8">یاقوت</span><span class="mx-8 text-gold">·</span>
+            <span class="mx-8">زمرد</span><span class="mx-8 text-gold">·</span>
+            <span class="mx-8">دست‌ساز</span><span class="mx-8 text-gold">·</span>
+        </div>
+    </div>
+</section>
+
+{% if home_categories %}
+<section class="gh-width gh-section">
+    <div class="gh-section-head">
+        <div>
+            <p class="gh-kicker" style="letter-spacing:0.3em;font-size:0.75rem;margin-bottom:1rem;">دسته‌بندی</p>
+            <h2 data-title class="gh-title">مجموعه‌های ما</h2>
+        </div>
+        <a href="/products/" class="nav-link text-gold" style="color:var(--color-gold);">مشاهده همه</a>
+    </div>
+
+    <div data-stagger class="gh-cat-grid">
+        {% for cat in home_categories %}
+        <a href="/products/{{ cat.slug }}/"
+           data-stagger-item
+           class="gh-cat-tile card-hover {% if forloop.first %}gh-cat-tile--tall{% elif forloop.last and home_categories|length > 3 %}gh-cat-tile--wide{% endif %}">
+            {% if cat.image %}
+            <img src="{{ cat.image }}" alt="{{ cat.name }}" loading="lazy">
+            {% endif %}
+            <div class="gh-cat-tile-label">
+                <p>{{ cat.slug|upper }}</p>
+                <h3>{{ cat.name }}</h3>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<section class="gh-width" style="padding-bottom:7rem;">
+    <div class="gh-section-center">
+        <p class="gh-kicker" style="letter-spacing:0.3em;font-size:0.75rem;margin-bottom:1rem;">منتخب گوهر</p>
+        <h2 data-title class="gh-title">جدیدترین قطعات</h2>
+    </div>
+    <div data-stagger class="gh-products-grid">
+        {% if home_deals %}
+            {% for p in home_deals|slice:":6" %}
+            {% include "partials/product_card.html" with product=p %}
+            {% endfor %}
+        {% elif home_products %}
+            {% for p in home_products|slice:":6" %}
+            {% include "partials/product_card.html" with product=p %}
+            {% endfor %}
+        {% else %}
+            <div class="ps-empty" style="grid-column:1/-1;">به‌زودی قطعات جدید افزوده می‌شود.</div>
+        {% endif %}
+    </div>
+</section>
+
+<section class="gh-story">
+    <div class="gh-width gh-story-grid">
+        <div class="reveal">
+            <p class="gh-kicker" style="letter-spacing:0.3em;font-size:0.75rem;margin-bottom:1.25rem;">آتلیه گوهر</p>
+            <h2 class="gh-title" style="line-height:1.25;margin-bottom:1.75rem;">
+                هنری که با
+                <span class="text-gold-grad">دست</span>
+                زاده می‌شود
+            </h2>
+            <p style="color:rgb(244 239 230 / 0.7);line-height:1.85;margin:0;">
+                در آتلیه گوهر، هر جواهر از یک طرح خام آغاز می‌شود و با صبر و دقت استادکاران
+                به اثری بی‌نظیر بدل می‌گردد. ما به جزئیات وفاداریم.
+            </p>
+            <div class="gh-story-stats">
+                <div>
+                    <div class="num"><span data-count="38">۰</span></div>
+                    <p style="color:var(--color-muted);font-size:0.875rem;margin:0.5rem 0 0;">سال تجربه</p>
+                </div>
+                <div>
+                    <div class="num"><span data-count="12000">۰</span></div>
+                    <p style="color:var(--color-muted);font-size:0.875rem;margin:0.5rem 0 0;">مشتری وفادار</p>
+                </div>
+                <div>
+                    <div class="num"><span data-count="450">۰</span></div>
+                    <p style="color:var(--color-muted);font-size:0.875rem;margin:0.5rem 0 0;">طرح اختصاصی</p>
+                </div>
+            </div>
+        </div>
+        <div class="reveal gh-story-media">
+            <img src="/media/gohar/atelier.png" alt="آتلیه ساخت جواهرات گوهر" loading="lazy"
+                 onerror="this.src='/media/gohar/ring.png'">
+        </div>
+    </div>
+</section>
+
+{% if home_blog_posts %}
+<section class="gh-width gh-section" data-ps-reveal>
+    <div class="ps-section-head">
+        <div>
+            <h2>آخرین مطالب</h2>
+            <p class="ps-section-sub">داستان‌ها و راهنماهای گوهر</p>
+        </div>
+        <a class="ps-section-link" href="/blog/">مشاهده همه <i data-lucide="arrow-left"></i></a>
+    </div>
+    <div class="ps-blog-grid">
+        {% for post in home_blog_posts %}
+        <a href="/blog/{{ post.slug }}/" class="ps-blog-card">
+            {% if post.featured_image %}
+            <span class="ps-blog-card-media"><img src="{{ post.featured_image }}" alt="" loading="lazy"></span>
+            {% else %}
+            <span class="ps-blog-card-media" aria-hidden="true"></span>
+            {% endif %}
+            <span class="ps-blog-card-body">
+                <span class="ps-blog-card-meta">
+                    {% if post.category %}<span>{{ post.category }}</span>{% endif %}
+                    {% if post.published_label %}<time>{{ post.published_label }}</time>{% endif %}
+                </span>
+                <h3 class="ps-blog-card-title">{{ post.title }}</h3>
+                {% if post.excerpt %}<p class="ps-blog-card-excerpt">{{ post.excerpt }}</p>{% endif %}
+            </span>
+        </a>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<section class="gh-width gh-cta-band">
+    <h2 data-title>
+        بگذارید درخشش شما را
+        <span class="text-gold-grad">طراحی</span>
+        کنیم
+    </h2>
+    <p class="reveal" style="margin:1.75rem auto 0;color:rgb(244 239 230 / 0.7);max-width:36rem;line-height:1.8;">
+        برای سفارش اختصاصی یا مشاوره خرید، کارشناسان گوهر در کنار شما هستند.
+    </p>
+    <a href="/page/contact/" class="reveal btn-gold" style="display:inline-flex;margin-top:2.5rem;padding:1rem 2.5rem;">رزرو مشاوره</a>
+</section>
+{% endblock %}

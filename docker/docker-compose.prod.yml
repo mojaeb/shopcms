@@ -27,6 +27,8 @@ services:
       - REDIS_URL=redis://redis:6379/0
       - CELERY_BROKER_URL=redis://redis:6379/1
       - CELERY_RESULT_BACKEND=redis://redis:6379/2
+      - LOAD_SEED_DATA=0
+      - LOAD_SEED_MEDIA=0
     volumes:
       - static_volume:/app/staticfiles
       - media_volume:/app/media
@@ -57,6 +59,7 @@ services:
       - REDIS_URL=redis://redis:6379/0
       - CELERY_BROKER_URL=redis://redis:6379/1
       - CELERY_RESULT_BACKEND=redis://redis:6379/2
+      - SKIP_ENTRYPOINT_SETUP=1
     volumes:
       - media_volume:/app/media
       - backup_volume:/app/backups
@@ -77,6 +80,7 @@ services:
       - DATABASE_URL=postgres://shopcms:${POSTGRES_PASSWORD:-shopcms}@db:5432/shopcms
       - CELERY_BROKER_URL=redis://redis:6379/1
       - CELERY_RESULT_BACKEND=redis://redis:6379/2
+      - SKIP_ENTRYPOINT_SETUP=1
     depends_on:
       - db
       - redis

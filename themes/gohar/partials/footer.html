@@ -1,0 +1,53 @@
+<footer class="gh-footer">
+    <div class="gh-width gh-footer-grid">
+        <div>
+            <div class="gh-brand-name text-gold-grad" style="font-size:1.875rem;">{{ store.name|default:"گوهر" }}</div>
+            <p style="margin-top:1.25rem;max-width:24rem;">
+                خانه‌ی جواهرات دست‌ساز ایرانی. هر قطعه با وسواس و عشق ساخته می‌شود تا داستان شما را روایت کند.
+            </p>
+            {% with badges=theme_settings.trust_badges %}
+            {% if badges.enamad.image or badges.badge2.image %}
+            <div style="display:flex;gap:0.75rem;margin-top:1.5rem;">
+                {% if badges.enamad.image %}
+                <a href="{{ badges.enamad.link|default:'#' }}" {% if badges.enamad.link %}target="_blank" rel="noopener"{% endif %}>
+                    <img src="{{ badges.enamad.image }}" alt="نماد اعتماد" loading="lazy" width="72" height="72">
+                </a>
+                {% endif %}
+                {% if badges.badge2.image %}
+                <a href="{{ badges.badge2.link|default:'#' }}" {% if badges.badge2.link %}target="_blank" rel="noopener"{% endif %}>
+                    <img src="{{ badges.badge2.image }}" alt="نشان اعتماد" loading="lazy" width="72" height="72">
+                </a>
+                {% endif %}
+            </div>
+            {% endif %}
+            {% endwith %}
+        </div>
+        <div>
+            <h4>صفحات</h4>
+            <div class="gh-footer-links">
+                {% if cms_menus.footer and cms_menus.footer.items %}
+                    {% for item in cms_menus.footer.items %}
+                    <a href="{{ item.url|default:'#' }}" {% if item.open_new_tab %}target="_blank" rel="noopener"{% endif %}>{{ item.label }}</a>
+                    {% endfor %}
+                {% else %}
+                    <a href="/">خانه</a>
+                    <a href="/products/">محصولات</a>
+                    <a href="/page/about/">درباره ما</a>
+                    <a href="/page/contact/">تماس با ما</a>
+                {% endif %}
+            </div>
+        </div>
+        <div>
+            <h4>ارتباط با ما</h4>
+            <ul class="gh-footer-links" style="padding:0;margin:0;">
+                <li>تهران، خیابان ولیعصر</li>
+                <li dir="ltr" style="text-align:right;">۰۲۱ ۲۲۱۳ ۴۵۶۷</li>
+                <li>info@gohar.ir</li>
+            </ul>
+        </div>
+    </div>
+    <div class="gh-width gh-footer-bottom">
+        <span>© {% now "Y" %} {{ store.name|default:"گوهر" }}. تمامی حقوق محفوظ است.</span>
+        <span style="letter-spacing:0.2em;text-transform:uppercase;">GOHAR · Fine Jewelry</span>
+    </div>
+</footer>

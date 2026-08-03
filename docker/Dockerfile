@@ -17,9 +17,11 @@ RUN pip install --no-cache-dir -r requirements/production.txt
 
 COPY . .
 
-RUN mkdir -p logs staticfiles media backups
+RUN mkdir -p logs staticfiles media backups \
+    && chmod +x docker/entrypoint.sh
 
 ENV SECRET_KEY=build-time-dummy-key
+ENV ALLOWED_HOSTS=*
 RUN python manage.py collectstatic --noinput --settings=config.settings.production
 
 EXPOSE 8000
@@ -27,4 +29,5 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/v1/health/live')" || exit 1
 
+ENTRYPOINT ["/bin/sh", "/app/docker/entrypoint.sh"]
 CMD ["gunicorn", "config.wsgi:application", "-c", "docker/gunicorn.conf.py"]

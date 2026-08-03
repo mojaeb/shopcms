@@ -1,0 +1,140 @@
+{# Gohar full-bleed hero slider — prefers CMS Slider(slug=home), else theme_settings.hero.slides #}
+{% if cms_slider and cms_slider.slides %}
+<section class="gh-hero" aria-label="اسلایدر">
+    <div class="swiper gh-hero-swiper"
+         data-ps-hero
+         data-gh-hero
+         {% if cms_slider.interval %}data-interval="{{ cms_slider.interval }}"{% endif %}
+         {% if cms_slider.autoplay == False %}data-autoplay="0"{% endif %}>
+        <div class="swiper-wrapper">
+            {% for slide in cms_slider.slides %}
+            <div class="swiper-slide">
+                <div class="gh-hero-slide">
+                    <div class="gh-hero-bg">
+                        {% if slide.image %}
+                        <img src="{{ slide.image }}"
+                             alt="{{ slide.title|default:store.name }}"
+                             {% if not forloop.first %}loading="lazy"{% endif %}
+                             draggable="false">
+                        {% endif %}
+                        <div class="gh-hero-veil"></div>
+                    </div>
+                    <div class="gh-width gh-hero-copy">
+                        <div class="gh-hero-copy-inner">
+                            <p {% if forloop.first %}data-hero{% endif %} class="gh-kicker">GOHAR · از سال ۱۳۶۵</p>
+                            {% if slide.title %}
+                            <h1 {% if forloop.first %}data-hero{% endif %}>{{ slide.title }}</h1>
+                            {% endif %}
+                            {% if slide.subtitle %}
+                            <p {% if forloop.first %}data-hero{% endif %} class="gh-hero-lead">{{ slide.subtitle }}</p>
+                            {% endif %}
+                            <div {% if forloop.first %}data-hero{% endif %} class="gh-hero-ctas">
+                                {% if slide.link %}
+                                <a href="{{ slide.link }}" class="btn-gold" style="padding:1rem 2.25rem;">مشاهده مجموعه</a>
+                                {% else %}
+                                <a href="/products/" class="btn-gold" style="padding:1rem 2.25rem;">مشاهده مجموعه</a>
+                                {% endif %}
+                                {% if forloop.first %}
+                                <a href="/page/about/" class="btn-ghost" style="padding:1rem 2.25rem;">داستان گوهر</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="swiper-pagination gh-hero-dots"></div>
+    </div>
+    {% if cms_slider.slides|length > 1 %}
+    <div class="gh-hero-nav">
+        <button type="button" class="gh-icon-btn gh-hero-prev" aria-label="قبلی"><i data-lucide="chevron-right"></i></button>
+        <button type="button" class="gh-icon-btn gh-hero-next" aria-label="بعدی"><i data-lucide="chevron-left"></i></button>
+    </div>
+    {% endif %}
+    <div class="gh-scroll-hint">اسکرول کنید</div>
+</section>
+{% elif theme_settings.hero.slides %}
+<section class="gh-hero" aria-label="اسلایدر">
+    <div class="swiper gh-hero-swiper" data-ps-hero data-gh-hero>
+        <div class="swiper-wrapper">
+            {% for slide in theme_settings.hero.slides %}
+            <div class="swiper-slide">
+                <div class="gh-hero-slide">
+                    <div class="gh-hero-bg">
+                        {% if slide.image %}
+                        <img src="{{ slide.image }}"
+                             alt="{{ slide.title|default:store.name }}"
+                             {% if not forloop.first %}loading="lazy"{% endif %}
+                             draggable="false">
+                        {% else %}
+                        <div class="gh-hero-fallback" style="background:{{ slide.background_color|default:'#0a0a0a' }};"></div>
+                        {% endif %}
+                        <div class="gh-hero-veil"></div>
+                    </div>
+                    <div class="gh-width gh-hero-copy">
+                        <div class="gh-hero-copy-inner">
+                            <p {% if forloop.first %}data-hero{% endif %} class="gh-kicker">
+                                {{ slide.kicker|default:"GOHAR · از سال ۱۳۶۵" }}
+                            </p>
+                            {% if slide.title %}
+                            <h1 {% if forloop.first %}data-hero{% endif %}>{{ slide.title }}</h1>
+                            {% endif %}
+                            {% if slide.text %}
+                            <p {% if forloop.first %}data-hero{% endif %} class="gh-hero-lead">{{ slide.text }}</p>
+                            {% endif %}
+                            <div {% if forloop.first %}data-hero{% endif %} class="gh-hero-ctas">
+                                {% if slide.button_link %}
+                                <a href="{{ slide.button_link }}" class="btn-gold" style="padding:1rem 2.25rem;">
+                                    {{ slide.button_text|default:"مشاهده مجموعه" }}
+                                </a>
+                                {% else %}
+                                <a href="/products/" class="btn-gold" style="padding:1rem 2.25rem;">مشاهده مجموعه</a>
+                                {% endif %}
+                                {% if forloop.first %}
+                                <a href="/page/about/" class="btn-ghost" style="padding:1rem 2.25rem;">داستان گوهر</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="swiper-pagination gh-hero-dots"></div>
+    </div>
+    {% if theme_settings.hero.slides|length > 1 %}
+    <div class="gh-hero-nav">
+        <button type="button" class="gh-icon-btn gh-hero-prev" aria-label="قبلی"><i data-lucide="chevron-right"></i></button>
+        <button type="button" class="gh-icon-btn gh-hero-next" aria-label="بعدی"><i data-lucide="chevron-left"></i></button>
+    </div>
+    {% endif %}
+    <div class="gh-scroll-hint">اسکرول کنید</div>
+</section>
+{% else %}
+<section class="gh-hero" aria-label="معرفی فروشگاه">
+    <div class="gh-hero-bg">
+        <img src="/media/gohar/hero-necklace.png" alt="{{ store.name }}">
+        <div class="gh-hero-veil"></div>
+    </div>
+    <div class="gh-width gh-hero-copy">
+        <div class="gh-hero-copy-inner">
+            <p data-hero class="gh-kicker">GOHAR · از سال ۱۳۶۵</p>
+            <h1 data-hero>
+                درخششی که
+                <span class="text-gold-grad">جاودانه</span>
+                می‌ماند
+            </h1>
+            <p data-hero class="gh-hero-lead">
+                هر قطعه‌ی گوهر، حاصل ساعت‌ها هنر دست استادکاران ایرانی است؛ جواهراتی که
+                نه تنها زینت، بلکه میراث شما خواهند بود.
+            </p>
+            <div data-hero class="gh-hero-ctas">
+                <a href="/products/" class="btn-gold" style="padding:1rem 2.25rem;">مشاهده مجموعه</a>
+                <a href="/page/about/" class="btn-ghost" style="padding:1rem 2.25rem;">داستان گوهر</a>
+            </div>
+        </div>
+    </div>
+    <div class="gh-scroll-hint">اسکرول کنید</div>
+</section>
+{% endif %}

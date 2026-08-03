@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}وبلاگ - {{ store.name }}{% endblock %}
+{% block content %}
+<div class="ps-page ps-width" id="blog-list-page">
+    <nav class="ps-breadcrumb" aria-label="مسیر">
+        <a href="/">خانه</a>
+        <span aria-hidden="true">/</span>
+        <span>وبلاگ</span>
+    </nav>
+    <h1 class="ps-page-title">وبلاگ</h1>
+    <p class="ps-page-sub">راهنماها، بررسی‌ها و اخبار فروشگاه</p>
+    <div id="blog-categories" class="ps-blog-filters" aria-label="دسته‌بندی مقالات"></div>
+    <div id="blog-posts">
+        <div class="ps-empty">در حال بارگذاری...</div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="/static/js/blog.js"></script>
+{% endblock %}

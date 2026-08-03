@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}{{ store.name }} - ورود / عضویت{% endblock %}
+{% block content %}
+<div class="ps-page">
+    <div class="gh-width" style="max-width:28rem;margin-inline:auto;">
+        <div id="auth-page" class="ps-surface" data-mode="login" data-unified="1">
+            <p class="gh-kicker" style="text-align:center;letter-spacing:0.3em;font-size:0.75rem;margin-bottom:1rem;">ACCOUNT</p>
+            <h1 class="ps-page-title ps-auth-title" style="text-align:center;font-size:2rem;">ورود / عضویت</h1>
+            <p class="ps-page-sub" style="text-align:center;margin-inline:auto;" id="auth-lead">با شماره موبایل وارد شوید یا عضو شوید</p>
+
+            <form id="auth-phone-form" style="display:grid;gap:0.75rem;margin-top:1.25rem;">
+                <label for="auth-phone">شماره موبایل</label>
+                <input id="auth-phone" class="ps-input" name="phone" type="tel" inputmode="numeric" placeholder="09123456789" required pattern="09[0-9]{9}" autocomplete="tel">
+                <button type="submit" class="btn-gold" id="auth-send-btn">ادامه</button>
+            </form>
+
+            <form id="auth-verify-form" style="display:none;gap:0.75rem;margin-top:1.25rem;">
+                <p class="ps-page-sub" id="auth-phone-display"></p>
+                <label for="auth-code">کد تأیید (۵ رقمی)</label>
+                <input id="auth-code" class="ps-input" name="code" type="text" inputmode="numeric" maxlength="5" pattern="[0-9]{5}" required placeholder="۱۲۳۴۵" autocomplete="one-time-code">
+                <button type="submit" class="btn-gold">تأیید و ادامه</button>
+                <button type="button" class="btn-ghost" id="auth-back-btn">تغییر شماره</button>
+            </form>
+
+            <form id="auth-name-form" style="display:none;gap:0.75rem;margin-top:1.25rem;">
+                <p class="ps-page-sub">نام خود را وارد کنید (اختیاری)</p>
+                <label for="auth-first-name">نام</label>
+                <input id="auth-first-name" class="ps-input" name="first_name" type="text" placeholder="نام" autocomplete="given-name">
+                <label for="auth-last-name">نام خانوادگی</label>
+                <input id="auth-last-name" class="ps-input" name="last_name" type="text" placeholder="نام خانوادگی" autocomplete="family-name">
+                <button type="submit" class="btn-gold">ذخیره و ادامه</button>
+                <button type="button" class="btn-ghost" id="auth-skip-name-btn">فعلاً رد شو</button>
+            </form>
+
+            <div id="register-fields" style="display:none;" hidden></div>
+            <p id="auth-message" class="ps-page-sub" style="margin-top:1rem;min-height:1.25rem;" role="status" aria-live="polite"></p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="/static/js/auth.js?v=unified-1"></script>
+{% endblock %}

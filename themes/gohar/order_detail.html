@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}{{ store.name }} - جزئیات سفارش{% endblock %}
+{% block content %}
+<div class="ps-account ps-width">
+    {% include "partials/account_nav.html" with active="orders" %}
+    <div class="ps-account-main" id="order-detail-page" data-order-id="{{ order_id }}">
+        <header class="ps-account-head ps-account-head--row">
+            <div>
+                <h1 class="ps-account-title">جزئیات سفارش</h1>
+                <p class="ps-account-sub">وضعیت، اقلام و اطلاعات ارسال این سفارش.</p>
+            </div>
+            <a href="/orders/" class="ps-btn ps-btn--ghost">بازگشت به سفارشات</a>
+        </header>
+        <div id="order-detail-content">
+            <div class="ps-empty" aria-busy="true">در حال بارگذاری سفارش...</div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="/static/js/orders.js"></script>
+{% endblock %}

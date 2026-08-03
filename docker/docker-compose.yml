@@ -3,9 +3,8 @@ services:
     build:
       context: ..
       dockerfile: docker/Dockerfile
-    command: >
-      sh -c "python manage.py migrate --noinput &&
-             python manage.py runserver 0.0.0.0:8000"
+    entrypoint: ["/bin/sh", "/app/docker/entrypoint.sh"]
+    command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
     volumes:
       - ..:/app
       - static_volume:/app/staticfiles
@@ -25,12 +24,16 @@ services:
       - REDIS_URL=redis://redis:6379/0
       - CELERY_BROKER_URL=redis://redis:6379/1
       - CELERY_RESULT_BACKEND=redis://redis:6379/2
+      - LOAD_SEED_DATA=0
+      - LOAD_SEED_MEDIA=0
+      - RUN_COLLECTSTATIC=0
 
   celery:
     build:
       context: ..
       dockerfile: docker/Dockerfile
-    command: celery -A config worker -l info
+    entrypoint: ["/bin/sh", "/app/docker/entrypoint.sh"]
+    command: ["celery", "-A", "config", "worker", "-l", "info"]
     volumes:
       - ..:/app
     env_file:
@@ -44,12 +47,14 @@ services:
       - REDIS_URL=redis://redis:6379/0
       - CELERY_BROKER_URL=redis://redis:6379/1
       - CELERY_RESULT_BACKEND=redis://redis:6379/2
+      - SKIP_ENTRYPOINT_SETUP=1
 
   celery-beat:
     build:
       context: ..
       dockerfile: docker/Dockerfile
-    command: celery -A config beat -l info
+    entrypoint: ["/bin/sh", "/app/docker/entrypoint.sh"]
+    command: ["celery", "-A", "config", "beat", "-l", "info"]
     volumes:
       - ..:/app
     env_file:
@@ -62,6 +67,7 @@ services:
       - DATABASE_URL=postgres://shopcms:shopcms@db:5432/shopcms
       - CELERY_BROKER_URL=redis://redis:6379/1
       - CELERY_RESULT_BACKEND=redis://redis:6379/2
+      - SKIP_ENTRYPOINT_SETUP=1
 
   db:
     image: postgres:16-alpine

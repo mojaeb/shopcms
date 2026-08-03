@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}{{ store.name }} - حساب کاربری{% endblock %}
+{% block content %}
+<div class="ps-account ps-width">
+    {% include "partials/account_nav.html" with active="dashboard" %}
+    <div class="ps-account-main">
+        <section class="ps-dash-hero">
+            <span class="ps-dash-kicker">حساب کاربری</span>
+            <h1>
+                {% if user.get_full_name %}
+                سلام، {{ user.get_full_name }}
+                {% elif user.first_name %}
+                سلام، {{ user.first_name }}
+                {% else %}
+                خوش آمدید
+                {% endif %}
+            </h1>
+            <p>سفارش‌ها، علاقه‌مندی‌ها و تنظیمات حسابتان را از اینجا مدیریت کنید.</p>
+            <div class="ps-dash-meta">
+                {% if user.phone %}<span class="ps-dash-chip">{{ user.phone }}</span>{% endif %}
+                {% if store %}<span class="ps-dash-chip">{{ store.name }}</span>{% endif %}
+                <a href="#" id="logout-link" class="js-logout ps-dash-logout">
+                    <i data-lucide="log-out"></i>
+                    خروج از حساب
+                </a>
+            </div>
+        </section>
+
+        {% if is_store_staff %}
+        <a href="/manage/" class="ps-dash-staff">
+            <div>
+                <strong>پنل مدیریت فروشگاه</strong>
+                <span>دسترسی به محصولات، سفارشات و تنظیمات ادمین</span>
+            </div>
+            <span class="ps-dash-go">ورود به پنل ←</span>
+        </a>
+        {% endif %}
+
+        <nav class="ps-dash-grid" aria-label="میانبرهای حساب">
+            <a href="/profile/" class="ps-dash-tile">
+                <span class="ps-dash-icon" aria-hidden="true"><i data-lucide="user"></i></span>
+                <h2>پروفایل</h2>
+                <p>مشاهده و ویرایش اطلاعات شخصی</p>
+                <span class="ps-dash-link">رفتن به پروفایل</span>
+            </a>
+            <a href="/orders/" class="ps-dash-tile">
+                <span class="ps-dash-icon" aria-hidden="true"><i data-lucide="package"></i></span>
+                <h2>سفارشات</h2>
+                <p>پیگیری وضعیت و جزئیات خریدها</p>
+                <span class="ps-dash-link">مشاهده سفارشات</span>
+            </a>
+            <a href="/wishlist/" class="ps-dash-tile">
+                <span class="ps-dash-icon" aria-hidden="true"><i data-lucide="heart"></i></span>
+                <h2>علاقه‌مندی‌ها</h2>
+                <p>محصولاتی که برای بعد ذخیره کرده‌اید</p>
+                <span class="ps-dash-link">لیست علاقه‌مندی</span>
+            </a>
+            <a href="/addresses/" class="ps-dash-tile">
+                <span class="ps-dash-icon" aria-hidden="true"><i data-lucide="map-pin"></i></span>
+                <h2>آدرس‌ها</h2>
+                <p>مدیریت آدرس‌های تحویل سفارش</p>
+                <span class="ps-dash-link">مدیریت آدرس</span>
+            </a>
+            <a href="/invoices/" class="ps-dash-tile">
+                <span class="ps-dash-icon" aria-hidden="true"><i data-lucide="file-text"></i></span>
+                <h2>فاکتورها</h2>
+                <p>دانلود و مشاهده صورتحساب‌ها</p>
+                <span class="ps-dash-link">مشاهده فاکتورها</span>
+            </a>
+            <a href="/comments/" class="ps-dash-tile">
+                <span class="ps-dash-icon" aria-hidden="true"><i data-lucide="message-square"></i></span>
+                <h2>نظرات</h2>
+                <p>نظرها و امتیازهایی که ثبت کرده‌اید</p>
+                <span class="ps-dash-link">مشاهده نظرات</span>
+            </a>
+        </nav>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}{{ store.name }} - پروفایل{% endblock %}
+{% block content %}
+<div class="ps-account ps-width">
+    {% include "partials/account_nav.html" with active="profile" %}
+    <div class="ps-account-main">
+        <header class="ps-account-head ps-account-head--row">
+            <div>
+                <h1 class="ps-account-title">پروفایل</h1>
+                <p class="ps-account-sub">اطلاعات شخصی حساب کاربری شما.</p>
+            </div>
+            {% if user.is_authenticated %}
+            <a href="/profile/edit/" class="ps-btn">
+                <i data-lucide="pencil" aria-hidden="true"></i>
+                ویرایش پروفایل
+            </a>
+            {% endif %}
+        </header>
+
+        {% if user.is_authenticated %}
+        <div class="ps-account-panel">
+            <div class="ps-profile-avatar">{{ user.full_name|default:user.phone|slice:":1" }}</div>
+            <div class="ps-profile-grid">
+                <div class="ps-profile-field">
+                    <label>نام و نام خانوادگی</label>
+                    <strong>{{ user.full_name|default:"—" }}</strong>
+                </div>
+                <div class="ps-profile-field">
+                    <label>موبایل</label>
+                    <strong>{{ user.phone }}</strong>
+                </div>
+                <div class="ps-profile-field">
+                    <label>ایمیل</label>
+                    <strong>{% if user.email %}{{ user.email }}{% else %}—{% endif %}</strong>
+                </div>
+                <div class="ps-profile-field">
+                    <label>وضعیت موبایل</label>
+                    <strong class="ps-profile-status {% if user.phone_verified %}is-ok{% endif %}">
+                        {% if user.phone_verified %}
+                        <i data-lucide="badge-check" aria-hidden="true"></i>
+                        تأیید شده
+                        {% else %}
+                        تأیید نشده
+                        {% endif %}
+                    </strong>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="ps-empty">
+            <strong>ورود لازم است</strong>
+            <p>برای مشاهده پروفایل وارد حساب کاربری شوید.</p>
+            <a href="/login/?next=/profile/" class="ps-btn" style="margin-top:1rem;">
+                <i data-lucide="log-in" aria-hidden="true"></i>
+                ورود
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

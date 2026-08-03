@@ -52,6 +52,8 @@ Thumbs.db
 
 # Docker
 .docker/
+docker/seed-data/data.json
+docker/seed-data/media/
 
 # Coverage / testing
 .coverage

@@ -78,6 +78,18 @@ class Command(BaseCommand):
         if created:
             self.stdout.write(self.style.SUCCESS(f"Created pulse theme: {pulse_theme.slug}"))
 
+        gohar_theme, created = Theme.objects.get_or_create(
+            slug="gohar",
+            defaults={
+                "name": "گوهر",
+                "directory": "gohar",
+                "description": "تم لوکس جواهرات گوهر — تاریک، طلایی، RTL با Vite و Tailwind",
+                "is_active": True,
+            },
+        )
+        if created:
+            self.stdout.write(self.style.SUCCESS(f"Created gohar theme: {gohar_theme.slug}"))
+
         store, created = Store.objects.get_or_create(
             slug="shop1",
             defaults={

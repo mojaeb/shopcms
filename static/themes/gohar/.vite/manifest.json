@@ -1,0 +1,43 @@
+{
+  "src/fonts/Kalameh-Black.woff2": {
+    "file": "assets/Kalameh-Black.woff2",
+    "src": "src/fonts/Kalameh-Black.woff2"
+  },
+  "src/fonts/Kalameh-Bold.woff2": {
+    "file": "assets/Kalameh-Bold.woff2",
+    "src": "src/fonts/Kalameh-Bold.woff2"
+  },
+  "src/fonts/Kalameh-ExtraBold.woff2": {
+    "file": "assets/Kalameh-ExtraBold.woff2",
+    "src": "src/fonts/Kalameh-ExtraBold.woff2"
+  },
+  "src/fonts/Kalameh-Medium.woff2": {
+    "file": "assets/Kalameh-Medium.woff2",
+    "src": "src/fonts/Kalameh-Medium.woff2"
+  },
+  "src/fonts/Kalameh-Regular.woff2": {
+    "file": "assets/Kalameh-Regular.woff2",
+    "src": "src/fonts/Kalameh-Regular.woff2"
+  },
+  "src/fonts/Kalameh-SemiBold.woff2": {
+    "file": "assets/Kalameh-SemiBold.woff2",
+    "src": "src/fonts/Kalameh-SemiBold.woff2"
+  },
+  "src/main.js": {
+    "file": "js/theme.js",
+    "name": "theme",
+    "src": "src/main.js",
+    "isEntry": true,
+    "css": [
+      "css/theme.css"
+    ],
+    "assets": [
+      "assets/Kalameh-Regular.woff2",
+      "assets/Kalameh-Medium.woff2",
+      "assets/Kalameh-SemiBold.woff2",
+      "assets/Kalameh-Bold.woff2",
+      "assets/Kalameh-ExtraBold.woff2",
+      "assets/Kalameh-Black.woff2"
+    ]
+  }
+}
