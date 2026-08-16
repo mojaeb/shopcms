@@ -5,6 +5,7 @@ Base Django settings for ShopCMS platform.
 from pathlib import Path
 
 import environ
+from django.templatetags.static import static
 
 # Build paths
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -26,6 +27,10 @@ ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])
 
 # Application definition
 DJANGO_APPS = [
+    "unfold",
+    "unfold.contrib.filters",
+    "unfold.contrib.forms",
+    "unfold.contrib.inlines",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -209,6 +214,24 @@ LANGUAGE_CODE = "fa-ir"
 TIME_ZONE = "Asia/Tehran"
 USE_I18N = True
 USE_TZ = True
+
+# Django Unfold admin (Persian / RTL — dir comes from LANGUAGE_BIDI)
+UNFOLD = {
+    "SITE_TITLE": "پنل مدیریت ShopCMS",
+    "SITE_HEADER": "پنل مدیریت ShopCMS",
+    "SITE_SUBHEADER": "مدیریت فروشگاه و محتوا",
+    "SHOW_BACK_BUTTON": True,
+    "BORDER_RADIUS": "0.5rem",
+    "SIDEBAR": {
+        "show_search": True,
+        "show_all_applications": True,
+        "navigation": "core.admin_navigation.get_navigation",
+    },
+    "STYLES": [
+        lambda request: static("css/admin-yekan.css"),
+        lambda request: static("css/admin-unfold-rtl.css"),
+    ],
+}
 
 # Static files
 STATIC_URL = env("STATIC_URL", default="/static/")

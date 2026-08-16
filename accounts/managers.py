@@ -32,6 +32,7 @@ class UserManager(BaseUserManager):
     @staticmethod
     def normalize_phone(phone: str) -> str:
         phone = phone.strip().replace(" ", "").replace("-", "")
+        phone = phone.translate(str.maketrans("۰۱۲۳۴۵۶۷۸۹٠١٢٣٤٥٦٧٨٩", "01234567890123456789"))
         if phone.startswith("+98"):
             phone = "0" + phone[3:]
         elif phone.startswith("98"):

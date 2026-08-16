@@ -101,6 +101,10 @@ def storefront_home(request):
             extra["home_blog_posts"] = home_posts
         else:
             extra["home_blog_posts"] = []
+
+        from tenants.services.seo import SeoService
+
+        extra["seo"] = SeoService().get_storefront_defaults(store)
     return engine.render_page(request, "home", extra)
 
 

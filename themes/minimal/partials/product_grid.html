@@ -1,0 +1,42 @@
+{% if products %}
+<div class="grid">
+    {% for p in products %}
+    <article class="em-product product-card card">
+        <div class="em-product-thumb">
+            {% if p.discount_percent %}
+            <span class="em-product-badge">-{{ p.discount_percent }}%</span>
+            {% elif not p.in_stock %}
+            <span class="em-product-badge em-product-badge--sold">ناموجود</span>
+            {% endif %}
+            <a href="/product/{{ p.slug }}/">
+                {% if p.image %}
+                <img src="{{ p.image }}" alt="{{ p.name }}" loading="lazy">
+                {% else %}
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='800'%3E%3Crect fill='%23f5f5f5' width='100%25' height='100%25'/%3E%3C/svg%3E" alt="{{ p.name }}">
+                {% endif %}
+            </a>
+            <div class="em-product-actions">
+                <button type="button" class="em-icon-btn" data-toggle-wishlist data-product="{{ p.slug }}" aria-label="علاقه‌مندی" aria-pressed="false">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 21s-7-4.6-9.5-9A5.2 5.2 0 0 1 12 5.2 5.2 5.2 0 0 1 21.5 12C19 16.4 12 21 12 21z"/></svg>
+                </button>
+            </div>
+            {% if p.in_stock %}
+            <div class="em-product-atc">
+                <button type="button" class="btn" data-add-to-cart data-product="{{ p.slug }}">افزودن به سبد</button>
+            </div>
+            {% endif %}
+        </div>
+        <div class="em-product-body">
+            {% if p.category %}<span class="em-product-cat">{{ p.category }}</span>{% endif %}
+            <h3 class="em-product-title"><a href="/product/{{ p.slug }}/">{{ p.name }}</a></h3>
+            <p class="em-product-price {% if p.compare_price %}has-sale{% endif %}">
+                <span class="{% if p.compare_price %}is-sale{% endif %}">{% money p.base_price %}</span>
+                {% if p.compare_price %}<s>{% money p.compare_price %}</s>{% endif %}
+            </p>
+        </div>
+    </article>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state card">محصولی یافت نشد.</div>
+{% endif %}

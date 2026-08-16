@@ -71,6 +71,11 @@ class SettingsOverviewSchema(Schema):
     payment: dict
     shipping: dict
     theme: dict
+    seo: dict
+
+
+class SeoSettingsUpdateSchema(Schema):
+    google_site_verification: str = ""
 
 
 class UserStatusUpdateSchema(Schema):

@@ -9,6 +9,7 @@ from dashboard.api.store_admin_schemas import (
     GeneralSettingsUpdateSchema,
     MemberSchema,
     ModuleStubSchema,
+    SeoSettingsUpdateSchema,
     SettingsOverviewSchema,
     TaxSettingsSchema,
     TaxSettingsUpdateSchema,
@@ -56,7 +57,7 @@ def dashboard_stats(request):
 
 @router.get("/settings", response=SettingsOverviewSchema, auth=store_settings_auth)
 def settings_overview(request):
-    overview = service.get_settings_overview(_get_store(request))
+    overview = service.get_settings_overview(_get_store(request), request=request)
     return overview
 
 
@@ -86,6 +87,18 @@ def update_shipping_settings(request, payload: dict):
 @router.put("/settings/theme", auth=store_settings_auth)
 def update_theme_settings(request, payload: dict = Body(...)):
     return service.update_theme_settings(_get_store(request), payload or {})
+
+
+@router.put("/settings/seo", auth=store_settings_auth)
+def update_seo_settings(request, payload: SeoSettingsUpdateSchema):
+    try:
+        return service.update_seo_settings(
+            _get_store(request),
+            payload.google_site_verification,
+            request=request,
+        )
+    except ValueError as exc:
+        raise HttpError(400, str(exc)) from exc
 
 
 @router.get("/users", response=list[MemberSchema], auth=store_admin_auth)

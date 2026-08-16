@@ -24,11 +24,20 @@ ICON = "https://api.iconify.design/lucide/{name}.svg?color=%23111"
 class Command(BaseCommand):
     help = "Seed sample products for development"
 
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "--store",
+            default="shop1",
+            help="Store slug to seed (default: shop1)",
+        )
+
     def handle(self, *args, **options):
-        store = Store.objects.filter(slug="shop1").first()
+        store_slug = options["store"]
+        store = Store.objects.filter(slug=store_slug).first()
         if not store:
-            self.stdout.write(self.style.WARNING("Run seed_store first."))
+            self.stdout.write(self.style.WARNING(f"Store '{store_slug}' not found. Run seed_store first."))
             return
+        self.stdout.write(f"Seeding products for store: {store.slug}")
 
         electronics, _ = Category.objects.get_or_create(
             store=store, slug="electronics",

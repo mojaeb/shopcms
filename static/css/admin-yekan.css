@@ -1,0 +1,75 @@
+/* Yekan (IranYekan) for Django Unfold admin — fanum for Persian digits */
+
+@font-face {
+  font-family: "Yekan";
+  src: url("../fonts/iranyekanweblightfanum.woff") format("woff");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Yekan";
+  src: url("../fonts/iranyekanwebregularfanum.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Yekan";
+  src: url("../fonts/iranyekanwebmediumfanum.woff") format("woff");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Yekan";
+  src: url("../fonts/iranyekanwebboldfanum.woff") format("woff");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* TTF fallbacks for weights without fanum woff */
+@font-face {
+  font-family: "Yekan";
+  src: url("../fonts/yekan-thin.ttf") format("truetype");
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Yekan";
+  src: url("../fonts/yekan-heavy.ttf") format("truetype");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Yekan";
+  src: url("../fonts/yekan-fat.ttf") format("truetype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+html,
+body,
+input,
+select,
+textarea,
+button,
+.font-sans,
+[class*="font-sans"] {
+  font-family: "Yekan", Tahoma, sans-serif !important;
+}
+
+/* Pair with admin-unfold-rtl.css for direction/layout; keep fonts here. */
+html[dir="rtl"] body {
+  font-feature-settings: "ss01" 0;
+  -webkit-font-smoothing: antialiased;
+}

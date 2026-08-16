@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}{{ store.name }} - سبد خرید{% endblock %}
+{% block content %}
+<div class="mn-page" id="cart-page" data-currency="{{ store.currency }}">
+    <header class="mn-page-head">
+        <h1 class="mn-page-title">سبد خرید</h1>
+        <p class="mn-page-desc">اقلام انتخاب‌شده را بررسی کنید و در صورت نیاز کد تخفیف اعمال کنید.</p>
+    </header>
+
+    <div id="cart-container">
+        <div class="empty-state card">در حال بارگذاری...</div>
+    </div>
+
+    <div class="coupon-section card" style="margin-top:1.25rem;">
+        <h3>کد تخفیف / کارت هدیه</h3>
+        <div class="input-row" style="margin-top:0.75rem;">
+            <input type="text" id="coupon-code" placeholder="کد کوپن">
+            <button type="button" class="btn" id="apply-coupon">اعمال کوپن</button>
+            <button type="button" class="btn btn-outline" id="remove-coupon">حذف کوپن</button>
+        </div>
+        <div class="input-row" style="margin-top:0.75rem;">
+            <input type="text" id="gift-code" placeholder="کد کارت هدیه">
+            <button type="button" class="btn" id="apply-gift">اعمال کارت هدیه</button>
+            <button type="button" class="btn btn-outline" id="remove-gift">حذف کارت</button>
+        </div>
+        <p id="coupon-message" class="muted" style="margin-top:0.5rem;"></p>
+    </div>
+
+    <div id="cart-summary" style="margin-top:1rem;"></div>
+</div>
+{% endblock %}

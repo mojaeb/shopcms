@@ -9,10 +9,16 @@ from tenants.theme.engine import ThemeEngine
 def store_context(request):
     store = get_current_store() or getattr(request, "store", None)
     user = getattr(request, "user", None)
+    google_site_verification = ""
+    if store:
+        from tenants.services.seo import SeoService
+
+        google_site_verification = SeoService().get_verification_token(store)
     return {
         "store": store,
         "theme_slug": getattr(request, "theme_slug", "default"),
         "is_store_staff": PermissionService().is_store_staff(user, store),
+        "google_site_verification": google_site_verification,
     }
 
 

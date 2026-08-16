@@ -1,0 +1,42 @@
+<footer class="em-footer">
+    <div class="em-footer-grid">
+        <div>
+            <h4>{{ store.name|default:"ShopCMS" }}</h4>
+            <p>فروشگاهی با طراحی مینیمال برای تجربه خرید آرام و دقیق.</p>
+        </div>
+        <div>
+            <h4>فروشگاه</h4>
+            <ul>
+                <li><a href="/category/">همه محصولات</a></li>
+                <li><a href="/search/">جستجو</a></li>
+                <li><a href="/wishlist/">علاقه‌مندی‌ها</a></li>
+                <li><a href="/cart/">سبد خرید</a></li>
+            </ul>
+        </div>
+        <div>
+            <h4>راهنما</h4>
+            <ul>
+                <li><a href="/blog/">وبلاگ</a></li>
+                <li><a href="/page/about/">درباره ما</a></li>
+                <li><a href="/page/contact/">تماس با ما</a></li>
+                <li><a href="/page/faq/">سوالات متداول</a></li>
+            </ul>
+        </div>
+        <div>
+            <h4>حساب کاربری</h4>
+            <ul>
+                {% if user.is_authenticated %}
+                <li><a href="/dashboard/">داشبورد</a></li>
+                <li><a href="/orders/">سفارش‌ها</a></li>
+                <li><a href="/addresses/">آدرس‌ها</a></li>
+                {% else %}
+                <li><a href="/login/">ورود</a></li>
+                <li><a href="/register/">ثبت‌نام</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+    <div class="em-footer-bottom">
+        © {{ store.name|default:"ShopCMS" }} — تمامی حقوق محفوظ است.
+    </div>
+</footer>

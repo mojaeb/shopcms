@@ -3,23 +3,200 @@
 {% block title %}{{ store.name }}{% endblock %}
 
 {% block content %}
-<div class="minimal-hero">
-    <span class="badge">{{ store.name }}</span>
-    <h1>{{ store.name }}</h1>
-    <p>طراحی ساده و مینیمال</p>
-    <nav class="minimal-links" aria-label="دسترسی سریع">
-        <a href="/category/">محصولات</a>
-        <a href="/blog/">وبلاگ</a>
-        <a href="/cart/">سبد خرید</a>
-    </nav>
-</div>
-
-{% if home_products %}
-<section style="max-width:960px;margin:0 auto 3rem;padding:0 1rem;">
-    <h2 style="text-align:center;font-weight:300;letter-spacing:-0.03em;margin-bottom:1.5rem;">تازه‌ها</h2>
-    {% with products=home_products %}
-    {% include "partials/product_grid.html" %}
+{% if theme_settings.hero.slides %}
+    {% with hero_slides=theme_settings.hero.slides %}
+    {% include "partials/hero_slider.html" %}
     {% endwith %}
+{% elif cms_slider and cms_slider.slides %}
+    {% with hero_slides=cms_slider.slides %}
+    {% include "partials/hero_slider.html" %}
+    {% endwith %}
+{% else %}
+<section class="em-hero-slider" aria-label="اسلایدر هیرو" data-em-hero>
+    <div class="em-hero-track">
+        <article class="em-hero-slide is-active" data-em-slide style="--slide-bg:#1c1c1c;">
+            <div class="em-hero-copy">
+                <h2 class="em-hero-title">استایل خود را پیدا کنید</h2>
+                <p class="em-hero-text">تابستان فصل جشن و انتخاب‌های تازه است.</p>
+                <a href="/category/" class="em-hero-cta">
+                    <span>خرید کالکشن</span>
+                    <svg width="12" height="12" viewBox="0 0 64 64" fill="currentColor" aria-hidden="true"><path d="M52,56.43,27.52,32,52,7.52,44.47,0,12.39,32,44.47,64Z"></path></svg>
+                </a>
+            </div>
+            <div class="em-hero-media">
+                <img src="/static/themes/minimal/img/hero-slide-1.webp" alt="{{ store.name }}" loading="eager" decoding="async">
+            </div>
+        </article>
+        <article class="em-hero-slide" data-em-slide style="--slide-bg:#1c1c1c;">
+            <div class="em-hero-copy">
+                <h2 class="em-hero-title">زیبایی خانه</h2>
+                <p class="em-hero-text">با دکورهای منتخب، فضای زندگی‌تان را ارتقا دهید.</p>
+                <a href="/category/" class="em-hero-cta">
+                    <span>خرید کالکشن</span>
+                    <svg width="12" height="12" viewBox="0 0 64 64" fill="currentColor" aria-hidden="true"><path d="M52,56.43,27.52,32,52,7.52,44.47,0,12.39,32,44.47,64Z"></path></svg>
+                </a>
+            </div>
+            <div class="em-hero-media">
+                <img src="/static/themes/minimal/img/hero-slide-2.webp" alt="{{ store.name }}" loading="lazy" decoding="async">
+            </div>
+        </article>
+        <article class="em-hero-slide" data-em-slide style="--slide-bg:#1c1c1c;">
+            <div class="em-hero-copy">
+                <h2 class="em-hero-title">هر گوشه، یک حس تازه</h2>
+                <p class="em-hero-text">لمس ظریف زیبایی برای هر اتاق.</p>
+                <a href="/category/" class="em-hero-cta">
+                    <span>خرید کالکشن</span>
+                    <svg width="12" height="12" viewBox="0 0 64 64" fill="currentColor" aria-hidden="true"><path d="M52,56.43,27.52,32,52,7.52,44.47,0,12.39,32,44.47,64Z"></path></svg>
+                </a>
+            </div>
+            <div class="em-hero-media">
+                <img src="/static/themes/minimal/img/hero-slide-3.webp" alt="{{ store.name }}" loading="lazy" decoding="async">
+            </div>
+        </article>
+    </div>
+    <div class="em-hero-controls">
+        <button type="button" class="em-hero-nav" data-em-prev aria-label="اسلاید قبلی">
+            <svg width="14" height="14" viewBox="0 0 64 64" fill="currentColor" aria-hidden="true"><path d="M52,56.43,27.52,32,52,7.52,44.47,0,12.39,32,44.47,64Z"></path></svg>
+        </button>
+        <div class="em-hero-dots" role="tablist" aria-label="اسلایدها">
+            <button type="button" class="em-hero-dot is-active" data-em-dot="0" aria-label="اسلاید ۱"></button>
+            <button type="button" class="em-hero-dot" data-em-dot="1" aria-label="اسلاید ۲"></button>
+            <button type="button" class="em-hero-dot" data-em-dot="2" aria-label="اسلاید ۳"></button>
+        </div>
+        <button type="button" class="em-hero-nav" data-em-next aria-label="اسلاید بعدی">
+            <svg width="14" height="14" viewBox="0 0 64 64" fill="currentColor" aria-hidden="true"><path d="M12,56.43,36.48,32,12,7.52,19.53,0,51.61,32,19.53,64Z"></path></svg>
+        </button>
+    </div>
 </section>
+<script>
+(function () {
+    var root = document.querySelector("[data-em-hero]");
+    if (!root) return;
+    var slides = Array.prototype.slice.call(root.querySelectorAll("[data-em-slide]"));
+    var dots = Array.prototype.slice.call(root.querySelectorAll("[data-em-dot]"));
+    var i = 0, timer;
+    function show(n) {
+        i = (n + slides.length) % slides.length;
+        slides.forEach(function (el, idx) { el.classList.toggle("is-active", idx === i); });
+        dots.forEach(function (el, idx) { el.classList.toggle("is-active", idx === i); });
+    }
+    function next() { show(i + 1); }
+    function prev() { show(i - 1); }
+    function arm() { clearInterval(timer); timer = setInterval(next, 5200); }
+    root.querySelector("[data-em-next]").addEventListener("click", function () { next(); arm(); });
+    root.querySelector("[data-em-prev]").addEventListener("click", function () { prev(); arm(); });
+    dots.forEach(function (dot) {
+        dot.addEventListener("click", function () {
+            show(parseInt(dot.getAttribute("data-em-dot"), 10) || 0);
+            arm();
+        });
+    });
+    root.addEventListener("mouseenter", function () { clearInterval(timer); });
+    root.addEventListener("mouseleave", arm);
+    arm();
+})();
+</script>
 {% endif %}
+
+<div class="mn-home">
+    {% if home_categories %}
+    <section class="em-section">
+        <div class="em-width">
+            <header class="em-sec-head">
+                <h2>محبوب‌ترین مجموعه‌ها</h2>
+                <p>از دسته‌بندی‌های منتخب شروع کنید و فضای خود را کامل کنید.</p>
+                <a href="/category/" class="em-sec-link">همه مجموعه‌ها</a>
+            </header>
+            <div class="em-collections">
+                {% for cat in home_categories|slice:":3" %}
+                <a href="/category/{{ cat.slug }}/" class="em-collection">
+                    {% if cat.image %}
+                    <img src="{{ cat.image }}" alt="{{ cat.name }}" loading="lazy">
+                    {% else %}
+                    <div class="em-collection-ph" aria-hidden="true">{{ cat.name|truncatechars:1 }}</div>
+                    {% endif %}
+                    <div class="em-collection-copy">
+                        <strong>{{ cat.name }}</strong>
+                        <span>خرید کنید</span>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    {% if home_products %}
+    <section class="em-section em-section--soft">
+        <div class="em-width">
+            <header class="em-sec-head">
+                <h2>محصولات ترند</h2>
+                <p>جدیدترین و پرطرفدارترین انتخاب‌های فروشگاه</p>
+                <a href="/category/" class="em-sec-link">مشاهده همه</a>
+            </header>
+            {% with products=home_products|slice:":8" %}
+            {% include "partials/product_grid.html" %}
+            {% endwith %}
+        </div>
+    </section>
+    {% endif %}
+
+    <section class="em-section">
+        <div class="em-width">
+            <div class="em-banners">
+                <a href="/category/" class="em-banner">
+                    <div>
+                        <h3>کالکشن فصل</h3>
+                        <p>ایده‌هایی تازه برای نوسازی فضا</p>
+                        <span class="em-sec-link">خرید کالکشن</span>
+                    </div>
+                </a>
+                <a href="/category/" class="em-banner em-banner--dark">
+                    <div>
+                        <h3>پیشنهادهای ویژه</h3>
+                        <p>تخفیف‌های منتخب همین حالا</p>
+                        <span class="em-sec-link" style="color:#fafafa;border-color:rgba(250,250,250,.7);">مشاهده پیشنهادها</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    {% if home_deals %}
+    <section class="em-section em-section--soft">
+        <div class="em-width">
+            <header class="em-sec-head">
+                <h2>پرفروش‌ها</h2>
+                <p>محصولاتی که بیشتر از همه انتخاب شده‌اند</p>
+            </header>
+            {% with products=home_deals|slice:":8" %}
+            {% include "partials/product_grid.html" %}
+            {% endwith %}
+        </div>
+    </section>
+    {% endif %}
+
+    <section class="em-section" aria-label="مزایا">
+        <div class="em-width">
+            <div class="em-trust">
+                <article>
+                    <strong>ارسال سریع</strong>
+                    <span>تحویل مطمئن در کمترین زمان</span>
+                </article>
+                <article>
+                    <strong>پرداخت امن</strong>
+                    <span>درگاه‌های معتبر و محافظت‌شده</span>
+                </article>
+                <article>
+                    <strong>مرجوعی آسان</strong>
+                    <span>۷ روز ضمانت بازگشت</span>
+                </article>
+                <article>
+                    <strong>پشتیبانی</strong>
+                    <span>همراه شما در تمام مراحل</span>
+                </article>
+            </div>
+        </div>
+    </section>
+</div>
 {% endblock %}

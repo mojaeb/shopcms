@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}{% if category %}{{ category.name }}{% else %}فروشگاه{% endif %} - {{ store.name }}{% endblock %}
+{% block content %}
+<div class="mn-page">
+    <header class="mn-page-head">
+        <h1 class="mn-page-title">{% if category %}{{ category.name }}{% else %}فروشگاه{% endif %}</h1>
+        {% if category and category.description %}
+        <p class="mn-page-desc">{{ category.description }}</p>
+        {% endif %}
+    </header>
+
+    {% if categories and not category %}
+    <nav class="mn-cat-list" aria-label="دسته‌بندی‌ها">
+        {% for cat in categories %}
+        <a href="/category/{{ cat.slug }}/" class="mn-cat-chip">{{ cat.name }}</a>
+        {% endfor %}
+    </nav>
+    {% endif %}
+
+    <div id="product-catalog"
+         data-api-base="/api/v1/products/"
+         data-currency="{{ store.currency }}"
+         data-category="{{ category_slug|default:'' }}">
+        {% include "partials/product_catalog.html" %}
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="/static/js/product-filters.js"></script>
+{% endblock %}

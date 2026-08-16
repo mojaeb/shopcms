@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{{ store.name|default:"ShopCMS" }}{% endblock %}</title>
+    {% include "partials/google_verification.html" %}
     {% if seo %}
     <meta name="description" content="{{ seo.meta_description }}">
     <meta name="keywords" content="{{ seo.meta_keywords }}">

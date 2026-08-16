@@ -17,6 +17,14 @@ NINJA_DEFAULT_THROTTLE_RATES = {
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", "0.0.0.0", "shop1.local", ".local"]
 
+# Host-header probes (scanners hitting :8000) are expected on an open runserver;
+# keep rejecting them, but don't spam ERROR + traceback in the console.
+LOGGING["handlers"]["null"] = {"class": "logging.NullHandler"}  # noqa: F405
+LOGGING["loggers"]["django.security.DisallowedHost"] = {  # noqa: F405
+    "handlers": ["null"],
+    "propagate": False,
+}
+
 # Use console email backend in development
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 

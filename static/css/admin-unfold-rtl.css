@@ -1,0 +1,427 @@
+/*
+ * ShopCMS — Unfold admin RTL + Persian UI polish
+ * Loaded after fonts via UNFOLD["STYLES"]. Uses !important because
+ * Unfold's compiled stylesheet is linked after custom STYLES.
+ */
+
+/* ------------------------------------------------------------------ */
+/* Base direction                                                      */
+/* ------------------------------------------------------------------ */
+
+html[dir="rtl"],
+html[dir="rtl"] body {
+  direction: rtl;
+  text-align: start;
+}
+
+html[dir="rtl"] body {
+  letter-spacing: 0;
+  word-spacing: 0;
+  line-height: 1.65;
+}
+
+/* ------------------------------------------------------------------ */
+/* Logical remaps for common LTR Tailwind leftovers                    */
+/* ------------------------------------------------------------------ */
+
+html[dir="rtl"] .text-left {
+  text-align: start !important;
+}
+
+html[dir="rtl"] .text-right {
+  text-align: end !important;
+}
+
+html[dir="rtl"] .ml-auto {
+  margin-left: 0 !important;
+  margin-inline-start: auto !important;
+}
+
+html[dir="rtl"] .mr-auto {
+  margin-right: 0 !important;
+  margin-inline-end: auto !important;
+}
+
+html[dir="rtl"] .ml-1 {
+  margin-left: 0 !important;
+  margin-inline-start: 0.25rem !important;
+}
+
+html[dir="rtl"] .ml-2 {
+  margin-left: 0 !important;
+  margin-inline-start: 0.5rem !important;
+}
+
+html[dir="rtl"] .ml-4 {
+  margin-left: 0 !important;
+  margin-inline-start: 1rem !important;
+}
+
+html[dir="rtl"] .mr-1 {
+  margin-right: 0 !important;
+  margin-inline-end: 0.25rem !important;
+}
+
+html[dir="rtl"] .mr-\[12px\] {
+  margin-right: 0 !important;
+  margin-inline-end: 12px !important;
+}
+
+html[dir="rtl"] .sm\:ml-auto {
+  margin-left: 0 !important;
+  margin-inline-start: auto !important;
+}
+
+html[dir="rtl"] .lg\:ml-auto {
+  margin-left: 0 !important;
+  margin-inline-start: auto !important;
+}
+
+html[dir="rtl"] .lg\:ml-2 {
+  margin-left: 0 !important;
+  margin-inline-start: 0.5rem !important;
+}
+
+/* Actions bar offset when desktop sidebar is open (Alpine toggles xl:ml-*) */
+@media (min-width: 1280px) {
+  html[dir="rtl"] .xl\:ml-72 {
+    margin-left: 0 !important;
+    margin-inline-start: 18rem !important;
+  }
+
+  html[dir="rtl"] .xl\:ml-0 {
+    margin-left: 0 !important;
+    margin-inline-start: 0 !important;
+  }
+}
+
+/* Mobile row labels: push label to the start (right) */
+html[dir="rtl"] .before\:mr-auto::before {
+  margin-right: 0 !important;
+  margin-inline-end: auto !important;
+}
+
+html[dir="rtl"] .before\:pr-4::before {
+  padding-right: 0 !important;
+  padding-inline-end: 1rem !important;
+}
+
+html[dir="rtl"] .lg\:pl-3 {
+  padding-left: 0 !important;
+  padding-inline-start: 0.75rem !important;
+}
+
+html[dir="rtl"] .lg\:pr-0 {
+  padding-right: 0 !important;
+  padding-inline-end: 0 !important;
+}
+
+html[dir="rtl"] .lg\:first\:pl-3:first-child,
+html[dir="rtl"] .first\:pl-3:first-child {
+  padding-left: 0 !important;
+  padding-inline-start: 0.75rem !important;
+}
+
+html[dir="rtl"] .lg\:first\:pl-6:first-child,
+html[dir="rtl"] .first\:pl-6:first-child {
+  padding-left: 0 !important;
+  padding-inline-start: 1.5rem !important;
+}
+
+html[dir="rtl"] .lg\:last\:pr-3:last-child,
+html[dir="rtl"] .last\:pr-3:last-child {
+  padding-right: 0 !important;
+  padding-inline-end: 0.75rem !important;
+}
+
+html[dir="rtl"] .lg\:last\:pr-6:last-child,
+html[dir="rtl"] .last\:pr-6:last-child {
+  padding-right: 0 !important;
+  padding-inline-end: 1.5rem !important;
+}
+
+/* ------------------------------------------------------------------ */
+/* Sidebar / navigation                                                */
+/* ------------------------------------------------------------------ */
+
+html[dir="rtl"] #nav-sidebar {
+  border-right-width: 0 !important;
+  border-inline-end-width: 1px !important;
+  border-inline-end-style: solid;
+}
+
+html[dir="rtl"] #nav-sidebar .border-r,
+html[dir="rtl"] #nav-sidebar [class*="border-r"] {
+  border-right-width: 0 !important;
+  border-inline-end-width: 1px !important;
+}
+
+html[dir="rtl"] #nav-sidebar-apps h2 .ml-auto {
+  margin-left: 0 !important;
+  margin-inline-start: auto !important;
+}
+
+html[dir="rtl"] #nav-sidebar-apps .mr-3 {
+  margin-right: 0 !important;
+  margin-inline-end: 0.75rem !important;
+}
+
+html[dir="rtl"] #nav-sidebar-apps h2 .rotate-90 {
+  transform: rotate(-90deg) !important;
+}
+
+/* ------------------------------------------------------------------ */
+/* Changelist density + sticky header                                  */
+/* ------------------------------------------------------------------ */
+
+html[dir="rtl"] #result_list {
+  font-size: 0.875rem;
+}
+
+html[dir="rtl"] #result_list thead th {
+  text-align: start !important;
+  vertical-align: middle;
+  padding-block: 0.625rem !important;
+  padding-inline: 0.75rem !important;
+  background-color: rgb(249 250 251);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  box-shadow: 0 1px 0 0 rgb(229 231 235);
+}
+
+html[dir="rtl"].dark #result_list thead th,
+html[dir="rtl"] .dark #result_list thead th {
+  background-color: rgb(17 24 39);
+  box-shadow: 0 1px 0 0 rgb(31 41 55);
+}
+
+html[dir="rtl"] #result_list tbody td,
+html[dir="rtl"] #result_list .data-row > td {
+  text-align: start !important;
+  vertical-align: middle;
+}
+
+@media (min-width: 1024px) {
+  html[dir="rtl"] #result_list tbody td,
+  html[dir="rtl"] #result_list .data-row > td {
+    padding-block: 0.625rem !important;
+    padding-inline: 0.75rem !important;
+    line-height: 1.5;
+  }
+}
+
+/* Action / checkbox column: keep compact and start-aligned */
+html[dir="rtl"] #result_list th.action-checkbox-column,
+html[dir="rtl"] #result_list td.action-checkbox,
+html[dir="rtl"] #result_list .action-checkbox {
+  text-align: start !important;
+  width: 2.5rem;
+}
+
+html[dir="rtl"] #result_list .action-select,
+html[dir="rtl"] #result_list input.action-select {
+  margin-inline: 0;
+}
+
+/* Sort controls spacing uses logical start */
+html[dir="rtl"] #result_list .sortoptions {
+  margin-inline-start: 0.5rem;
+  gap: 0.125rem;
+}
+
+html[dir="rtl"] #result_list .sortremove,
+html[dir="rtl"] #result_list .sortpriority {
+  margin-inline-start: 0.25rem;
+}
+
+/* Search + filters toolbar */
+html[dir="rtl"] #toolbar,
+html[dir="rtl"] #changelist-search {
+  text-align: start;
+}
+
+html[dir="rtl"] #searchbar,
+html[dir="rtl"] #changelist-search input[type="text"] {
+  text-align: start;
+  direction: rtl;
+}
+
+/* Filter sheet / sidebar */
+html[dir="rtl"] #changelist-filter {
+  text-align: start;
+}
+
+html[dir="rtl"] #changelist-filter h3 {
+  text-align: start;
+}
+
+html[dir="rtl"] #changelist-filter ul li {
+  text-align: start;
+}
+
+html[dir="rtl"] #changelist-filter ul li.border-r {
+  border-right-width: 0 !important;
+  border-inline-end-width: 1px !important;
+}
+
+html[dir="rtl"] #changelist-filter ul li.last\:border-r-0:last-child {
+  border-inline-end-width: 0 !important;
+}
+
+/* Actions bar */
+html[dir="rtl"] #changelist-actions-wrapper,
+html[dir="rtl"] .changelist-actions,
+html[dir="rtl"] .actions {
+  text-align: start;
+}
+
+html[dir="rtl"] .actions select {
+  text-align: start;
+}
+
+/* Pagination */
+html[dir="rtl"] .paginator,
+html[dir="rtl"] [class*="pagination"] {
+  text-align: start;
+}
+
+/* ------------------------------------------------------------------ */
+/* Forms, labels, inlines                                              */
+/* ------------------------------------------------------------------ */
+
+html[dir="rtl"] label,
+html[dir="rtl"] .form-row label,
+html[dir="rtl"] .aligned label {
+  text-align: start !important;
+}
+
+html[dir="rtl"] input[type="text"],
+html[dir="rtl"] input[type="email"],
+html[dir="rtl"] input[type="password"],
+html[dir="rtl"] input[type="number"],
+html[dir="rtl"] input[type="url"],
+html[dir="rtl"] input[type="search"],
+html[dir="rtl"] input[type="tel"],
+html[dir="rtl"] textarea,
+html[dir="rtl"] select {
+  text-align: start;
+}
+
+/* Keep LTR for codes / numbers that read better left-to-right */
+html[dir="rtl"] input[type="email"],
+html[dir="rtl"] input[type="url"],
+html[dir="rtl"] input[name*="slug"],
+html[dir="rtl"] input[name*="sku"],
+html[dir="rtl"] input[name*="code"],
+html[dir="rtl"] input[autocomplete="username"],
+html[dir="rtl"] input[name="username"] {
+  direction: ltr;
+  text-align: left;
+  unicode-bidi: isolate;
+}
+
+html[dir="rtl"] .inline-group,
+html[dir="rtl"] .tabular,
+html[dir="rtl"] .tabular-table,
+html[dir="rtl"] .stacked {
+  text-align: start;
+}
+
+html[dir="rtl"] .tabular-table th,
+html[dir="rtl"] .tabular-table td {
+  text-align: start !important;
+}
+
+/* ------------------------------------------------------------------ */
+/* Breadcrumbs / headers / dropdowns / modals                          */
+/* ------------------------------------------------------------------ */
+
+html[dir="rtl"] #header,
+html[dir="rtl"] #header-inner,
+html[dir="rtl"] nav[aria-label],
+html[dir="rtl"] .breadcrumbs {
+  text-align: start;
+}
+
+/* Dropdown menus anchored with right-0 */
+html[dir="rtl"] #tabs-dropdown,
+html[dir="rtl"] nav[id^="tabs-dropdown"],
+html[dir="rtl"] [x-anchor] {
+  right: auto !important;
+  inset-inline-end: 0 !important;
+}
+
+html[dir="rtl"] #modal-overlay {
+  left: 0 !important;
+  right: 0 !important;
+  margin-inline: 0 !important;
+}
+
+/* Select chevron: physical right → logical end */
+html[dir="rtl"] .grow.relative > select + .material-symbols-outlined.absolute {
+  right: auto !important;
+  inset-inline-end: 0 !important;
+  margin-right: 0 !important;
+  margin-inline-end: 12px !important;
+}
+
+html[dir="rtl"] select {
+  padding-inline-end: 2.25rem !important;
+}
+
+/* File input leading icon strip */
+html[dir="rtl"] .border-r.border-base-200.flex.flex-none {
+  border-right-width: 0 !important;
+  border-inline-end-width: 1px !important;
+}
+
+/* ------------------------------------------------------------------ */
+/* Icons — do not mirror symbol fonts globally                         */
+/* ------------------------------------------------------------------ */
+
+html[dir="rtl"] .material-symbols-outlined {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+/* Opt-in mirror for directional icons when marked in markup */
+html[dir="rtl"] .material-symbols-outlined.mirror-rtl {
+  transform: scaleX(-1);
+}
+
+/* ------------------------------------------------------------------ */
+/* App index / dashboard polish                                        */
+/* ------------------------------------------------------------------ */
+
+html[dir="rtl"] caption,
+html[dir="rtl"] .module caption,
+html[dir="rtl"] #content-main {
+  text-align: start;
+}
+
+html[dir="rtl"] #content h1,
+html[dir="rtl"] #content h2,
+html[dir="rtl"] #content h3 {
+  text-align: start;
+}
+
+/* ------------------------------------------------------------------ */
+/* Store change form — unified settings polish                         */
+/* ------------------------------------------------------------------ */
+
+html[dir="rtl"] .app-tenants.model-store.change-form #tabs-items {
+  flex-wrap: wrap;
+  row-gap: 0.35rem;
+}
+
+html[dir="rtl"] .app-tenants.model-store.change-form .tab-wrapper {
+  margin-block-start: 0.25rem;
+}
+
+html[dir="rtl"] .app-tenants.model-store.change-form fieldset.module > h2,
+html[dir="rtl"] .app-tenants.model-store.change-form .fieldset-description {
+  letter-spacing: 0;
+  line-height: 1.7;
+}
+

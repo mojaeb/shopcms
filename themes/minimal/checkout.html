@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}{{ store.name }} - تسویه{% endblock %}
+{% block content %}
+<div class="mn-page" id="checkout-page" data-currency="{{ store.currency }}">
+    <header class="mn-page-head">
+        <h1 class="mn-page-title">تسویه حساب</h1>
+        <p class="mn-page-desc">آدرس، ارسال و پرداخت را تکمیل کنید تا سفارش ثبت شود.</p>
+    </header>
+
+    <div class="checkout-grid">
+        <section class="card">
+            <h2>آدرس تحویل</h2>
+            <div id="checkout-address">
+                <p class="muted">در حال بارگذاری آدرس...</p>
+            </div>
+            <a href="/addresses/" class="btn btn-outline" style="margin-top:0.75rem;">مدیریت آدرس‌ها</a>
+        </section>
+
+        <section class="card">
+            <h2>اقلام سفارش</h2>
+            <div id="checkout-items" class="checkout-items">
+                <p class="muted">در حال بارگذاری اقلام...</p>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>روش ارسال</h2>
+            <div id="shipping-options">
+                <p class="muted">ابتدا آدرس را انتخاب کنید.</p>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>درگاه پرداخت</h2>
+            <div id="payment-gateways">
+                <p class="muted">در حال بارگذاری درگاه‌ها...</p>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>خلاصه سفارش</h2>
+            <div id="checkout-summary">
+                <p>سبد: <span id="cart-subtotal" class="money-slot">—</span></p>
+                <p>هزینه ارسال: <span id="shipping-cost" class="money-slot">—</span></p>
+                <p id="tax-row" style="display:none;">مالیات: <span id="tax-cost" class="money-slot">—</span></p>
+                <p style="font-size:1.15rem; margin-top:0.65rem; font-weight:700;">
+                    جمع کل: <span id="checkout-total" class="money-slot">—</span>
+                </p>
+            </div>
+            <button type="button" class="btn" id="checkout-submit" style="margin-top:1rem; width:100%;">پرداخت</button>
+            <p id="checkout-message" class="muted" style="margin-top:0.5rem;"></p>
+        </section>
+    </div>
+</div>
+{% endblock %}
+{% block extra_css %}
+<style>
+.checkout-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:1rem; }
+.shipping-option { display:flex; align-items:center; gap:0.75rem; padding:0.75rem; border:1px solid var(--border); margin-bottom:0.5rem; cursor:pointer; }
+.shipping-option.selected { border-color: var(--mn-ink, #0a0a0a); background: var(--mn-soft, #f4f4f5); }
+.shipping-option input { margin:0; }
+.checkout-items { display:flex; flex-direction:column; gap:0.75rem; }
+.checkout-item {
+    display:flex; align-items:center; justify-content:space-between; gap:1rem;
+    padding:0.75rem 0; border-bottom:1px solid var(--border);
+}
+.checkout-item:last-child { border-bottom:none; padding-bottom:0; }
+.checkout-item-info { display:flex; align-items:center; gap:0.75rem; min-width:0; }
+.checkout-item-img { width:64px; height:64px; object-fit:cover; flex-shrink:0; }
+.checkout-item-img--empty { background:var(--border, #e5e7eb); }
+.checkout-item-title { margin:0; font-size:0.95rem; }
+.checkout-item-meta { margin:0.15rem 0 0; font-size:0.8rem; }
+.checkout-item-total { margin:0; font-weight:600; white-space:nowrap; }
+</style>
+{% endblock %}
+{% block extra_js %}
+<script src="/static/js/checkout.js"></script>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}{{ store.name }} - علاقه‌مندی‌ها{% endblock %}
+{% block extra_css %}
+<style>
+.wishlist-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap:1.5rem; }
+.wishlist-card { background:transparent; border:none; padding:0; }
+.wishlist-card img { width:100%; aspect-ratio:4/5; height:auto; object-fit:cover; background:var(--mn-soft, #f4f4f5); border-radius:0; }
+.wishlist-actions { display:flex; gap:0.5rem; margin-top:0.75rem; flex-wrap:wrap; }
+</style>
+{% endblock %}
+{% block content %}
+<div class="mn-page" id="wishlist-page" data-currency="{{ store.currency }}">
+    <header class="mn-page-head">
+        <h1 class="mn-page-title">علاقه‌مندی‌ها</h1>
+        <p class="mn-page-desc">محصولاتی که برای بعد ذخیره کرده‌اید</p>
+    </header>
+    <div id="wishlist-container">
+        <div class="empty-state card">در حال بارگذاری...</div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="/static/js/wishlist.js"></script>
+{% endblock %}

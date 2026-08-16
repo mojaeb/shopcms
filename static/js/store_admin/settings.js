@@ -5,6 +5,7 @@
     if (!api.requireAuth("/manage/settings/")) return;
 
     const form = document.getElementById("settings-form");
+    const gscForm = document.getElementById("seo-gsc-form");
     const themeForm = document.getElementById("theme-settings-form");
     const slidesEl = document.getElementById("theme-slides");
     const slideTpl = document.getElementById("theme-slide-template");
@@ -104,6 +105,51 @@
         }
     }
 
+    function renderGscForm(seo) {
+        const token = (seo && seo.google_site_verification) || "";
+        const htmlFile = (seo && seo.google_html_file) || "";
+        const verificationEl = document.getElementById("gsc-verification");
+        const sitemapEl = document.getElementById("gsc-sitemap");
+        const robotsEl = document.getElementById("gsc-robots");
+        const htmlFileEl = document.getElementById("gsc-html-file");
+        const htmlWrap = document.getElementById("gsc-html-file-wrap");
+        const statusEl = document.getElementById("gsc-status");
+        if (verificationEl) verificationEl.value = token || htmlFile || "";
+        if (sitemapEl) sitemapEl.value = (seo && seo.sitemap_url) || (window.location.origin + "/sitemap.xml");
+        if (robotsEl) robotsEl.value = (seo && seo.robots_url) || (window.location.origin + "/robots.txt");
+        if (htmlFileEl) htmlFileEl.value = (seo && seo.html_file_url) || "";
+        if (htmlWrap) htmlWrap.hidden = !htmlFile;
+        if (statusEl) {
+            const on = !!(seo && seo.verification_configured);
+            statusEl.hidden = false;
+            statusEl.classList.toggle("is-on", on);
+            statusEl.classList.toggle("is-off", !on);
+            statusEl.textContent = on
+                ? "کد تأیید ذخیره شد. در گوگل کنسول Verify را بزنید."
+                : "هنوز وصل نشده.";
+        }
+    }
+
+    function copyField(id) {
+        const el = document.getElementById(id);
+        const text = el && el.value ? el.value : "";
+        if (!text) return;
+        const done = function () {
+            api.flash("کپی شد");
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(done).catch(function () {
+                el.select();
+                document.execCommand("copy");
+                done();
+            });
+            return;
+        }
+        el.select();
+        document.execCommand("copy");
+        done();
+    }
+
     function loadSettings() {
         api.setPageLoading(root, true);
         api.apiFetch("/api/v1/store-admin/settings").then(function ({ ok, data }) {
@@ -118,6 +164,7 @@
             document.getElementById("setting-timezone").value = general.timezone || "";
             document.getElementById("setting-language").value = general.language || "";
             renderThemeForm(data.theme || {});
+            renderGscForm(data.seo || {});
         });
     }
 
@@ -146,6 +193,36 @@
             if (data.name) document.getElementById("setting-name").value = data.name;
         });
     });
+
+    if (gscForm) {
+        gscForm.querySelectorAll("[data-copy]").forEach(function (btn) {
+            btn.addEventListener("click", function () {
+                copyField(btn.getAttribute("data-copy"));
+            });
+        });
+        gscForm.addEventListener("submit", function (e) {
+            e.preventDefault();
+            const btn = gscForm.querySelector('button[type="submit"]');
+            const payload = {
+                google_site_verification: document.getElementById("gsc-verification").value.trim(),
+            };
+            api.setBusy(btn, true, "در حال ذخیره...");
+            api.setPageLoading(root, true, "در حال ذخیره...");
+            api.apiFetch("/api/v1/store-admin/settings/seo", {
+                method: "PUT",
+                body: JSON.stringify(payload),
+            }).then(function ({ ok, data }) {
+                api.setBusy(btn, false);
+                api.setPageLoading(root, false);
+                if (!ok) {
+                    api.flash(data.detail || "ذخیره اتصال گوگل ناموفق", true);
+                    return;
+                }
+                api.flash("اتصال گوگل ذخیره شد");
+                renderGscForm(data);
+            });
+        });
+    }
 
     document.getElementById("theme-add-slide").addEventListener("click", function () {
         addSlide(emptySlide());

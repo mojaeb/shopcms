@@ -20,6 +20,47 @@
         </div>
     </form>
 
+    <form id="seo-gsc-form" class="sa-form sa-card">
+        <h2>گوگل سرچ کنسول</h2>
+        <p class="sa-muted sa-form-intro">
+            با ثبت کد تأیید، گوگل این دامنه را به‌نام فروشگاه می‌شناسد. بعد از ذخیره، در
+            <a href="https://search.google.com/search-console" target="_blank" rel="noopener noreferrer">Search Console</a>
+            روی Verify بزنید و نقشه سایت را اضافه کنید.
+        </p>
+        <p id="gsc-status" class="sa-gsc-status" hidden></p>
+        <ol class="sa-steps">
+            <li>در Search Console یک property با آدرس همین سایت بسازید.</li>
+            <li>روش HTML tag یا HTML file را انتخاب کنید.</li>
+            <li>کد یا نام فایل را اینجا ذخیره کنید و در گوگل Verify را بزنید.</li>
+        </ol>
+        <label>کد تأیید
+            <textarea id="gsc-verification" class="sa-input" rows="3" dir="ltr" placeholder='&lt;meta name="google-site-verification" content="…"&gt; یا google123.html'></textarea>
+        </label>
+        <label>نقشه سایت
+            <div class="sa-copy-row">
+                <input type="text" id="gsc-sitemap" class="sa-input" readonly dir="ltr">
+                <button type="button" class="sa-btn sa-btn-ghost" data-copy="gsc-sitemap">کپی</button>
+            </div>
+        </label>
+        <label>robots.txt
+            <div class="sa-copy-row">
+                <input type="text" id="gsc-robots" class="sa-input" readonly dir="ltr">
+                <button type="button" class="sa-btn sa-btn-ghost" data-copy="gsc-robots">کپی</button>
+            </div>
+        </label>
+        <div id="gsc-html-file-wrap" hidden>
+            <label>فایل تأیید
+                <div class="sa-copy-row">
+                    <input type="text" id="gsc-html-file" class="sa-input" readonly dir="ltr">
+                    <button type="button" class="sa-btn sa-btn-ghost" data-copy="gsc-html-file">کپی</button>
+                </div>
+            </label>
+        </div>
+        <div class="sa-form-actions">
+            <button type="submit" class="sa-btn">ذخیره اتصال گوگل</button>
+        </div>
+    </form>
+
     <form id="theme-settings-form" class="sa-form sa-card">
         <h2>تنظیمات تم / Hero</h2>
         <p class="sa-muted sa-form-intro">

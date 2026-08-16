@@ -19,6 +19,33 @@ class PermissionService:
             .first()
         )
 
+    def get_staff_store_ids(self, user: User) -> set[int]:
+        """Return store IDs where the user has an active staff role.
+
+        Superusers are unrestricted elsewhere; this returns an empty set for them
+        so callers should still check ``user.is_superuser`` first.
+        """
+        from dashboard.authentication_store import STAFF_ROLES
+
+        if not user or not getattr(user, "is_authenticated", False):
+            return set()
+        return set(
+            StoreMembership.objects.filter(
+                user=user,
+                status="active",
+                role__codename__in=STAFF_ROLES,
+            ).values_list("store_id", flat=True)
+        )
+
+    def can_manage_store(self, user: User, store: Store | None = None) -> bool:
+        """True if user may manage the given store (staff membership or superuser)."""
+        store = store or get_current_store()
+        if not user or not getattr(user, "is_authenticated", False) or not store:
+            return False
+        if user.is_superuser:
+            return True
+        return self.is_store_staff(user, store)
+
     def has_permission(self, user: User, codename: str, store: Store | None = None) -> bool:
         if not user or not user.is_authenticated:
             return False

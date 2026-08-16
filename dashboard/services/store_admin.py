@@ -61,7 +61,8 @@ class StoreAdminService:
             ).count(),
         }
 
-    def get_settings_overview(self, store: Store) -> dict:
+    def get_settings_overview(self, store: Store, request=None) -> dict:
+        from tenants.services.seo import SeoService
         from tenants.services.theme_settings import ThemeSettingsService
 
         return {
@@ -80,7 +81,18 @@ class StoreAdminService:
             "payment": self._get_group_settings(store, "payment"),
             "shipping": self._get_group_settings(store, "shipping"),
             "theme": ThemeSettingsService().get_theme_settings(store),
+            "seo": SeoService().get_overview(store, request),
         }
+
+    def update_seo_settings(self, store: Store, raw_verification: str, request=None) -> dict:
+        from tenants.services.seo import SeoError, SeoService
+
+        service = SeoService()
+        try:
+            service.save_google_verification(store, raw_verification or "")
+        except SeoError as exc:
+            raise ValueError(str(exc)) from exc
+        return service.get_overview(store, request)
 
     def update_theme_settings(self, store: Store, data: dict) -> dict:
         from tenants.services.theme_settings import ThemeSettingsService

@@ -7,4 +7,8 @@ class CoreConfig(AppConfig):
     verbose_name = "Core"
 
     def ready(self):
-        pass
+        # Admin autodiscover runs in django.contrib.admin's AppConfig.ready,
+        # which is listed before local apps — registry is complete here.
+        from core.admin_scoping import apply_store_admin_scoping
+
+        apply_store_admin_scoping()

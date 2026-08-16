@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}{{ store.name }} - {% if auth_mode == 'register' %}ثبت‌نام{% else %}ورود{% endif %}{% endblock %}
+{% block content %}
+<div id="auth-page" class="mn-page mn-auth" data-mode="{{ auth_mode|default:'login' }}">
+    <header class="mn-page-head" style="text-align:center; border:0; padding-bottom:0;">
+        <h1 class="mn-page-title">{% if auth_mode == 'register' %}ثبت‌نام{% else %}ورود{% endif %}</h1>
+        <p class="mn-page-desc" style="margin-inline:auto;">با شماره موبایل وارد شوید یا حساب جدید بسازید.</p>
+    </header>
+
+    <div class="mn-auth-tabs auth-tabs" style="margin-top:1.25rem;">
+        <button type="button" class="btn btn-outline auth-tab" data-mode="login">ورود</button>
+        <button type="button" class="btn btn-outline auth-tab" data-mode="register">ثبت‌نام</button>
+    </div>
+
+    <div class="card">
+        <form id="auth-phone-form">
+            <label for="auth-phone">شماره موبایل</label>
+            <input id="auth-phone" name="phone" type="tel" inputmode="numeric" placeholder="09123456789" required pattern="09[0-9]{9}">
+
+            <div id="register-fields" style="display:none; margin-top:1rem;">
+                <label for="auth-first-name">نام</label>
+                <input id="auth-first-name" name="first_name" type="text" placeholder="نام">
+                <label for="auth-last-name" style="margin-top:0.75rem; display:block;">نام خانوادگی</label>
+                <input id="auth-last-name" name="last_name" type="text" placeholder="نام خانوادگی">
+            </div>
+
+            <button type="submit" class="btn" style="width:100%; margin-top:1rem;" id="auth-send-btn">دریافت کد</button>
+        </form>
+
+        <form id="auth-verify-form" style="display:none; margin-top:1.5rem;">
+            <p class="muted" id="auth-phone-display"></p>
+            <label for="auth-code">کد تأیید (۵ رقمی)</label>
+            <input id="auth-code" name="code" type="text" inputmode="numeric" maxlength="5" pattern="[0-9]{5}" required placeholder="12345">
+            <button type="submit" class="btn" style="width:100%; margin-top:1rem;">تأیید و ادامه</button>
+            <button type="button" class="btn btn-outline" style="width:100%; margin-top:0.5rem;" id="auth-back-btn">تغییر شماره</button>
+        </form>
+
+        <p id="auth-message" class="muted" style="margin-top:1rem; min-height:1.25rem;"></p>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="/static/js/auth.js"></script>
+{% endblock %}

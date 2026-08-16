@@ -8,10 +8,18 @@ from tenants.models import Store, StoreSetting
 class Command(BaseCommand):
     help = "Seed payment gateway settings for development"
 
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "--store",
+            default="shop1",
+            help="Store slug to seed (default: shop1)",
+        )
+
     def handle(self, *args, **options):
-        store = Store.objects.filter(slug="shop1").first()
+        store_slug = options["store"]
+        store = Store.objects.filter(slug=store_slug).first()
         if not store:
-            self.stdout.write(self.style.WARNING("Run seed_store first."))
+            self.stdout.write(self.style.WARNING(f"Store '{store_slug}' not found. Run seed_store first."))
             return
 
         settings = {

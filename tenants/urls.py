@@ -1,11 +1,19 @@
 """Tenant URL patterns - storefront pages."""
 
-from django.urls import path
+from django.urls import path, re_path
 
+from tenants.views import seo as seo_views
 from tenants.views import store_admin_ui as manage
 from tenants.views import storefront as views
 
 urlpatterns = [
+    path("robots.txt", seo_views.robots_txt, name="storefront_robots"),
+    path("sitemap.xml", seo_views.sitemap_xml, name="storefront_sitemap"),
+    re_path(
+        r"^google(?P<token>[A-Za-z0-9_-]+)\.html$",
+        seo_views.google_html_verification,
+        name="storefront_google_verification",
+    ),
     path("manage/", manage.manage_dashboard, name="store_admin_dashboard"),
     path("manage/products/", manage.manage_products, name="store_admin_products"),
     path("manage/products/new/", manage.manage_product_new, name="store_admin_product_new"),

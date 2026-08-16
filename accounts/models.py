@@ -137,6 +137,13 @@ class StoreMembership(TimeStampedModel):
     def __str__(self):
         return f"{self.user.phone} @ {self.store.slug} ({self.role.codename})"
 
+    def save(self, *args, **kwargs):
+        if self.is_primary and self.store_id:
+            StoreMembership.objects.filter(store_id=self.store_id, is_primary=True).exclude(
+                pk=self.pk
+            ).update(is_primary=False)
+        super().save(*args, **kwargs)
+
     @property
     def is_active(self) -> bool:
         return self.status == MembershipStatus.ACTIVE

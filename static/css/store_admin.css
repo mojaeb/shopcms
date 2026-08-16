@@ -1036,6 +1036,28 @@ a.sa-stat:hover {
     margin: 0 0 1rem;
     font-size: 0.88rem;
 }
+.sa-settings .sa-form-intro a {
+    color: var(--sa-accent-hover);
+}
+.sa-steps {
+    margin: 0 0 1rem;
+    padding: 0 1.2rem 0 0;
+    color: var(--sa-muted);
+    font-size: 0.88rem;
+    line-height: 1.7;
+}
+.sa-gsc-status {
+    margin: 0 0 0.85rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+}
+.sa-gsc-status.is-on {
+    color: #047857;
+}
+.sa-gsc-status.is-off {
+    color: var(--sa-muted);
+    font-weight: 500;
+}
 .sa-theme-colors {
     display: grid;
     grid-template-columns: repeat(3, 1fr);

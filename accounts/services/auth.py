@@ -211,7 +211,7 @@ class AuthService:
 
         phone = UserManager.normalize_phone(phone)
 
-        user, created = User.objects.get_or_create(
+        user, _created = User.objects.get_or_create(
             phone=phone,
             defaults={
                 "first_name": first_name,
@@ -221,11 +221,29 @@ class AuthService:
             },
         )
 
-        if not created and first_name:
+        update_fields: list[str] = []
+        if first_name and user.first_name != first_name:
             user.first_name = first_name
+            update_fields.append("first_name")
+        if last_name and user.last_name != last_name:
             user.last_name = last_name
+            update_fields.append("last_name")
+        if not user.is_staff:
             user.is_staff = True
-            user.save()
+            update_fields.append("is_staff")
+        if not user.phone_verified:
+            user.phone_verified = True
+            update_fields.append("phone_verified")
+        if not user.is_active:
+            user.is_active = True
+            update_fields.append("is_active")
+        if update_fields:
+            user.save(update_fields=update_fields)
+
+        if is_primary:
+            StoreMembership.objects.filter(store=store, is_primary=True).exclude(user=user).update(
+                is_primary=False
+            )
 
         admin_role = self._get_store_admin_role()
         membership, _ = StoreMembership.objects.update_or_create(

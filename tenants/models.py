@@ -160,7 +160,9 @@ class StoreSetting(TimeStampedModel):
         verbose_name="گروه",
     )
     key = models.CharField(max_length=200, verbose_name="کلید")
-    value = models.JSONField(default=dict, verbose_name="مقدار")
+    # blank=True: empty JSON string "" is a valid stored value (contact/seo clears),
+    # and Django's forms.JSONField treats "" as empty — without blank, admin save fails.
+    value = models.JSONField(default=dict, blank=True, verbose_name="مقدار")
     value_type = models.CharField(
         max_length=20,
         choices=SettingValueType.choices,

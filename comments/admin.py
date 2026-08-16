@@ -1,11 +1,12 @@
 """Comment admin."""
 
 from django.contrib import admin
+from unfold.admin import ModelAdmin, TabularInline
 
 from comments.models import Comment, CommentLike
 
 
-class ReplyInline(admin.TabularInline):
+class ReplyInline(TabularInline):
     model = Comment
     fk_name = "parent"
     extra = 0
@@ -13,7 +14,7 @@ class ReplyInline(admin.TabularInline):
 
 
 @admin.register(Comment)
-class CommentAdmin(admin.ModelAdmin):
+class CommentAdmin(ModelAdmin):
     list_display = ("product", "user", "rating", "status", "likes_count", "is_verified_purchase", "created_at")
     list_filter = ("store", "status", "rating")
     search_fields = ("body", "user__phone", "product__name")
@@ -21,5 +22,5 @@ class CommentAdmin(admin.ModelAdmin):
 
 
 @admin.register(CommentLike)
-class CommentLikeAdmin(admin.ModelAdmin):
+class CommentLikeAdmin(ModelAdmin):
     list_display = ("comment", "user", "created_at")

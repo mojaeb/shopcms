@@ -52,7 +52,8 @@ class StoreAdminAuth(HttpBearer):
             return user
 
         jwt_store_id = payload.get("store_id")
-        if jwt_store_id and int(jwt_store_id) != store.id:
+        # Non-superuser store staff tokens must be bound to the current store.
+        if not jwt_store_id or int(jwt_store_id) != store.id:
             return None
 
         membership = self.permission_service.get_membership(user, store)

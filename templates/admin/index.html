@@ -1,0 +1,42 @@
+{% extends 'admin/base.html' %}
+
+{% load i18n %}
+
+{% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+{% block branding %}
+    {% include "unfold/helpers/site_branding.html" %}
+{% endblock %}
+
+{% block content %}
+    <div class="flex flex-col gap-8 lg:flex-row">
+        <div class="grow">
+            <header class="mb-8">
+                <h1 class="text-xl font-semibold text-font-important-light dark:text-font-important-dark">پنل مدیریت</h1>
+                <p class="mt-2 max-w-xl text-sm text-font-subtle-light dark:text-font-subtle-dark">
+                    فروشگاه، کاربر و مدیر فروشگاه اینجاست. کاتالوگ و داده‌های مشتری در سایدبار جمع شده‌اند.
+                </p>
+            </header>
+
+            <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                <a href="{% url 'admin:tenants_store_changelist' %}" class="block rounded-default border border-base-200 bg-white p-4 hover:border-primary-500/40 dark:border-base-800 dark:bg-base-900">
+                    <span class="material-symbols-outlined mb-3 block text-primary-600 dark:text-primary-500">storefront</span>
+                    <span class="block font-semibold text-font-important-light dark:text-font-important-dark">فروشگاه‌ها</span>
+                    <span class="mt-1 block text-sm text-font-subtle-light dark:text-font-subtle-dark">تنظیمات، دامنه و مدیر فروشگاه</span>
+                </a>
+                <a href="{% url 'admin:accounts_user_changelist' %}" class="block rounded-default border border-base-200 bg-white p-4 hover:border-primary-500/40 dark:border-base-800 dark:bg-base-900">
+                    <span class="material-symbols-outlined mb-3 block text-primary-600 dark:text-primary-500">group</span>
+                    <span class="block font-semibold text-font-important-light dark:text-font-important-dark">کاربران</span>
+                    <span class="mt-1 block text-sm text-font-subtle-light dark:text-font-subtle-dark">حساب‌ها و دسترسی ادمین</span>
+                </a>
+                <a href="{% url 'admin:accounts_storemembership_changelist' %}" class="block rounded-default border border-base-200 bg-white p-4 hover:border-primary-500/40 dark:border-base-800 dark:bg-base-900">
+                    <span class="material-symbols-outlined mb-3 block text-primary-600 dark:text-primary-500">badge</span>
+                    <span class="block font-semibold text-font-important-light dark:text-font-important-dark">مدیرهای فروشگاه</span>
+                    <span class="mt-1 block text-sm text-font-subtle-light dark:text-font-subtle-dark">عضویت و نقش در هر فروشگاه</span>
+                </a>
+            </div>
+        </div>
+
+        {% include "unfold/helpers/history.html" %}
+    </div>
+{% endblock %}

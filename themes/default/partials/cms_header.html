@@ -1,4 +1,4 @@
-{% if cms_layout.use_custom_header %}
+{% if cms_layout.use_custom_header and cms_layout.header_html %}
 {{ cms_layout.header_html|safe }}
 {% else %}
 {% include "partials/header.html" %}

@@ -120,6 +120,47 @@ def test_tax_settings(client, admin_token, setup_store):
 
 
 @pytest.mark.django_db
+def test_seo_google_search_console(client, admin_token, setup_store):
+    listed = client.get(
+        "/api/v1/store-admin/settings",
+        HTTP_AUTHORIZATION=f"Bearer {admin_token}",
+        HTTP_HOST="localhost",
+    )
+    assert listed.status_code == 200
+    seo = listed.json()["seo"]
+    assert seo["verification_configured"] is False
+    assert seo["sitemap_url"].endswith("/sitemap.xml")
+
+    bad = client.put(
+        "/api/v1/store-admin/settings/seo",
+        data={"google_site_verification": "bad code!!"},
+        content_type="application/json",
+        HTTP_AUTHORIZATION=f"Bearer {admin_token}",
+        HTTP_HOST="localhost",
+    )
+    assert bad.status_code == 400
+
+    saved = client.put(
+        "/api/v1/store-admin/settings/seo",
+        data={
+            "google_site_verification": (
+                '<meta name="google-site-verification" content="ApiToken_gsc999">'
+            )
+        },
+        content_type="application/json",
+        HTTP_AUTHORIZATION=f"Bearer {admin_token}",
+        HTTP_HOST="localhost",
+    )
+    assert saved.status_code == 200
+    data = saved.json()
+    assert data["google_site_verification"] == "ApiToken_gsc999"
+    assert data["verification_configured"] is True
+
+    home = client.get("/", HTTP_HOST="localhost")
+    assert 'content="ApiToken_gsc999"' in home.content.decode()
+
+
+@pytest.mark.django_db
 def test_list_customers(client, admin_token, customer_user):
     response = client.get(
         "/api/v1/store-admin/users",
