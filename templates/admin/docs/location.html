@@ -1,0 +1,112 @@
+{% extends "admin/docs/base.html" %}
+
+{% block docs_content %}
+<article class="max-w-3xl space-y-5 text-sm" dir="rtl">
+  <h1 class="text-xl font-semibold text-font-important-light dark:text-font-important-dark">{{ doc.title }}</h1>
+  <p class="text-font-subtle-light dark:text-font-subtle-dark">{{ doc.summary }}</p>
+
+  {# ── مختصات مبدا فروشگاه ─────────────────────────────────────────── #}
+  <section class="rounded-default border border-base-200 p-4 dark:border-base-800 space-y-2">
+    <h2 class="font-semibold text-font-important-light dark:text-font-important-dark">تنظیم مختصات مبدا فروشگاه</h2>
+    <p class="text-font-subtle-light dark:text-font-subtle-dark">
+      در فرم فروشگاه (تب «ارسال» یا اطلاعات اصلی) دو فیلد <strong>عرض جغرافیایی مبدا</strong> و <strong>طول جغرافیایی مبدا</strong> را پر کنید.
+      این مختصات برای محاسبه فاصله واقعی تا آدرس مشتری (در حالت‌های distance و distance_weight) استفاده می‌شود.
+    </p>
+    <ul class="list-disc space-y-1 pr-5 text-xs text-font-subtle-light dark:text-font-subtle-dark">
+      <li>از Google Maps یا نشان‌مپ مختصات انبار / مرکز ارسال را بردارید</li>
+      <li>فرمت: اعشار (مثال: <span dir="ltr" class="font-mono">35.689200</span>، <span dir="ltr" class="font-mono">51.389000</span>)</li>
+      <li>محدوده معتبر ایران: عرض ۲۵.۰۸ تا ۳۹.۷۸ — طول ۴۴.۰۳ تا ۶۳.۳۲</li>
+      <li>اگر این فیلدها خالی باشند، سیستم به رفتار قبلی (zone_tier بر اساس شهر) fallback می‌کند</li>
+    </ul>
+  </section>
+
+  {# ── نحوه کار محاسبه فاصله ──────────────────────────────────────── #}
+  <section class="rounded-default border border-base-200 p-4 dark:border-base-800 space-y-3">
+    <h2 class="font-semibold text-font-important-light dark:text-font-important-dark">نحوه محاسبه فاصله</h2>
+    <div class="overflow-x-auto">
+      <table class="w-full text-xs border-collapse">
+        <thead>
+          <tr class="bg-base-50 dark:bg-base-950 text-right">
+            <th class="border border-base-200 dark:border-base-700 px-3 py-2">روش</th>
+            <th class="border border-base-200 dark:border-base-700 px-3 py-2">شرط فعال‌شدن</th>
+            <th class="border border-base-200 dark:border-base-700 px-3 py-2">دقت</th>
+          </tr>
+        </thead>
+        <tbody class="text-font-subtle-light dark:text-font-subtle-dark">
+          <tr>
+            <td class="border border-base-200 dark:border-base-700 px-3 py-1.5">Haversine (خط مستقیم)</td>
+            <td class="border border-base-200 dark:border-base-700 px-3 py-1.5">مختصات مبدا + مقصد موجود، بدون routing_api_key</td>
+            <td class="border border-base-200 dark:border-base-700 px-3 py-1.5">±۵٪ کافی برای تعرفه‌بندی</td>
+          </tr>
+          <tr>
+            <td class="border border-base-200 dark:border-base-700 px-3 py-1.5">Routing API (مسیر واقعی)</td>
+            <td class="border border-base-200 dark:border-base-700 px-3 py-1.5">routing_api_key در تنظیمات shipping.map</td>
+            <td class="border border-base-200 dark:border-base-700 px-3 py-1.5">فاصله جاده‌ای</td>
+          </tr>
+          <tr>
+            <td class="border border-base-200 dark:border-base-700 px-3 py-1.5">zone_tier (شهر/استان)</td>
+            <td class="border border-base-200 dark:border-base-700 px-3 py-1.5">مختصات موجود نباشد</td>
+            <td class="border border-base-200 dark:border-base-700 px-3 py-1.5">گروه‌بندی استانی</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="text-xs text-font-subtle-light dark:text-font-subtle-dark">
+      نتیجه ۳۰ روز cache می‌شود — برای به‌روزرسانی، cache فروشگاه را از پنل مدیریت پاک کنید.
+    </p>
+  </section>
+
+  {# ── تنظیم routing API ───────────────────────────────────────────── #}
+  <section class="rounded-default border border-base-200 p-4 dark:border-base-800 space-y-2">
+    <h2 class="font-semibold text-font-important-light dark:text-font-important-dark">تنظیم Routing API (اختیاری)</h2>
+    <p class="text-font-subtle-light dark:text-font-subtle-dark">
+      برای فاصله جاده‌ای واقعی، کلید <span dir="ltr" class="font-mono">routing_api_key</span> را در تنظیمات پیشرفته فروشگاه (گروه shipping) قرار دهید:
+    </p>
+    <pre class="rounded-default bg-base-50 dark:bg-base-950 p-3 text-xs" dir="ltr">{
+  "map": {
+    "routing_api_key": "YOUR-API-KEY"
+  }
+}</pre>
+    <p class="text-xs text-font-subtle-light dark:text-font-subtle-dark">
+      اگر کلید خالی باشد یا API خطا بدهد، سیستم به Haversine fallback می‌کند و محاسبه شیپینگ fail نمی‌شود.
+    </p>
+  </section>
+
+  {# ── GPS چک‌اوت ──────────────────────────────────────────────────── #}
+  <section class="rounded-default border border-base-200 p-4 dark:border-base-800 space-y-2">
+    <h2 class="font-semibold text-font-important-light dark:text-font-important-dark">ویجت GPS در چک‌اوت (تم default)</h2>
+    <p class="text-font-subtle-light dark:text-font-subtle-dark">
+      در تم <span dir="ltr" class="font-mono">default</span> دکمه «📍 دریافت موقعیت من از GPS» به فرم آدرس اضافه شده:
+    </p>
+    <ul class="list-disc space-y-1 pr-5 text-xs text-font-subtle-light dark:text-font-subtle-dark">
+      <li>از <span dir="ltr" class="font-mono">navigator.geolocation.getCurrentPosition</span> استفاده می‌کند</li>
+      <li>مختصات در دو فیلد hidden <span dir="ltr" class="font-mono">latitude / longitude</span> ست می‌شود</li>
+      <li>پیش‌نمایش فاصله از مبدا فروشگاه نمایش می‌دهد (endpoint زیر)</li>
+      <li>مختصات خارج از ایران رد می‌شوند (اعتبارسنجی در API)</li>
+    </ul>
+  </section>
+
+  {# ── API endpoint ها ─────────────────────────────────────────────── #}
+  <section class="rounded-default border border-base-200 p-4 dark:border-base-800 space-y-3">
+    <h2 class="font-semibold text-font-important-light dark:text-font-important-dark">API Endpoints</h2>
+
+    <div>
+      <p class="font-mono text-xs mb-1" dir="ltr">POST /api/v1/shipping/distance-preview/</p>
+      <p class="text-xs text-font-subtle-light dark:text-font-subtle-dark mb-1">پیش‌نمایش فاصله قبل از ثبت آدرس (بدون نیاز به login):</p>
+      <pre class="rounded-default bg-base-50 dark:bg-base-950 p-2 text-xs" dir="ltr">Request:  {"latitude": 36.2972, "longitude": 59.6067}
+Response: {"distance_km": "741.234"}</pre>
+    </div>
+
+    <div>
+      <p class="font-mono text-xs mb-1" dir="ltr">POST /api/v1/addresses/</p>
+      <p class="text-xs text-font-subtle-light dark:text-font-subtle-dark mb-1">ثبت آدرس با مختصات (اختیاری):</p>
+      <pre class="rounded-default bg-base-50 dark:bg-base-950 p-2 text-xs" dir="ltr">{
+  "full_name": "...", "phone": "...", "province": "...",
+  "city": "...", "postal_code": "...", "address_line": "...",
+  "latitude": 36.2972,
+  "longitude": 59.6067
+}</pre>
+    </div>
+  </section>
+</article>
+{% endblock %}

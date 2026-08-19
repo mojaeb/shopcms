@@ -223,9 +223,18 @@
         });
     }
 
+    function setWishlistBusy(button, busy) {
+        if (!button) return;
+        button.disabled = busy;
+        button.classList.toggle("is-busy", busy);
+        if (busy) button.setAttribute("aria-busy", "true");
+        else button.removeAttribute("aria-busy");
+    }
+
     function toggleWishlist(slug, button) {
         if (!slug) return;
-        if (button) button.disabled = true;
+        if (button && (button.disabled || button.classList.contains("is-busy"))) return;
+        setWishlistBusy(button, true);
 
         apiFetch("/toggle", {
             method: "POST",
@@ -246,7 +255,7 @@
                 setWishlistButtonState(button, data.in_wishlist);
             })
             .finally(() => {
-                if (button) button.disabled = false;
+                setWishlistBusy(button, false);
             });
     }
 
@@ -265,6 +274,7 @@
 
             btn.addEventListener("click", (event) => {
                 event.preventDefault();
+                if (btn.disabled || btn.classList.contains("is-busy")) return;
                 toggleWishlist(slug, btn);
             });
         });

@@ -191,3 +191,28 @@ def test_gift_card_admin_api(client, store, admin_headers):
     )
     assert response.status_code == 200
     assert response.json()["balance"] == "100000"
+
+
+@pytest.mark.django_db
+def test_manage_discounts_page_for_store_admin(client, store, admin_user):
+    client.force_login(admin_user)
+    response = client.get("/manage/discounts/", HTTP_HOST="disc.local")
+    assert response.status_code == 200
+    body = response.content.decode("utf-8")
+    assert "کد تخفیف" in body
+    assert "کارت هدیه" in body
+    assert "store_admin/discounts.js" in body
+
+
+@pytest.mark.django_db
+def test_coupon_admin_api_lists_created_code(client, store, admin_headers):
+    client.post(
+        "/api/v1/store-admin/discounts/coupons",
+        data=json.dumps({"code": "save10", "discount_type": "percentage", "value": 10, "scope": "all"}),
+        content_type="application/json",
+        **admin_headers,
+    )
+    listing = client.get("/api/v1/store-admin/discounts/coupons", **admin_headers)
+    assert listing.status_code == 200
+    codes = [row["code"] for row in listing.json()]
+    assert "SAVE10" in codes

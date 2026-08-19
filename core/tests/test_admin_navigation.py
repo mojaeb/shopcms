@@ -5,7 +5,7 @@ from django.conf import settings
 from django.test import RequestFactory
 
 from accounts.models import User
-from core.admin_navigation import can_view_model, get_navigation
+from core.admin_navigation import can_access_admin, can_view_model, get_navigation
 
 
 def _group_map(nav: list[dict]) -> dict[str, dict]:
@@ -31,8 +31,11 @@ def test_sidebar_keeps_platform_open_and_collapses_catalog():
     assert "فروشگاه‌ها" in platform_titles
     assert "کاربران" in platform_titles
     assert "مدیرهای فروشگاه" in platform_titles
+    assert "مستندات" in platform_titles
+    assert platform_titles[-1] == "مستندات"
     assert "محصولات" not in platform_titles
     assert "برندها" not in platform_titles
+    assert str(groups["پلتفرم"]["items"][-1]["link"]).endswith("/admin/docs/")
 
     catalog = groups["کاتالوگ فروشگاه"]
     assert catalog["collapsible"] is True
@@ -75,3 +78,8 @@ def test_model_permission_allows_superuser_and_denies_anonymous():
 
     anon.user = Anon()
     assert can_view_model("products", "product")(anon) is False
+
+    staff = factory.get("/admin/")
+    staff.user = User.objects.create_user(phone="09120008888", is_staff=True, password="x")
+    assert can_view_model("products", "product")(staff) is False
+    assert can_access_admin(staff) is False

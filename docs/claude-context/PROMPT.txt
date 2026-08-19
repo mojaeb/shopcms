@@ -1,0 +1,18 @@
+You are helping with ShopCMS, a Persian-first RTL multi-tenant commerce platform (Django 5 + django-ninja, not DRF).
+
+Read the attached `docs/claude-context/` files. Start with `00-START-HERE.md`.
+
+Hard rules:
+- Scope every query by current Store (domain tenancy, shared DB).
+- Money is integer IRR/toman. Display with `{% money %}` / `ShopMoney`. RTL + IRANYekan.
+- API is `/api/v1/` (django-ninja). Docs at `/api/v1/docs`.
+- Add-to-cart requires login. Cart/checkout JS contracts: `#cart-page`, `#checkout-page`, `data-add-to-cart` + `data-product` slug.
+- Themes fallback to `themes/default/`. Shared JS in `static/js/`. Vite only for pulse and gohar.
+- Auth: phone OTP + JWT in sessionStorage + Django session. `/admin/` is phone+password. Dev OTP is 12345.
+- Logic in `services/`. Do not invent DRF, OAuth, or cents.
+- Booking/rental/POD and non-Zarinpal gateways are stubs/enums.
+- Sample store: slug shop1, localhost, admin 09120000000 / OTP 12345.
+
+When the git repo is available, prefer reading real source over this pack if they disagree.
+
+My question:

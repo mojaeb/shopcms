@@ -2,12 +2,14 @@
 
 from __future__ import annotations
 
+import json
 import re
 
 from django import forms
 
 from accounts.managers import UserManager
 from payments.enums import GatewayType
+from shipping.enums import ShippingProviderType
 from tenants.models import Store
 from tenants.services.store_config import StoreConfigService
 from unfold.widgets import (
@@ -181,29 +183,261 @@ class StoreConfigForm(forms.ModelForm):
         label="زرین‌پال — حالت آزمایشی",
         widget=UnfoldBooleanSwitchWidget,
     )
+    payment_callback_base_url = forms.URLField(
+        required=False,
+        assume_scheme="https",
+        label="آدرس پایه بازگشت پرداخت (Callback)",
+        help_text="مثلاً https://shop.example.com — اگر خالی باشد از دامنهٔ فعلی درخواست استفاده می‌شود.",
+        widget=UnfoldAdminURLInputWidget(attrs={"dir": "ltr", "placeholder": "https://..."}),
+    )
+    zarinpal_api_base = forms.CharField(
+        required=False,
+        label="زرین‌پال — آدرس API",
+        help_text="خالی = پیش‌فرض رسمی. مثال زنده: https://api.zarinpal.com/pg/v4/payment",
+        widget=UnfoldAdminTextInputWidget(attrs={"dir": "ltr", "placeholder": "https://api.zarinpal.com/pg/v4/payment"}),
+    )
+    zarinpal_start_pay_url = forms.CharField(
+        required=False,
+        label="زرین‌پال — آدرس شروع پرداخت",
+        help_text="باید شامل {authority} باشد. مثال: https://www.zarinpal.com/pg/StartPay/{authority}",
+        widget=UnfoldAdminTextInputWidget(
+            attrs={"dir": "ltr", "placeholder": "https://www.zarinpal.com/pg/StartPay/{authority}"}
+        ),
+    )
+    zarinpal_graphql_url = forms.CharField(
+        required=False,
+        label="زرین‌پال — آدرس GraphQL (ریفاند)",
+        help_text="خالی = https://next.zarinpal.com/api/v4/graphql",
+        widget=UnfoldAdminTextInputWidget(attrs={"dir": "ltr", "placeholder": "https://next.zarinpal.com/api/v4/graphql"}),
+    )
 
     shipping_origin_city = forms.CharField(
         required=False,
         label="شهر مبدا",
+        help_text="برای محاسبه تعرفه منطقه‌ای (هم‌استان / مجاور / دورافتاده) استفاده می‌شود.",
         widget=UnfoldAdminTextInputWidget(),
     )
     shipping_origin_province = forms.CharField(
         required=False,
         label="استان مبدا",
+        help_text="نام فارسی استان (مثلاً خراسان رضوی، تهران).",
         widget=UnfoldAdminTextInputWidget(),
+    )
+    shipping_providers = forms.MultipleChoiceField(
+        required=False,
+        label="ارائه‌دهندگان فعال",
+        choices=ShippingProviderType.choices,
+        help_text="برای راهنمای پنل؛ روش‌های واقعی ارسال در بخش «ارسال» تعریف می‌شوند.",
+        widget=UnfoldAdminCheckboxSelectMultipleWidget,
+    )
+    shipping_default_provider = forms.ChoiceField(
+        required=False,
+        label="ارائه‌دهنده پیش‌فرض",
+        choices=[("", "— انتخاب کنید —"), *ShippingProviderType.choices],
+        widget=UnfoldAdminSelectWidget,
     )
     shipping_free_threshold = forms.DecimalField(
         required=False,
-        label="آستانه ارسال رایگان",
+        label="آستانه ارسال رایگان (فروشگاه)",
         min_value=0,
         decimal_places=0,
         max_digits=12,
+        help_text="اگر جمع سبد به این مبلغ برسد، گزینه ارسال رایگان سطح فروشگاه نمایش داده می‌شود.",
         widget=UnfoldAdminTextInputWidget(attrs={"dir": "ltr", "placeholder": "0"}),
     )
-    shipping_default_provider = forms.CharField(
+    shipping_base_package_weight_kg = forms.DecimalField(
         required=False,
-        label="ارائه‌دهنده پیش‌فرض",
-        widget=UnfoldAdminTextInputWidget(attrs={"placeholder": "post / tipax", "dir": "ltr"}),
+        label="وزن بسته‌بندی (کیلوگرم)",
+        min_value=0,
+        decimal_places=3,
+        max_digits=8,
+        help_text="به مجموع وزن محصولات سبد اضافه می‌شود. خالی یا ۰ یعنی بدون وزن بسته‌بندی.",
+        widget=UnfoldAdminTextInputWidget(attrs={"dir": "ltr", "placeholder": "0.100"}),
+    )
+
+    # --- Advanced form tab (gateways + shipping snippets); optional JSON override per section ---
+    idpay_api_key = forms.CharField(
+        required=False,
+        label="آیدی‌پی — API Key",
+        widget=UnfoldAdminTextInputWidget(attrs={"dir": "ltr"}),
+    )
+    idpay_sandbox = forms.BooleanField(
+        required=False,
+        label="آیدی‌پی — آزمایشی",
+        widget=UnfoldBooleanSwitchWidget,
+    )
+    idpay_use_json = forms.BooleanField(
+        required=False,
+        label="آیدی‌پی — ذخیره از JSON",
+        help_text="اگر JSON را عوض کنید همان ذخیره می‌شود. این سوییچ برای اجبار JSON است.",
+        widget=UnfoldBooleanSwitchWidget,
+    )
+    idpay_json = forms.CharField(
+        required=False,
+        label="آیدی‌پی — JSON",
+        widget=UnfoldAdminTextareaWidget(attrs={"rows": 6, "dir": "ltr", "spellcheck": "false"}),
+    )
+
+    mellat_terminal_id = forms.CharField(
+        required=False,
+        label="ملت — Terminal ID",
+        widget=UnfoldAdminTextInputWidget(attrs={"dir": "ltr"}),
+    )
+    mellat_username = forms.CharField(
+        required=False,
+        label="ملت — نام کاربری",
+        widget=UnfoldAdminTextInputWidget(attrs={"dir": "ltr"}),
+    )
+    mellat_password = forms.CharField(
+        required=False,
+        label="ملت — رمز",
+        widget=UnfoldAdminTextInputWidget(attrs={"dir": "ltr"}),
+    )
+    mellat_sandbox = forms.BooleanField(
+        required=False,
+        label="ملت — آزمایشی",
+        widget=UnfoldBooleanSwitchWidget,
+    )
+    mellat_use_json = forms.BooleanField(
+        required=False,
+        label="ملت — ذخیره از JSON",
+        widget=UnfoldBooleanSwitchWidget,
+    )
+    mellat_json = forms.CharField(
+        required=False,
+        label="ملت — JSON",
+        widget=UnfoldAdminTextareaWidget(attrs={"rows": 6, "dir": "ltr", "spellcheck": "false"}),
+    )
+
+    pasargad_merchant_code = forms.CharField(
+        required=False,
+        label="پاسارگاد — Merchant Code",
+        widget=UnfoldAdminTextInputWidget(attrs={"dir": "ltr"}),
+    )
+    pasargad_terminal_id = forms.CharField(
+        required=False,
+        label="پاسارگاد — Terminal ID",
+        widget=UnfoldAdminTextInputWidget(attrs={"dir": "ltr"}),
+    )
+    pasargad_sandbox = forms.BooleanField(
+        required=False,
+        label="پاسارگاد — آزمایشی",
+        widget=UnfoldBooleanSwitchWidget,
+    )
+    pasargad_use_json = forms.BooleanField(
+        required=False,
+        label="پاسارگاد — ذخیره از JSON",
+        widget=UnfoldBooleanSwitchWidget,
+    )
+    pasargad_json = forms.CharField(
+        required=False,
+        label="پاسارگاد — JSON",
+        widget=UnfoldAdminTextareaWidget(attrs={"rows": 6, "dir": "ltr", "spellcheck": "false"}),
+    )
+
+    sina_terminal_id = forms.CharField(
+        required=False,
+        label="سینا — Terminal ID",
+        widget=UnfoldAdminTextInputWidget(attrs={"dir": "ltr"}),
+    )
+    sina_sandbox = forms.BooleanField(
+        required=False,
+        label="سینا — آزمایشی",
+        widget=UnfoldBooleanSwitchWidget,
+    )
+    sina_use_json = forms.BooleanField(
+        required=False,
+        label="سینا — ذخیره از JSON",
+        widget=UnfoldBooleanSwitchWidget,
+    )
+    sina_json = forms.CharField(
+        required=False,
+        label="سینا — JSON",
+        widget=UnfoldAdminTextareaWidget(attrs={"rows": 5, "dir": "ltr", "spellcheck": "false"}),
+    )
+
+    ship_post_fixed_price = forms.DecimalField(
+        required=False,
+        label="اسنیپت پست — قیمت ثابت",
+        min_value=0,
+        decimal_places=0,
+        max_digits=12,
+        widget=UnfoldAdminTextInputWidget(attrs={"dir": "ltr"}),
+    )
+    ship_post_max_weight_kg = forms.DecimalField(
+        required=False,
+        label="اسنیپت پست — سقف وزن (کیلو)",
+        min_value=0,
+        decimal_places=3,
+        max_digits=8,
+        widget=UnfoldAdminTextInputWidget(attrs={"dir": "ltr"}),
+    )
+    ship_post_use_json = forms.BooleanField(
+        required=False,
+        label="پست — ذخیره از JSON",
+        widget=UnfoldBooleanSwitchWidget,
+    )
+    ship_post_json = forms.CharField(
+        required=False,
+        label="پست — JSON",
+        widget=UnfoldAdminTextareaWidget(attrs={"rows": 5, "dir": "ltr", "spellcheck": "false"}),
+    )
+
+    ship_tipax_fixed_price = forms.DecimalField(
+        required=False,
+        label="اسنیپت تیپاکس — قیمت ثابت",
+        min_value=0,
+        decimal_places=0,
+        max_digits=12,
+        widget=UnfoldAdminTextInputWidget(attrs={"dir": "ltr"}),
+    )
+    ship_tipax_use_json = forms.BooleanField(
+        required=False,
+        label="تیپاکس — ذخیره از JSON",
+        widget=UnfoldBooleanSwitchWidget,
+    )
+    ship_tipax_json = forms.CharField(
+        required=False,
+        label="تیپاکس — JSON",
+        widget=UnfoldAdminTextareaWidget(attrs={"rows": 5, "dir": "ltr", "spellcheck": "false"}),
+    )
+
+    ship_peyk_fixed_price = forms.DecimalField(
+        required=False,
+        label="اسنیپت پیک — قیمت ثابت",
+        min_value=0,
+        decimal_places=0,
+        max_digits=12,
+        widget=UnfoldAdminTextInputWidget(attrs={"dir": "ltr"}),
+    )
+    ship_peyk_delivery_cities = forms.CharField(
+        required=False,
+        label="اسنیپت پیک — شهرهای مجاز",
+        help_text="با ویرگول جدا کنید. خالی = همه شهرها.",
+        widget=UnfoldAdminTextInputWidget(attrs={"placeholder": "مشهد, تهران"}),
+    )
+    ship_peyk_use_json = forms.BooleanField(
+        required=False,
+        label="پیک — ذخیره از JSON",
+        widget=UnfoldBooleanSwitchWidget,
+    )
+    ship_peyk_json = forms.CharField(
+        required=False,
+        label="پیک — JSON",
+        widget=UnfoldAdminTextareaWidget(attrs={"rows": 5, "dir": "ltr", "spellcheck": "false"}),
+    )
+
+    theme_hero_slides_json = forms.CharField(
+        required=False,
+        label="اسلایدر تم — JSON آرایه slides",
+        help_text="آرایهٔ اسلایدها با ذخیره همین تب اعمال می‌شود.",
+        widget=UnfoldAdminTextareaWidget(attrs={"rows": 10, "dir": "ltr", "spellcheck": "false"}),
+    )
+    theme_hero_use_json = forms.BooleanField(
+        required=False,
+        label="اسلایدر تم — ذخیره از JSON",
+        help_text="دیگر لازم نیست؛ اسلایدهای این کادر با ذخیره اعمال می‌شوند.",
+        widget=UnfoldBooleanSwitchWidget,
     )
 
     storage_driver = forms.CharField(
@@ -285,6 +519,54 @@ class StoreConfigForm(forms.ModelForm):
             from accounts.services.store_manager import StoreManagerService
 
             StoreManagerService().sync_from_admin(self.instance, self.cleaned_data)
+
+    def _clean_optional_json_object(self, field_name: str):
+        raw = (self.cleaned_data.get(field_name) or "").strip()
+        if not raw:
+            return ""
+        try:
+            parsed = json.loads(raw)
+        except json.JSONDecodeError as exc:
+            raise forms.ValidationError(f"JSON نامعتبر است: {exc.msg}") from exc
+        if not isinstance(parsed, dict):
+            raise forms.ValidationError("مقدار JSON باید یک آبجکت باشد.")
+        return json.dumps(parsed, ensure_ascii=False, indent=2)
+
+    def _clean_optional_json_array(self, field_name: str):
+        raw = (self.cleaned_data.get(field_name) or "").strip()
+        if not raw:
+            return ""
+        try:
+            parsed = json.loads(raw)
+        except json.JSONDecodeError as exc:
+            raise forms.ValidationError(f"JSON نامعتبر است: {exc.msg}") from exc
+        if not isinstance(parsed, list):
+            raise forms.ValidationError("مقدار JSON باید یک آرایه باشد.")
+        return json.dumps(parsed, ensure_ascii=False, indent=2)
+
+    def clean_idpay_json(self):
+        return self._clean_optional_json_object("idpay_json")
+
+    def clean_mellat_json(self):
+        return self._clean_optional_json_object("mellat_json")
+
+    def clean_pasargad_json(self):
+        return self._clean_optional_json_object("pasargad_json")
+
+    def clean_sina_json(self):
+        return self._clean_optional_json_object("sina_json")
+
+    def clean_ship_post_json(self):
+        return self._clean_optional_json_object("ship_post_json")
+
+    def clean_ship_tipax_json(self):
+        return self._clean_optional_json_object("ship_tipax_json")
+
+    def clean_ship_peyk_json(self):
+        return self._clean_optional_json_object("ship_peyk_json")
+
+    def clean_theme_hero_slides_json(self):
+        return self._clean_optional_json_array("theme_hero_slides_json")
 
     def clean_store_manager_phone(self):
         raw = (self.cleaned_data.get("store_manager_phone") or "").strip()

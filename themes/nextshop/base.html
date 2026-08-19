@@ -14,8 +14,7 @@
     {{ seo.head_scripts|safe }}
     {% endif %}
     {% include "partials/styles.html" %}
-    <link rel="stylesheet" href="/static/themes/nextshop/vendor/swiper-bundle.min.css">
-    {% include "partials/theme.css.html" %}
+    <link rel="stylesheet" href="/static/themes/nextshop/css/theme.css">
     {% if theme_settings.colors %}
     <style>
         :root {
@@ -57,11 +56,7 @@
     <script src="/static/js/cart.js"></script>
     <script src="/static/js/wishlist.js"></script>
     <script src="/static/js/auth-header.js"></script>
-    <script src="/static/themes/nextshop/vendor/lucide.min.js"></script>
-    <script src="/static/themes/nextshop/vendor/swiper-bundle.min.js"></script>
-    <script src="/static/themes/nextshop/js/modern-alpine.js"></script>
-    <script src="/static/themes/nextshop/js/theme.js"></script>
-    <script defer src="/static/themes/nextshop/vendor/alpine.min.js"></script>
+    <script type="module" src="/static/themes/nextshop/js/theme.js"></script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>

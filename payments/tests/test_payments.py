@@ -62,7 +62,12 @@ def cart_with_items(store, user):
 def test_list_gateways_api(client, store):
     response = client.get("/api/v1/payments/gateways", HTTP_HOST="pay.local")
     assert response.status_code == 200
-    assert len(response.json()) == 2
+    data = response.json()
+    assert len(data) == 2
+    zarinpal = next(g for g in data if g["codename"] == "zarinpal")
+    idpay = next(g for g in data if g["codename"] == "idpay")
+    assert zarinpal["implemented"] is True
+    assert idpay["implemented"] is False
 
 
 @pytest.mark.django_db
@@ -155,6 +160,85 @@ def test_webhook_verify(store, user):
     )
     result = service.handle_webhook(store, "zarinpal", {"Authority": "webhook-auth", "Status": "OK"})
     assert result.status == PaymentStatus.PAID
+
+
+@pytest.mark.django_db
+def test_callback_base_url_override(store, user, cart_with_items):
+    StoreSetting.objects.update_or_create(
+        store=store,
+        group="payment",
+        key="callback_base_url",
+        defaults={"value": "https://public.example.com"},
+    )
+    service = PaymentService()
+
+    class FakeRequest:
+        def __init__(self, user_obj):
+            self.user = user_obj
+            self.META = {}
+            self.store = store
+            self.session = type("S", (), {"session_key": "cb-base", "create": lambda self: None})()
+
+        def get_host(self):
+            return "internal.local"
+
+        def is_secure(self):
+            return False
+
+    txn = service.create_payment(store, user, "zarinpal", 1, 1, 50000, FakeRequest(user))
+    assert txn.callback_url.startswith("https://public.example.com/api/v1/payments/callback/zarinpal/")
+
+
+@pytest.mark.django_db
+def test_reconcile_pending_zarinpal(store, user):
+    from datetime import timedelta
+
+    from django.utils import timezone
+
+    txn = PaymentTransaction.objects.create(
+        store=store, user=user, gateway="zarinpal", amount=100000,
+        authority="old-auth", status=PaymentStatus.REDIRECTED,
+    )
+    PaymentTransaction.objects.filter(pk=txn.pk).update(
+        created_at=timezone.now() - timedelta(minutes=45),
+    )
+    stats = PaymentService().reconcile_pending_payments(minutes=30)
+    assert stats["checked"] == 1
+    assert stats["verified"] == 1
+    txn.refresh_from_db()
+    assert txn.status == PaymentStatus.PAID
+
+
+@pytest.mark.django_db
+def test_mellat_live_create_marks_failed(store, user, cart_with_items):
+    StoreSetting.objects.filter(store=store, group="payment", key="gateways").update(
+        value=["zarinpal", "idpay", "mellat"],
+    )
+    StoreSetting.objects.update_or_create(
+        store=store,
+        group="payment",
+        key="mellat",
+        defaults={"value": {"terminal_id": "live", "sandbox": False}},
+    )
+    service = PaymentService()
+
+    class FakeRequest:
+        def __init__(self, user_obj):
+            self.user = user_obj
+            self.META = {}
+            self.session = type("S", (), {"session_key": "mellat", "create": lambda self: None})()
+
+        def get_host(self):
+            return "pay.local"
+
+        def is_secure(self):
+            return False
+
+    with pytest.raises(PaymentError, match="ملت"):
+        service.create_payment(store, user, "mellat", 1, 1, 50000, FakeRequest(user))
+    txn = PaymentTransaction.objects.filter(store=store, gateway="mellat").latest("id")
+    assert txn.status == PaymentStatus.FAILED
+    assert "ملت" in txn.error_message
 
 
 @pytest.mark.django_db

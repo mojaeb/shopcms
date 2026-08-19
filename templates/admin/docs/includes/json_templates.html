@@ -1,0 +1,97 @@
+{% load i18n %}
+<section id="shopcms-setting-snippets" class="rounded-default border border-base-200 bg-white p-4 dark:border-base-800 dark:bg-base-900" dir="rtl">
+  <header class="mb-4 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+    <div>
+      <h2 class="text-base font-semibold text-font-important-light dark:text-font-important-dark">قالب‌های آماده</h2>
+      <p class="mt-1 max-w-3xl text-sm text-font-subtle-light dark:text-font-subtle-dark">
+        یک حالت را انتخاب کنید، «کپی» بزنید و در تب تنظیمات پیشرفته فروشگاه یا فیلد config روش ارسال جای‌گذاری کنید.
+        ذخیرهٔ فرم فروشگاه این قالب‌ها را خودکار اعمال نمی‌کند.
+      </p>
+    </div>
+    <p id="shopcms-snippet-toast" class="hidden text-sm font-medium text-primary-600 dark:text-primary-400" role="status"></p>
+  </header>
+
+  {% if setting_snippet_categories %}
+  <div class="mb-4 flex flex-wrap gap-2" role="tablist" aria-label="دسته قالب‌ها">
+    <button type="button" class="shopcms-snippet-filter is-active rounded-default border border-primary-500 bg-primary-50 px-3 py-1.5 text-sm text-primary-700 dark:bg-primary-500/10 dark:text-primary-300" data-category="*">همه</button>
+    {% for cat in setting_snippet_categories %}
+    <button type="button" class="shopcms-snippet-filter rounded-default border border-base-200 px-3 py-1.5 text-sm text-font-subtle-light hover:border-primary-500/50 dark:border-base-700 dark:text-font-subtle-dark" data-category="{{ cat }}">{{ cat }}</button>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <div class="grid gap-3 lg:grid-cols-2">
+    {% for snip in setting_snippets %}
+    <article class="shopcms-snippet-card flex flex-col rounded-default border border-base-200 p-3 dark:border-base-700" data-category="{{ snip.category }}">
+      <div class="mb-2 flex items-start justify-between gap-2">
+        <div>
+          <p class="text-xs text-font-subtle-light dark:text-font-subtle-dark">{{ snip.category }} · <span dir="ltr" class="font-mono">{{ snip.target }}</span></p>
+          <h3 class="mt-0.5 text-sm font-semibold text-font-important-light dark:text-font-important-dark">{{ snip.title }}</h3>
+        </div>
+        <button type="button"
+                class="shopcms-snippet-copy shrink-0 rounded-default border border-base-200 px-2.5 py-1 text-xs font-medium hover:border-primary-500 hover:text-primary-600 dark:border-base-700"
+                data-snippet-id="{{ snip.id }}">
+          کپی
+        </button>
+      </div>
+      <p class="mb-2 text-xs leading-relaxed text-font-subtle-light dark:text-font-subtle-dark">{{ snip.hint }}</p>
+      <pre class="max-h-56 overflow-auto rounded-default bg-base-50 p-2 text-left text-xs leading-relaxed text-font-important-light dark:bg-base-950 dark:text-font-important-dark" dir="ltr"><code id="shopcms-snippet-{{ snip.id }}">{{ snip.json }}</code></pre>
+    </article>
+    {% empty %}
+    <p class="text-sm text-font-subtle-light dark:text-font-subtle-dark">قالبی تعریف نشده است.</p>
+    {% endfor %}
+  </div>
+</section>
+
+<script>
+(function () {
+  const root = document.getElementById("shopcms-setting-snippets");
+  if (!root) return;
+  const toast = document.getElementById("shopcms-snippet-toast");
+
+  function showToast(msg) {
+    if (!toast) return;
+    toast.textContent = msg;
+    toast.classList.remove("hidden");
+    window.clearTimeout(showToast._t);
+    showToast._t = window.setTimeout(function () {
+      toast.classList.add("hidden");
+    }, 2200);
+  }
+
+  root.querySelectorAll(".shopcms-snippet-copy").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      const id = btn.getAttribute("data-snippet-id");
+      const code = document.getElementById("shopcms-snippet-" + id);
+      if (!code) return;
+      const text = code.textContent || "";
+      function ok() {
+        showToast("کپی شد — در فیلد مقدار JSON جای‌گذاری کنید");
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(ok).catch(function () {
+          window.prompt("کپی دستی:", text);
+        });
+      } else {
+        window.prompt("کپی دستی:", text);
+      }
+    });
+  });
+
+  root.querySelectorAll(".shopcms-snippet-filter").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      const cat = btn.getAttribute("data-category") || "*";
+      root.querySelectorAll(".shopcms-snippet-filter").forEach(function (b) {
+        b.classList.remove("is-active", "border-primary-500", "bg-primary-50", "text-primary-700");
+        b.classList.add("border-base-200");
+      });
+      btn.classList.add("is-active", "border-primary-500", "bg-primary-50", "text-primary-700");
+      btn.classList.remove("border-base-200");
+      root.querySelectorAll(".shopcms-snippet-card").forEach(function (card) {
+        const match = cat === "*" || card.getAttribute("data-category") === cat;
+        card.classList.toggle("hidden", !match);
+      });
+    });
+  });
+})();
+</script>

@@ -1,11 +1,14 @@
 """Store admin discount API."""
 
+from django.db import IntegrityError
+from django.utils.dateparse import parse_datetime
+from django.utils.timezone import get_current_timezone, is_naive, make_aware
 from ninja import Router, Schema
 from ninja.errors import HttpError
 
 from carts.enums import DiscountScope, DiscountType
 from carts.models import Coupon, GiftCard
-from carts.services.discount import DiscountError, DiscountService
+from carts.services.discount import DiscountService
 from dashboard.authentication_store import store_settings_auth
 from tenants.context import get_current_store
 
@@ -71,6 +74,42 @@ def _store(request):
     return store
 
 
+def _parse_optional_dt(value):
+    if value in (None, ""):
+        return None
+    text = str(value).strip().replace("Z", "+00:00")
+    dt = parse_datetime(text)
+    if dt is None:
+        raise HttpError(400, "تاریخ نامعتبر است")
+    if is_naive(dt):
+        dt = make_aware(dt, get_current_timezone())
+    return dt
+
+
+def _coupon_fields(data: dict, *, partial: bool) -> tuple[dict, dict]:
+    m2m = {}
+    for key in ("category_ids", "product_ids", "allowed_user_ids"):
+        if key in data and data[key] is not None:
+            m2m[key] = data.pop(key)
+        elif key in data:
+            data.pop(key)
+
+    if "code" in data and data["code"] is not None:
+        data["code"] = str(data["code"]).strip().upper()
+        if not data["code"]:
+            raise HttpError(400, "کد تخفیف الزامی است")
+
+    for key in ("valid_from", "valid_until"):
+        if key not in data:
+            continue
+        if data[key] in (None, "") and partial:
+            data[key] = None
+        else:
+            data[key] = _parse_optional_dt(data[key])
+
+    return data, m2m
+
+
 @router.get("/coupons")
 def list_coupons(request):
     store = _store(request)
@@ -82,18 +121,17 @@ def list_coupons(request):
 def create_coupon(request, payload: CouponCreateSchema):
     store = _store(request)
     data = payload.dict()
-    m2m = {
-        "category_ids": data.pop("category_ids", []),
-        "product_ids": data.pop("product_ids", []),
-        "allowed_user_ids": data.pop("allowed_user_ids", []),
-    }
-    data["code"] = data["code"].strip().upper()
-    coupon = Coupon.objects.create(store=store, **data)
-    if m2m["category_ids"]:
+    data, m2m = _coupon_fields(data, partial=False)
+    service.sync_plugin(store)
+    try:
+        coupon = Coupon.objects.create(store=store, **data)
+    except IntegrityError as exc:
+        raise HttpError(400, "این کد تخفیف قبلاً ثبت شده است") from exc
+    if m2m.get("category_ids"):
         coupon.categories.set(m2m["category_ids"])
-    if m2m["product_ids"]:
+    if m2m.get("product_ids"):
         coupon.products.set(m2m["product_ids"])
-    if m2m["allowed_user_ids"]:
+    if m2m.get("allowed_user_ids"):
         coupon.allowed_users.set(m2m["allowed_user_ids"])
     return service.serialize_coupon(coupon)
 
@@ -106,25 +144,22 @@ def update_coupon(request, coupon_id: int, payload: CouponUpdateSchema):
     except Coupon.DoesNotExist:
         raise HttpError(404, "کوپن یافت نشد")
 
-    data = {k: v for k, v in payload.dict().items() if v is not None}
-    m2m_fields = {}
-    for key in ("category_ids", "product_ids", "allowed_user_ids"):
-        if key in data:
-            m2m_fields[key] = data.pop(key)
-
-    if "code" in data:
-        data["code"] = data["code"].strip().upper()
+    data = payload.dict(exclude_unset=True)
+    data, m2m = _coupon_fields(data, partial=True)
 
     for field, value in data.items():
         setattr(coupon, field, value)
-    coupon.save()
+    try:
+        coupon.save()
+    except IntegrityError as exc:
+        raise HttpError(400, "این کد تخفیف قبلاً ثبت شده است") from exc
 
-    if "category_ids" in m2m_fields:
-        coupon.categories.set(m2m_fields["category_ids"])
-    if "product_ids" in m2m_fields:
-        coupon.products.set(m2m_fields["product_ids"])
-    if "allowed_user_ids" in m2m_fields:
-        coupon.allowed_users.set(m2m_fields["allowed_user_ids"])
+    if "category_ids" in m2m:
+        coupon.categories.set(m2m["category_ids"])
+    if "product_ids" in m2m:
+        coupon.products.set(m2m["product_ids"])
+    if "allowed_user_ids" in m2m:
+        coupon.allowed_users.set(m2m["allowed_user_ids"])
 
     return service.serialize_coupon(coupon)
 
@@ -147,15 +182,19 @@ def list_gift_cards(request):
 @router.post("/gift-cards")
 def create_gift_card(request, payload: GiftCardCreateSchema):
     store = _store(request)
-    gift = GiftCard.objects.create(
-        store=store,
-        code=payload.code.strip().upper(),
-        initial_balance=payload.initial_balance,
-        balance=payload.initial_balance,
-        owner_id=payload.owner_id,
-        valid_until=payload.valid_until,
-        is_active=payload.is_active,
-    )
+    service.sync_plugin(store)
+    try:
+        gift = GiftCard.objects.create(
+            store=store,
+            code=payload.code.strip().upper(),
+            initial_balance=payload.initial_balance,
+            balance=payload.initial_balance,
+            owner_id=payload.owner_id,
+            valid_until=_parse_optional_dt(payload.valid_until),
+            is_active=payload.is_active,
+        )
+    except IntegrityError as exc:
+        raise HttpError(400, "این کد کارت هدیه قبلاً ثبت شده است") from exc
     return service.serialize_gift_card(gift)
 
 
@@ -167,7 +206,9 @@ def update_gift_card(request, gift_id: int, payload: GiftCardUpdateSchema):
     except GiftCard.DoesNotExist:
         raise HttpError(404, "کارت هدیه یافت نشد")
 
-    data = {k: v for k, v in payload.dict().items() if v is not None}
+    data = payload.dict(exclude_unset=True)
+    if "valid_until" in data:
+        data["valid_until"] = _parse_optional_dt(data["valid_until"])
     for field, value in data.items():
         setattr(gift, field, value)
     gift.save()

@@ -28,6 +28,14 @@ class PaymentRefundResult:
     message: str = ""
 
 
+@dataclass
+class PaymentInquiryResult:
+    success: bool
+    status: str = ""
+    message: str = ""
+    raw: dict | None = None
+
+
 class PaymentGateway(ABC):
     codename: str = ""
     label: str = ""
@@ -42,6 +50,13 @@ class PaymentGateway(ABC):
 
     def refund_payment(self, transaction: PaymentTransaction, config: dict, amount: Decimal) -> PaymentRefundResult:
         return PaymentRefundResult(success=False, message="Refund not supported")
+
+    def inquiry_payment(self, transaction: PaymentTransaction, config: dict) -> PaymentInquiryResult:
+        return PaymentInquiryResult(success=False, message="استعلام برای این درگاه پشتیبانی نمی‌شود")
+
+    def is_live_ready(self, config: dict | None = None) -> bool:
+        """True when live (non-sandbox) create/verify is implemented."""
+        return False
 
     def parse_webhook(self, payload: dict) -> dict:
         return payload

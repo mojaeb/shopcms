@@ -16,25 +16,88 @@
     <div class="ps-product-layout" data-ps-reveal>
         <div class="ps-gallery" data-ps-gallery>
             {% if product.images %}
-            <div class="ps-gallery-main">
-                <img src="{{ product.images.0.image }}" alt="{{ product.images.0.alt_text|default:product.name }}" data-ps-gallery-main>
+            <div class="ps-gallery-stage">
+                <div class="swiper ps-gallery-main" data-ps-gallery-main>
+                    <div class="swiper-wrapper">
+                        {% for img in product.images %}
+                        <div class="swiper-slide">
+                            <img src="{{ img.image }}"
+                                 alt="{{ img.alt_text|default:product.name }}"
+                                 {% if forloop.first %}fetchpriority="high"{% else %}loading="lazy"{% endif %}
+                                 decoding="async">
+                            <button type="button" class="ps-gallery-zoom-hint" data-ps-gallery-open aria-label="نمایش بزرگ‌تر">
+                                <i data-lucide="maximize-2"></i>
+                                <span>نمایش بزرگ</span>
+                            </button>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% if product.images|length > 1 %}
+                <div class="ps-gallery-nav">
+                    <button type="button" class="ps-icon-btn" data-ps-gallery-prev aria-label="تصویر قبلی">
+                        <i data-lucide="chevron-right"></i>
+                    </button>
+                    <button type="button" class="ps-icon-btn" data-ps-gallery-next aria-label="تصویر بعدی">
+                        <i data-lucide="chevron-left"></i>
+                    </button>
+                </div>
+                {% endif %}
             </div>
             {% if product.images|length > 1 %}
-            <div class="ps-gallery-thumbs">
-                {% for img in product.images %}
-                <button type="button"
-                        class="ps-gallery-thumb {% if forloop.first %}is-active{% endif %}"
-                        data-ps-gallery-thumb
-                        data-src="{{ img.image }}"
-                        data-alt="{{ img.alt_text|default:product.name }}"
-                        aria-label="تصویر {{ forloop.counter|money_format }}">
-                    <img src="{{ img.image }}" alt="" loading="lazy">
-                </button>
-                {% endfor %}
+            <div class="swiper ps-gallery-thumbs" data-ps-gallery-thumbs>
+                <div class="swiper-wrapper">
+                    {% for img in product.images %}
+                    <div class="swiper-slide">
+                        <img src="{{ img.image }}" alt="" loading="lazy">
+                    </div>
+                    {% endfor %}
+                </div>
             </div>
             {% endif %}
+
+            <div class="ps-lightbox" data-ps-lightbox aria-hidden="true">
+                <div class="ps-lightbox-backdrop" data-ps-lightbox-close></div>
+                <div class="ps-lightbox-dialog" role="dialog" aria-modal="true" aria-label="گالری تصاویر محصول" tabindex="-1">
+                    <div class="ps-lightbox-toolbar">
+                        <div class="ps-lightbox-tools">
+                            <button type="button" class="ps-icon-btn" data-ps-zoom-out aria-label="کوچک‌نمایی">
+                                <i data-lucide="zoom-out"></i>
+                            </button>
+                            <button type="button" class="ps-icon-btn" data-ps-zoom-in aria-label="بزرگ‌نمایی">
+                                <i data-lucide="zoom-in"></i>
+                            </button>
+                        </div>
+                        <span class="ps-lightbox-counter" data-ps-lightbox-counter></span>
+                        <button type="button" class="ps-icon-btn ps-lightbox-close" data-ps-lightbox-close aria-label="بستن">
+                            <i data-lucide="x"></i>
+                        </button>
+                    </div>
+                    <div class="swiper ps-lightbox-swiper" data-ps-lightbox-swiper>
+                        <div class="swiper-wrapper">
+                            {% for img in product.images %}
+                            <div class="swiper-slide">
+                                <div class="swiper-zoom-container">
+                                    <img src="{{ img.image }}" alt="{{ img.alt_text|default:product.name }}" decoding="async">
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% if product.images|length > 1 %}
+                    <div class="ps-lightbox-nav">
+                        <button type="button" class="ps-icon-btn" data-ps-lightbox-prev aria-label="تصویر قبلی">
+                            <i data-lucide="chevron-right"></i>
+                        </button>
+                        <button type="button" class="ps-icon-btn" data-ps-lightbox-next aria-label="تصویر بعدی">
+                            <i data-lucide="chevron-left"></i>
+                        </button>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
             {% else %}
-            <div class="ps-gallery-main" style="display:grid;place-items:center;color:#94a3b8;">
+            <div class="ps-gallery-stage ps-gallery-empty">
                 <i data-lucide="image-off"></i>
             </div>
             {% endif %}

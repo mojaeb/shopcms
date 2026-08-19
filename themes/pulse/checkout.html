@@ -31,6 +31,23 @@
                 <h2 style="margin:0 0 0.85rem;font-size:1.05rem;"><i data-lucide="shopping-bag"></i> اقلام سفارش</h2>
                 <div id="checkout-items" class="checkout-items"><p class="ps-page-sub">در حال بارگذاری اقلام...</p></div>
             </section>
+            <section class="ps-surface ps-cart-coupon" aria-label="کد تخفیف و کارت هدیه">
+                <h2 class="ps-cart-section-title">
+                    <i data-lucide="ticket-percent" aria-hidden="true"></i>
+                    کد تخفیف / کارت هدیه
+                </h2>
+                <div class="ps-cart-coupon-row">
+                    <input type="text" id="coupon-code" class="ps-input" placeholder="کد کوپن" aria-label="کد کوپن" autocomplete="off">
+                    <button type="button" class="ps-btn" id="apply-coupon">اعمال</button>
+                    <button type="button" class="ps-btn ps-btn--ghost" id="remove-coupon">حذف</button>
+                </div>
+                <div class="ps-cart-coupon-row">
+                    <input type="text" id="gift-code" class="ps-input" placeholder="کد کارت هدیه" aria-label="کد کارت هدیه" autocomplete="off">
+                    <button type="button" class="ps-btn" id="apply-gift">اعمال</button>
+                    <button type="button" class="ps-btn ps-btn--ghost" id="remove-gift">حذف</button>
+                </div>
+                <p id="coupon-message" class="ps-page-sub ps-cart-coupon-msg" role="status"></p>
+            </section>
             <section class="ps-surface">
                 <h2 style="margin:0 0 0.85rem;font-size:1.05rem;"><i data-lucide="truck"></i> روش ارسال</h2>
                 <div id="shipping-options"><p class="ps-page-sub">ابتدا آدرس را انتخاب کنید.</p></div>
@@ -45,6 +62,8 @@
             <h2 style="margin:0 0 0.85rem;font-size:1.05rem;"><i data-lucide="receipt"></i> خلاصه سفارش</h2>
             <div id="checkout-summary" style="display:grid;gap:0.65rem;">
                 <p style="display:flex;justify-content:space-between;margin:0;"><span>سبد خرید</span> <span id="cart-subtotal" class="money-slot">—</span></p>
+                <p id="discount-row" style="display:none;justify-content:space-between;margin:0;"><span>تخفیف</span> <span id="discount-cost" class="money-slot">—</span></p>
+                <p id="applied-code-row" class="ps-page-sub" style="display:none;justify-content:space-between;margin:0;"><span id="applied-code-label">کد</span> <strong id="applied-code-value"></strong></p>
                 <p style="display:flex;justify-content:space-between;margin:0;"><span>هزینه ارسال</span> <span id="shipping-cost" class="money-slot">—</span></p>
                 <p id="tax-row" style="display:none;justify-content:space-between;margin:0;"><span>مالیات</span> <span id="tax-cost" class="money-slot">—</span></p>
                 <p style="display:flex;justify-content:space-between;margin:0;font-size:1.1rem;font-weight:800;">

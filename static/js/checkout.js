@@ -59,10 +59,10 @@
         const shipping = selectedShipping ? Number(selectedShipping.price) : 0;
         setMoney("shipping-cost", shipping);
         const taxRow = document.getElementById("tax-row");
-        if (taxEnabled && cartTax > 0) {
-            taxRow.style.display = "";
+        if (taxEnabled) {
+            setRowVisible("tax-row", true);
             setMoney("tax-cost", cartTax);
-        } else {
+        } else if (taxRow) {
             taxRow.style.display = "none";
         }
         setMoney("checkout-total", cartSubtotal + shipping + cartTax);
@@ -125,18 +125,62 @@
         if (window.lucide) window.lucide.createIcons();
     }
 
+    function setRowVisible(elId, visible) {
+        const el = document.getElementById(elId);
+        if (!el) return;
+        if (!visible) {
+            el.style.display = "none";
+            return;
+        }
+        el.style.display = el.style.justifyContent ? "flex" : "";
+    }
+
+    function renderDiscountMeta(data) {
+        const discount = Number(data.discount || 0);
+        setRowVisible("discount-row", discount > 0);
+        if (discount > 0) setMoney("discount-cost", discount);
+
+        const codeRow = document.getElementById("applied-code-row");
+        const codeLabel = document.getElementById("applied-code-label");
+        const codeValue = document.getElementById("applied-code-value");
+        if (!codeRow || !codeLabel || !codeValue) return;
+        if (data.coupon) {
+            setRowVisible("applied-code-row", true);
+            codeLabel.textContent = "کوپن";
+            codeValue.textContent = data.coupon.code || "";
+        } else if (data.gift_card) {
+            setRowVisible("applied-code-row", true);
+            codeLabel.textContent = "کارت هدیه";
+            codeValue.textContent = data.gift_card.code || "";
+        } else {
+            setRowVisible("applied-code-row", false);
+            codeValue.textContent = "";
+        }
+    }
+
+    function applyCartPayload(data) {
+        const gross = Number(data.subtotal || 0);
+        const discount = Number(data.discount || 0);
+        cartSubtotal = gross - discount;
+        setMoney("cart-subtotal", gross);
+        renderDiscountMeta(data);
+        renderCheckoutItems(data.items || []);
+        refreshTaxPreview();
+    }
+
     function loadCart() {
         apiFetch("/api/v1/cart/").then(({ ok, data }) => {
             if (ok) {
-                cartSubtotal = Number(data.subtotal || 0) - Number(data.discount || 0);
-                setMoney("cart-subtotal", cartSubtotal);
-                renderCheckoutItems(data.items || []);
-                refreshTaxPreview();
+                applyCartPayload(data);
             } else {
                 renderCheckoutItems([]);
             }
         });
     }
+
+    document.addEventListener("shop:cart-updated", (e) => {
+        if (e.detail) applyCartPayload(e.detail);
+    });
 
     function loadGateways() {
         apiFetch("/api/v1/payments/gateways").then(({ ok, data }) => {

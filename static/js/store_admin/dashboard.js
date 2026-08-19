@@ -195,6 +195,11 @@
                 href: "/manage/pages/",
             },
             {
+                title: "تخفیف و کارت هدیه",
+                desc: "کد تخفیف و موجودی کارت",
+                href: "/manage/discounts/",
+            },
+            {
                 title: "تنظیمات",
                 desc: "ارز، تم و هویت فروشگاه",
                 href: "/manage/settings/",

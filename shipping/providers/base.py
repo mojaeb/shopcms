@@ -17,6 +17,7 @@ class ShippingContext:
     item_count: int
     origin_city: str = ""
     origin_province: str = ""
+    distance_km: Decimal | None = None
 
 
 @dataclass
@@ -29,6 +30,7 @@ class ShippingQuote:
     price: Decimal
     estimated_days: int
     is_free: bool = False
+    payment_type: str = "prepaid"
 
 
 class ShippingProvider(ABC):

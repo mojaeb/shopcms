@@ -17,3 +17,4 @@ class GatewayType(models.TextChoices):
     IDPAY = "idpay", "آیدی‌پی"
     MELLAT = "mellat", "ملت"
     PASARGAD = "pasargad", "پاسارگاد"
+    SINA = "sina", "سینا"

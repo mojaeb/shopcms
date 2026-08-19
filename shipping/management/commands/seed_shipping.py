@@ -66,6 +66,12 @@ class Command(BaseCommand):
             key="free_shipping_threshold",
             defaults={"value": 0},
         )
+        StoreSetting.objects.update_or_create(
+            store=store,
+            group="shipping",
+            key="base_package_weight_kg",
+            defaults={"value": 0.1},
+        )
 
         zone, _ = ShippingZone.objects.update_or_create(
             store=store,

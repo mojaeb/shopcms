@@ -65,11 +65,30 @@ def user(db):
 
 
 @pytest.mark.django_db
-def test_tax_disabled_without_plugin(store, cart_with_item):
+def test_tax_follows_store_flag_even_without_plugin(store, cart_with_item):
     StorePlugin.objects.filter(store=store).update(is_enabled=False)
+    result = TaxService().calculate_for_cart(store, cart_with_item)
+    assert result["enabled"] is True
+    assert result["tax"] == "90000"
+
+    store.tax_enabled = False
+    store.save(update_fields=["tax_enabled"])
     result = TaxService().calculate_for_cart(store, cart_with_item)
     assert result["enabled"] is False
     assert result["tax"] == "0"
+
+
+@pytest.mark.django_db
+def test_save_admin_tax_enables_plugin(store):
+    from tenants.services.store_config import StoreConfigService
+
+    store.tax_enabled = True
+    store.tax_percent = Decimal("9")
+    store.save(update_fields=["tax_enabled", "tax_percent"])
+    StorePlugin.objects.filter(store=store, plugin__codename="tax").update(is_enabled=False)
+
+    StoreConfigService().save_admin_data(store, {**StoreConfigService().get_admin_initial(store)})
+    assert StorePlugin.objects.get(store=store, plugin__codename="tax").is_enabled is True
 
 
 @pytest.mark.django_db

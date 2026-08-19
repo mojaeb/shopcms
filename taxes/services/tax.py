@@ -8,7 +8,7 @@ from django.db import transaction
 from carts.models import Cart
 from taxes.enums import TaxRuleScope
 from taxes.models import TaxRule
-from tenants.models import Store, StorePlugin, StoreSetting
+from tenants.models import Store, StoreSetting
 
 logger = logging.getLogger(__name__)
 
@@ -21,11 +21,29 @@ class TaxService:
     """Calculate tax for carts and checkout."""
 
     def is_tax_active(self, store: Store) -> bool:
-        if not store.tax_enabled:
-            return False
-        from plugins.services.plugin import PluginService
+        """Store.tax_enabled is the checkout switch; plugin is kept in sync on save."""
+        return bool(store.tax_enabled)
 
-        return PluginService().is_enabled(store, "tax")
+    def sync_plugin(self, store: Store) -> None:
+        """Keep the tax plugin aligned with the store flag so the plugins tab matches."""
+        from plugins.services.plugin import PluginError, PluginService
+        from tenants.models import Plugin
+
+        plugin, _ = Plugin.objects.get_or_create(
+            codename="tax",
+            defaults={
+                "name": "مالیات",
+                "description": "محاسبه مالیات در سبد و تسویه",
+                "is_active": True,
+            },
+        )
+        if not plugin.is_active:
+            plugin.is_active = True
+            plugin.save(update_fields=["is_active"])
+        try:
+            PluginService().set_enabled(store, "tax", bool(store.tax_enabled))
+        except (Plugin.DoesNotExist, PluginError):
+            logger.warning("Could not sync tax plugin for store %s", store.slug)
 
     def get_tax_settings(self, store: Store) -> dict:
         return {
@@ -50,6 +68,7 @@ class TaxService:
         if "tax_on_shipping" in data:
             self._set_tax_on_shipping(store, bool(data["tax_on_shipping"]))
 
+        self.sync_plugin(store)
         return self.get_tax_settings(store)
 
     def calculate_for_cart(self, store: Store, cart: Cart, shipping_cost: Decimal = Decimal("0")) -> dict:

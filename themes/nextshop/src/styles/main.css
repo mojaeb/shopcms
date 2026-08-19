@@ -1,0 +1,8 @@
+/* Swiper */
+@import "swiper/css";
+@import "swiper/css/navigation";
+@import "swiper/css/pagination";
+@import "swiper/css/autoplay";
+
+/* NextShop theme styles */
+@import "./nextshop.css";

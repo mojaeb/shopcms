@@ -12,12 +12,15 @@ from addresses.models import CustomerAddress
 from addresses.services.address import AddressService
 from carts.models import Cart
 from carts.services.cart import CartService
+from notifications.services.notification import NotificationError, NotificationService
 from orders.enums import OrderStatus, ShipmentStatus
 from orders.models import Invoice, Order, OrderHistory, OrderItem, Shipment, generate_order_number
 from payments.models import PaymentTransaction
 from shipping.models import ShippingMethod
 
 logger = logging.getLogger(__name__)
+
+_notification_service = NotificationService()
 
 
 class OrderError(Exception):
@@ -160,13 +163,19 @@ class OrderService:
                 shipment.status = ShipmentStatus.PREPARING
                 shipment.save(update_fields=["status", "updated_at"])
             elif new_status == OrderStatus.SENT:
+                old_shipment_status = shipment.status
                 shipment.status = ShipmentStatus.SHIPPED
                 shipment.shipped_at = timezone.now()
                 shipment.save(update_fields=["status", "shipped_at", "updated_at"])
+                if old_shipment_status != ShipmentStatus.SHIPPED:
+                    self._notify_shipment_status(order, shipment)
             elif new_status == OrderStatus.DELIVERED:
+                old_shipment_status = shipment.status
                 shipment.status = ShipmentStatus.DELIVERED
                 shipment.delivered_at = timezone.now()
                 shipment.save(update_fields=["status", "delivered_at", "updated_at"])
+                if old_shipment_status != ShipmentStatus.DELIVERED:
+                    self._notify_shipment_status(order, shipment)
 
         return order
 
@@ -182,6 +191,7 @@ class OrderService:
             order=order,
             defaults={"status": ShipmentStatus.PENDING},
         )
+        old_status = shipment.status
         if tracking_code:
             shipment.tracking_code = tracking_code
         if carrier:
@@ -193,6 +203,8 @@ class OrderService:
             if status == ShipmentStatus.DELIVERED and not shipment.delivered_at:
                 shipment.delivered_at = timezone.now()
         shipment.save()
+        if shipment.status != old_status and shipment.status in (ShipmentStatus.SHIPPED, ShipmentStatus.DELIVERED):
+            self._notify_shipment_status(order, shipment)
         return shipment
 
     def list_customer_orders(self, user, store):
@@ -376,6 +388,47 @@ class OrderService:
             "line_total": str(int(item.line_total)),
             "image": item.image,
         }
+
+    def _shipment_sms_enabled(self, store) -> bool:
+        from dashboard.services.store_admin import StoreAdminService
+
+        settings = StoreAdminService()._get_group_settings(store, "notifications")
+        return bool(settings.get("shipment_sms_enabled", False))
+
+    def _customer_phone(self, order: Order) -> str:
+        """شماره تلفن مشتری: ابتدا از snapshot آدرس، سپس از user."""
+        snapshot = order.address_snapshot or {}
+        phone = snapshot.get("phone", "")
+        if phone:
+            return str(phone)
+        if order.user_id and order.user:
+            return str(order.user.phone or "")
+        return ""
+
+    def _notify_shipment_status(self, order: Order, shipment: Shipment) -> None:
+        """پیامک وضعیت مرسوله به مشتری — هرگز کل تراکنش را fail نمی‌کند."""
+        if not self._shipment_sms_enabled(order.store):
+            return
+        phone = self._customer_phone(order)
+        if not phone:
+            logger.warning("shipment sms: no phone for order %s", order.order_number)
+            return
+        if shipment.status == ShipmentStatus.SHIPPED:
+            tracking = shipment.tracking_code or "به‌زودی"
+            body = f"سفارش {order.order_number} شما ارسال شد. کد رهگیری: {tracking}"
+        elif shipment.status == ShipmentStatus.DELIVERED:
+            body = f"سفارش {order.order_number} شما تحویل داده شد. متشکریم!"
+        else:
+            return
+        try:
+            _notification_service.send_sms(
+                phone,
+                body,
+                store=order.store,
+                metadata={"order_number": order.order_number, "shipment_status": shipment.status},
+            )
+        except NotificationError as exc:
+            logger.warning("shipment sms failed for order %s: %s", order.order_number, exc)
 
     def _resolve_address_snapshot(self, payment: PaymentTransaction, metadata: dict) -> dict:
         address_id = metadata.get("address_id")

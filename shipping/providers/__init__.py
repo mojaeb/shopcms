@@ -22,6 +22,14 @@ class PostProvider(BaseCarrierProvider):
     codename = "post"
     label = "پست"
 
+    def is_available(self, method, context: ShippingContext) -> bool:
+        if not super().is_available(method, context):
+            return False
+        max_weight = method.config.get("max_weight_kg")
+        if max_weight is not None and context.weight_kg > Decimal(str(max_weight)):
+            return False
+        return True
+
 
 @register
 class TipaxProvider(BaseCarrierProvider):
@@ -33,6 +41,14 @@ class TipaxProvider(BaseCarrierProvider):
 class PeykProvider(BaseCarrierProvider):
     codename = "peyk"
     label = "پیک"
+
+    def is_available(self, method, context: ShippingContext) -> bool:
+        if not super().is_available(method, context):
+            return False
+        delivery_cities = method.config.get("delivery_cities") or []
+        if delivery_cities and context.city not in delivery_cities:
+            return False
+        return True
 
 
 @register

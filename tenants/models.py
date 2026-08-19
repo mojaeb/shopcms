@@ -72,6 +72,20 @@ class Store(TimeStampedModel):
         default=StoreStatus.ACTIVE,
         verbose_name="وضعیت",
     )
+    origin_latitude = models.DecimalField(
+        max_digits=9,
+        decimal_places=6,
+        null=True,
+        blank=True,
+        verbose_name="عرض جغرافیایی مبدا",
+    )
+    origin_longitude = models.DecimalField(
+        max_digits=9,
+        decimal_places=6,
+        null=True,
+        blank=True,
+        verbose_name="طول جغرافیایی مبدا",
+    )
     tax_enabled = models.BooleanField(default=False, verbose_name="مالیات فعال")
     tax_percent = models.DecimalField(
         max_digits=5,

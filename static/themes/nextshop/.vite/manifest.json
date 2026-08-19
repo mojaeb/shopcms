@@ -1,0 +1,11 @@
+{
+  "src/main.js": {
+    "file": "js/theme.js",
+    "name": "theme",
+    "src": "src/main.js",
+    "isEntry": true,
+    "css": [
+      "css/theme.css"
+    ]
+  }
+}

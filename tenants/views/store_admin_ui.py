@@ -125,6 +125,15 @@ def manage_files(request):
 
 
 @store_staff_required
+def manage_discounts(request):
+    return render(
+        request,
+        "store_admin/discounts.html",
+        _ctx(request, page_title="تخفیف و کارت هدیه", active_nav="discounts"),
+    )
+
+
+@store_staff_required
 def manage_settings(request):
     return render(
         request,

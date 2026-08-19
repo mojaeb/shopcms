@@ -35,10 +35,12 @@ class PaymentService:
             gateway = get_gateway(codename)
             if not gateway:
                 continue
+            config = settings.get(codename, {})
             result.append({
                 "codename": codename,
                 "label": gateway.label,
                 "is_default": codename == default,
+                "implemented": gateway.is_live_ready(config),
             })
         return result
 
@@ -46,7 +48,6 @@ class PaymentService:
         settings = self._get_payment_settings(store)
         return settings.get(gateway, {"sandbox": True})
 
-    @transaction.atomic
     def create_payment(
         self,
         store,
@@ -82,37 +83,41 @@ class PaymentService:
         config = self.get_gateway_config(store, gateway)
         callback_url = self._build_callback_url(request, gateway)
 
-        txn = PaymentTransaction.objects.create(
-            store=store,
-            user=user,
-            gateway=gateway,
-            amount=amount,
-            status=PaymentStatus.PENDING,
-            callback_url=callback_url,
-            metadata={
-                "address_id": address_id,
-                "shipping_method_id": shipping_method_id,
-                "shipping_price": str(shipping_price),
-                "subtotal": str(totals["subtotal"]),
-                "discount": str(totals["discount"]),
-                "tax": str(tax_amount),
-                "cart_id": cart.id,
-            },
-        )
+        fail_message = None
+        with transaction.atomic():
+            txn = PaymentTransaction.objects.create(
+                store=store,
+                user=user,
+                gateway=gateway,
+                amount=amount,
+                status=PaymentStatus.PENDING,
+                callback_url=callback_url,
+                metadata={
+                    "address_id": address_id,
+                    "shipping_method_id": shipping_method_id,
+                    "shipping_price": str(shipping_price),
+                    "subtotal": str(totals["subtotal"]),
+                    "discount": str(totals["discount"]),
+                    "tax": str(tax_amount),
+                    "cart_id": cart.id,
+                },
+            )
 
-        try:
-            result = provider.create_payment(txn, config, callback_url)
-        except (ValueError, NotImplementedError) as exc:
-            txn.status = PaymentStatus.FAILED
-            txn.error_message = str(exc)
-            txn.save(update_fields=["status", "error_message", "updated_at"])
-            raise PaymentError(str(exc)) from exc
+            try:
+                result = provider.create_payment(txn, config, callback_url)
+            except (ValueError, NotImplementedError) as exc:
+                txn.status = PaymentStatus.FAILED
+                txn.error_message = str(exc)
+                txn.save(update_fields=["status", "error_message", "updated_at"])
+                fail_message = str(exc)
+            else:
+                txn.authority = result.authority
+                txn.payment_url = result.payment_url
+                txn.status = PaymentStatus.REDIRECTED
+                txn.save(update_fields=["authority", "payment_url", "status", "updated_at"])
+                return txn
 
-        txn.authority = result.authority
-        txn.payment_url = result.payment_url
-        txn.status = PaymentStatus.REDIRECTED
-        txn.save(update_fields=["authority", "payment_url", "status", "updated_at"])
-        return txn
+        raise PaymentError(fail_message)
 
     @transaction.atomic
     def verify_payment(self, transaction: PaymentTransaction, params: dict) -> PaymentTransaction:
@@ -180,6 +185,61 @@ class PaymentService:
 
         return self.verify_payment(txn, parsed)
 
+    def reconcile_pending_payments(self, *, minutes: int = 30, store=None, dry_run: bool = False) -> dict:
+        """Inquiry redirected Zarinpal txns older than `minutes` and verify if paid."""
+        from datetime import timedelta
+
+        from django.db.models import Q
+
+        cutoff = timezone.now() - timedelta(minutes=minutes)
+        qs = PaymentTransaction.objects.filter(
+            gateway=GatewayType.ZARINPAL,
+            status=PaymentStatus.REDIRECTED,
+            created_at__lte=cutoff,
+        ).exclude(Q(authority="") | Q(authority__isnull=True)).select_related("store")
+        if store is not None:
+            qs = qs.filter(store=store)
+
+        stats = {"checked": 0, "verified": 0, "skipped": 0, "failed": 0}
+        for txn in qs:
+            stats["checked"] += 1
+            provider = get_gateway(txn.gateway)
+            if not provider or not hasattr(provider, "inquiry_payment"):
+                stats["skipped"] += 1
+                continue
+
+            config = self.get_gateway_config(txn.store, txn.gateway)
+            inquiry = provider.inquiry_payment(txn, config)
+            if not inquiry.success:
+                stats["skipped"] += 1
+                logger.info(
+                    "Payment inquiry not paid: %s status=%s msg=%s",
+                    txn.tracking_code,
+                    inquiry.status,
+                    inquiry.message,
+                )
+                continue
+
+            if dry_run:
+                stats["verified"] += 1
+                continue
+
+            try:
+                updated = self.verify_payment(
+                    txn,
+                    {"Authority": txn.authority, "Status": "OK"},
+                )
+            except PaymentError as exc:
+                stats["failed"] += 1
+                logger.warning("Reconcile verify failed for %s: %s", txn.tracking_code, exc)
+                continue
+
+            if updated.status == PaymentStatus.PAID:
+                stats["verified"] += 1
+            else:
+                stats["failed"] += 1
+        return stats
+
     def serialize_transaction(self, txn: PaymentTransaction) -> dict:
         order = getattr(txn, "order", None)
         return {
@@ -211,14 +271,33 @@ class PaymentService:
         defaults = {
             "gateways": [],
             "default_gateway": "",
-            "zarinpal": {"merchant_id": "", "sandbox": True},
+            "callback_base_url": "",
+            "zarinpal": {
+                "merchant_id": "",
+                "sandbox": True,
+                "api_base": "",
+                "start_pay_url": "",
+                "graphql_url": "",
+                "access_token": "",
+            },
             "idpay": {"api_key": "", "sandbox": True},
             "mellat": {"terminal_id": "", "sandbox": True},
             "pasargad": {"merchant_code": "", "sandbox": True},
+            "sina": {"terminal_id": "", "sandbox": True},
         }
         return {**defaults, **settings}
 
     def _build_callback_url(self, request, gateway: str) -> str:
+        # Prefer payment.callback_base_url when set (public domain / reverse proxy).
+        store = getattr(request, "store", None)
+        if store is None:
+            from tenants.context import get_current_store
+
+            store = get_current_store()
+        if store is not None:
+            base = str(self._get_payment_settings(store).get("callback_base_url") or "").strip().rstrip("/")
+            if base:
+                return f"{base}/api/v1/payments/callback/{gateway}/"
         host = request.get_host()
         scheme = "https" if request.is_secure() else "http"
         return f"{scheme}://{host}/api/v1/payments/callback/{gateway}/"

@@ -6,6 +6,7 @@ from ninja.errors import HttpError
 from accounts.models import User
 from accounts.services.jwt import JWTService
 from addresses.services.address import AddressError, AddressService
+from core.utils.geo import is_iran_coordinate
 from tenants.context import get_current_store
 
 router = Router()
@@ -23,6 +24,8 @@ class AddressSchema(Schema):
     unit: str = ""
     label: str = ""
     is_default: bool = False
+    latitude: float | None = None
+    longitude: float | None = None
 
 
 class AddressUpdateSchema(Schema):
@@ -36,6 +39,8 @@ class AddressUpdateSchema(Schema):
     unit: str | None = None
     label: str | None = None
     is_default: bool | None = None
+    latitude: float | None = None
+    longitude: float | None = None
 
 
 class AddressResponseSchema(Schema):
@@ -51,6 +56,8 @@ class AddressResponseSchema(Schema):
     label: str
     is_default: bool
     full_address: str
+    latitude: float | None = None
+    longitude: float | None = None
 
 
 def _store(request):
@@ -94,8 +101,14 @@ def checkout_selection(request):
 def create_address(request, payload: AddressSchema):
     store = _store(request)
     user = _user(request)
+    data = payload.dict()
+    lat = data.get("latitude")
+    lng = data.get("longitude")
+    if lat is not None and lng is not None:
+        if not is_iran_coordinate(lat, lng):
+            raise HttpError(400, "موقعیت انتخابی خارج از محدوده‌ی جغرافیایی ایران است")
     try:
-        address = service.create_address(user, store, payload.dict())
+        address = service.create_address(user, store, data)
         return service.serialize_address(address)
     except AddressError as e:
         raise HttpError(400, str(e))
@@ -116,6 +129,11 @@ def update_address(request, address_id: int, payload: AddressUpdateSchema):
     store = _store(request)
     user = _user(request)
     data = {k: v for k, v in payload.dict().items() if v is not None}
+    lat = data.get("latitude")
+    lng = data.get("longitude")
+    if lat is not None and lng is not None:
+        if not is_iran_coordinate(lat, lng):
+            raise HttpError(400, "موقعیت انتخابی خارج از محدوده‌ی جغرافیایی ایران است")
     try:
         address = service.update_address(user, store, address_id, data)
         return service.serialize_address(address)

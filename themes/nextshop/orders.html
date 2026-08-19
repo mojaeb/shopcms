@@ -4,13 +4,16 @@
 <div class="ns-account ns-width">
     {% include "partials/account_nav.html" with active="orders" %}
     <div class="ns-account-main" id="orders-page">
-        <h1 class="page-title">سفارشات من</h1>
-        <div id="orders-list">
+        <header class="ns-account-head">
+            <h1 class="page-title">سفارشات من</h1>
+            <p class="ns-account-sub">وضعیت، مبلغ و جزئیات خریدهایتان را اینجا پیگیری کنید.</p>
+        </header>
+        <div id="orders-list" class="orders-list" aria-live="polite">
             <div class="ns-loading-panel" aria-busy="true" aria-label="در حال بارگذاری سفارشات">
-                <div class="ns-skeleton-stack">
+                <div class="ns-skeleton-stack ns-orders-skeleton">
                     <div class="ns-skeleton ns-skeleton-card"></div>
-                    <div class="ns-skeleton ns-skeleton-line ns-skeleton-line--md"></div>
-                    <div class="ns-skeleton ns-skeleton-line ns-skeleton-line--sm"></div>
+                    <div class="ns-skeleton ns-skeleton-card"></div>
+                    <div class="ns-skeleton ns-skeleton-card"></div>
                 </div>
             </div>
         </div>

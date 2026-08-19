@@ -3,7 +3,12 @@
 from django.contrib import admin
 from unfold.admin import ModelAdmin
 
+from core.admin_access import patch_admin_superuser_only
+from core.admin_docs import patch_admin_docs_urls
 from core.models import AuditLog, BackupJob
+
+patch_admin_superuser_only()
+patch_admin_docs_urls()
 
 
 @admin.register(BackupJob)

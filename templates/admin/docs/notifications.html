@@ -1,0 +1,76 @@
+{% extends "admin/docs/base.html" %}
+
+{% block docs_content %}
+<article class="max-w-3xl space-y-5 text-sm" dir="rtl">
+  <h1 class="text-xl font-semibold text-font-important-light dark:text-font-important-dark">{{ doc.title }}</h1>
+  <p class="text-font-subtle-light dark:text-font-subtle-dark">{{ doc.summary }}</p>
+
+  {# ── پیامک وضعیت مرسوله ──────────────────────────────────────────── #}
+  <section class="rounded-default border border-base-200 p-4 dark:border-base-800 space-y-3">
+    <h2 class="font-semibold text-font-important-light dark:text-font-important-dark">پیامک وضعیت مرسوله</h2>
+    <p class="text-font-subtle-light dark:text-font-subtle-dark">
+      هر بار وضعیت مرسوله تغییر می‌کند، اگر قابلیت فعال باشد یک پیامک به مشتری ارسال می‌شود.
+      برای فعال‌کردن، کلید زیر را در <strong>StoreSetting گروه notifications</strong> ست کنید:
+    </p>
+    <pre class="rounded-default bg-base-50 dark:bg-base-950 p-3 text-xs" dir="ltr">key: shipment_sms_enabled
+value: true</pre>
+    <p class="text-xs text-font-subtle-light dark:text-font-subtle-dark">
+      <strong>پیش‌فرض False است</strong> — چون ارسال پیامک هزینه دارد و باید صریحاً فعال شود.
+    </p>
+
+    <div class="overflow-x-auto">
+      <table class="w-full text-xs border-collapse">
+        <thead>
+          <tr class="bg-base-50 dark:bg-base-950 text-right">
+            <th class="border border-base-200 dark:border-base-700 px-3 py-2">وضعیت مرسوله</th>
+            <th class="border border-base-200 dark:border-base-700 px-3 py-2">متن پیامک</th>
+          </tr>
+        </thead>
+        <tbody class="text-font-subtle-light dark:text-font-subtle-dark">
+          <tr>
+            <td class="border border-base-200 dark:border-base-700 px-3 py-1.5 font-mono" dir="ltr">shipped</td>
+            <td class="border border-base-200 dark:border-base-700 px-3 py-1.5">«سفارش ORD-XXXX شما ارسال شد. کد رهگیری: [کد یا به‌زودی]»</td>
+          </tr>
+          <tr>
+            <td class="border border-base-200 dark:border-base-700 px-3 py-1.5 font-mono" dir="ltr">delivered</td>
+            <td class="border border-base-200 dark:border-base-700 px-3 py-1.5">«سفارش ORD-XXXX شما تحویل داده شد. متشکریم!»</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <ul class="list-disc space-y-1 pr-5 text-xs text-font-subtle-light dark:text-font-subtle-dark">
+      <li>شماره گیرنده: ابتدا از snapshot آدرس سفارش خوانده می‌شود، سپس از <span dir="ltr" class="font-mono">user.phone</span></li>
+      <li>اگر ارسال پیامک fail شود (اعتبار تمام، شماره نامعتبر و…) سفارش fail <strong>نمی‌شود</strong> — فقط لاگ می‌شود</li>
+      <li>پیامک تکراری نمی‌رود — اگر وضعیت تغییر نکرده باشد (مثلاً فقط tracking code آپدیت شود) پیامک ارسال نمی‌شود</li>
+    </ul>
+  </section>
+
+  {# ── کانال SMS ───────────────────────────────────────────────────── #}
+  <section class="rounded-default border border-base-200 p-4 dark:border-base-800 space-y-2">
+    <h2 class="font-semibold text-font-important-light dark:text-font-important-dark">تنظیم کانال SMS فروشگاه</h2>
+    <p class="text-font-subtle-light dark:text-font-subtle-dark">
+      کانال‌های اعلان از مدل <strong>NotificationChannel</strong> در پنل ادمین مدیریت می‌شوند.
+      اگر کانال SMS فعال تعریف نشده باشد، سیستم از پروایدر <span dir="ltr" class="font-mono">console_sms</span> (چاپ در ترمینال) استفاده می‌کند.
+    </p>
+    <ul class="list-disc space-y-1 pr-5 text-xs text-font-subtle-light dark:text-font-subtle-dark">
+      <li>از پنل ادمین → <strong>NotificationChannel</strong> یک کانال با نوع <span dir="ltr" class="font-mono">sms</span> بسازید</li>
+      <li>Provider مناسب (kavenegar، melipayamak و…) را انتخاب کنید</li>
+      <li>config مربوط (api_key و…) را پر کنید</li>
+      <li><span dir="ltr" class="font-mono">is_default: true</span> → برای همه پیامک‌های فروشگاه استفاده می‌شود</li>
+    </ul>
+  </section>
+
+  {# ── لاگ اعلان‌ها ─────────────────────────────────────────────────── #}
+  <section class="rounded-default border border-base-200 p-4 dark:border-base-800 space-y-2">
+    <h2 class="font-semibold text-font-important-light dark:text-font-important-dark">لاگ اعلان‌ها</h2>
+    <p class="text-font-subtle-light dark:text-font-subtle-dark">
+      هر اعلان ارسال‌شده در مدل <strong>NotificationLog</strong> ذخیره می‌شود با وضعیت‌های
+      <span dir="ltr" class="font-mono">sent</span> یا <span dir="ltr" class="font-mono">failed</span>.
+    </p>
+    <div class="font-mono text-xs rounded-default bg-base-50 dark:bg-base-950 p-3" dir="ltr">
+      GET /api/v1/store-admin/notifications/logs/?channel_type=sms
+    </div>
+  </section>
+</article>
+{% endblock %}

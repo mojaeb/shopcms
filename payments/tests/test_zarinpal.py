@@ -81,6 +81,28 @@ def test_zarinpal_live_request_uses_api(txn):
 
 
 @pytest.mark.django_db
+def test_zarinpal_custom_urls(txn):
+    gw = ZarinpalGateway()
+    config = {
+        "merchant_id": "1344b5d4-0048-11e8-94db-005056a205be",
+        "sandbox": False,
+        "simulate": False,
+        "api_base": "https://pay.proxy.example/pg/v4/payment",
+        "start_pay_url": "https://pay.proxy.example/StartPay/{authority}",
+        "graphql_url": "https://pay.proxy.example/graphql",
+    }
+    fake_response = {
+        "data": {"code": 100, "authority": "A00000000000000000000000000000000001", "message": "Success"},
+        "errors": [],
+    }
+    with patch.object(gw, "_post", return_value=fake_response) as post:
+        created = gw.create_payment(txn, config, "https://shop.example/callback/")
+    assert created.payment_url == "https://pay.proxy.example/StartPay/A00000000000000000000000000000000001"
+    assert post.call_args[0][0] == "https://pay.proxy.example/pg/v4/payment/request.json"
+    assert gw._graphql_endpoint(config) == "https://pay.proxy.example/graphql"
+
+
+@pytest.mark.django_db
 def test_zarinpal_live_verify(txn):
     gw = ZarinpalGateway()
     config = {
@@ -97,6 +119,101 @@ def test_zarinpal_live_verify(txn):
         result = gw.verify_payment(txn, config, {"Authority": txn.authority, "Status": "OK"})
     assert result.success is True
     assert result.ref_id == "987654"
+
+
+@pytest.mark.django_db
+def test_zarinpal_live_inquiry(txn):
+    gw = ZarinpalGateway()
+    config = {
+        "merchant_id": "1344b5d4-0048-11e8-94db-005056a205be",
+        "sandbox": False,
+        "simulate": False,
+    }
+    txn.authority = "A00000000000000000000000000000000001"
+    fake_response = {
+        "data": {"status": "PAID", "code": 100, "message": "Success"},
+        "errors": [],
+    }
+    with patch.object(gw, "_post", return_value=fake_response) as post:
+        result = gw.inquiry_payment(txn, config)
+    assert result.success is True
+    assert result.status == "PAID"
+    post.assert_called_once()
+    args, _kwargs = post.call_args
+    assert args[0].endswith("/inquiry.json")
+    assert args[1]["authority"] == txn.authority
+    assert args[1]["merchant_id"] == config["merchant_id"]
+    assert "amount" not in args[1]
+
+
+@pytest.mark.django_db
+def test_zarinpal_simulate_inquiry(txn):
+    gw = ZarinpalGateway()
+    config = {"merchant_id": "sandbox-merchant", "sandbox": True}
+    txn.authority = "Sabc"
+    result = gw.inquiry_payment(txn, config)
+    assert result.success is True
+    assert result.status == "PAID"
+
+
+@pytest.mark.django_db
+def test_zarinpal_live_refund_graphql(txn):
+    gw = ZarinpalGateway()
+    config = {
+        "merchant_id": "1344b5d4-0048-11e8-94db-005056a205be",
+        "sandbox": False,
+        "simulate": False,
+        "access_token": "test-access-token",
+    }
+    txn.authority = "A00000000000000000000000000000000001"
+    session_resp = {"data": {"Session": [{"id": "385404123"}]}}
+    refund_resp = {
+        "data": {
+            "resource": {
+                "id": "386426364",
+                "amount": 150000,
+                "timeline": {"refund_status": "PENDING", "refund_amount": 150000},
+            }
+        }
+    }
+    with patch.object(gw, "_graphql_post", side_effect=[session_resp, refund_resp]) as gql:
+        result = gw.refund_payment(txn, config, Decimal("150000"))
+    assert result.success is True
+    assert result.refunded_amount == Decimal("150000")
+    assert gql.call_count == 2
+    session_query, session_vars, token = gql.call_args_list[0][0]
+    assert "Session" in session_query
+    assert session_vars["authority"] == txn.authority
+    assert token == "test-access-token"
+    _, refund_vars, _token = gql.call_args_list[1][0]
+    assert refund_vars["session_id"] == "385404123"
+    assert refund_vars["amount"] == 150000
+    assert refund_vars["method"] == "PAYA"
+    assert refund_vars["reason"] == "CUSTOMER_REQUEST"
+
+
+@pytest.mark.django_db
+def test_zarinpal_live_refund_requires_access_token(txn):
+    gw = ZarinpalGateway()
+    config = {
+        "merchant_id": "1344b5d4-0048-11e8-94db-005056a205be",
+        "sandbox": False,
+        "simulate": False,
+    }
+    result = gw.refund_payment(txn, config, Decimal("150000"))
+    assert result.success is False
+    assert "پنل پذیرنده" in result.message
+
+
+def test_zarinpal_error_code_fallback():
+    gw = ZarinpalGateway()
+    msg = gw._error_message({"errors": {"code": -54}})
+    assert "نامعتبر" in msg
+    inquiry_msg = gw._error_message({
+        "message": "Invalid authority",
+        "errors": {"authority": ["Invalid authority.", "-54"]},
+    })
+    assert "نامعتبر" in inquiry_msg
 
 
 @pytest.mark.django_db

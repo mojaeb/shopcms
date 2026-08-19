@@ -1,0 +1,114 @@
+{% extends "store_admin/base.html" %}
+{% block content %}
+<div id="sa-discounts" class="sa-page">
+    <section class="sa-card">
+        <div class="sa-toolbar">
+            <div>
+                <h2>کد تخفیف</h2>
+                <p class="sa-muted sa-section-desc is-tight">مشتری این کد را در سبد یا تسویه وارد می‌کند.</p>
+            </div>
+            <button type="button" class="sa-btn" id="coupon-new">کد تخفیف جدید</button>
+        </div>
+        <div id="coupon-table-wrap" class="sa-loading-host"></div>
+    </section>
+
+    <section class="sa-card" style="margin-top:1.25rem;">
+        <div class="sa-toolbar">
+            <div>
+                <h2>کارت هدیه</h2>
+                <p class="sa-muted sa-section-desc is-tight">موجودی کارت از مبلغ سفارش کم می‌شود.</p>
+            </div>
+            <button type="button" class="sa-btn" id="gift-new">کارت هدیه جدید</button>
+        </div>
+        <div id="gift-table-wrap" class="sa-loading-host"></div>
+    </section>
+
+    <dialog id="coupon-dialog" class="sa-dialog sa-dialog-wide">
+        <form method="dialog" id="coupon-form" class="sa-form">
+            <h2 id="coupon-dialog-title">کد تخفیف جدید</h2>
+            <input type="hidden" id="coupon-id">
+            <div class="sa-grid-2">
+                <label>کد
+                    <input type="text" id="coupon-code" class="sa-input" dir="ltr" required placeholder="OFF10" autocomplete="off">
+                </label>
+                <label>نوع
+                    <select id="coupon-type" class="sa-input">
+                        <option value="percentage">درصدی</option>
+                        <option value="fixed">مبلغ ثابت</option>
+                    </select>
+                </label>
+                <label>مقدار
+                    <input type="number" id="coupon-value" class="sa-input" dir="ltr" min="0" required>
+                </label>
+                <label>محدوده
+                    <select id="coupon-scope" class="sa-input">
+                        <option value="all">همه محصولات</option>
+                        <option value="category">دسته‌بندی</option>
+                        <option value="product">محصول</option>
+                    </select>
+                </label>
+                <label>حداقل سفارش
+                    <input type="number" id="coupon-min-order" class="sa-input" dir="ltr" min="0" value="0">
+                </label>
+                <label>سقف تخفیف (اختیاری)
+                    <input type="number" id="coupon-max-discount" class="sa-input" dir="ltr" min="0" placeholder="خالی = بدون سقف">
+                </label>
+                <label>حداکثر استفاده کل
+                    <input type="number" id="coupon-max-uses" class="sa-input" dir="ltr" min="1" placeholder="خالی = نامحدود">
+                </label>
+                <label>حداکثر استفاده هر کاربر
+                    <input type="number" id="coupon-per-user" class="sa-input" dir="ltr" min="1" placeholder="خالی = نامحدود">
+                </label>
+                <label>شروع اعتبار
+                    <input type="datetime-local" id="coupon-valid-from" class="sa-input" dir="ltr">
+                </label>
+                <label>پایان اعتبار
+                    <input type="datetime-local" id="coupon-valid-until" class="sa-input" dir="ltr">
+                </label>
+            </div>
+            <label class="sa-check-inline">
+                <input type="checkbox" id="coupon-active" checked>
+                فعال
+            </label>
+            <label class="sa-check-inline">
+                <input type="checkbox" id="coupon-first-purchase">
+                فقط اولین خرید
+            </label>
+            <div class="sa-form-actions">
+                <button type="submit" class="sa-btn" value="save">ذخیره</button>
+                <button type="button" class="sa-btn sa-btn-ghost" id="coupon-cancel">انصراف</button>
+            </div>
+        </form>
+    </dialog>
+
+    <dialog id="gift-dialog" class="sa-dialog">
+        <form method="dialog" id="gift-form" class="sa-form">
+            <h2 id="gift-dialog-title">کارت هدیه جدید</h2>
+            <input type="hidden" id="gift-id">
+            <label>کد
+                <input type="text" id="gift-code" class="sa-input" dir="ltr" required placeholder="GIFT100" autocomplete="off">
+            </label>
+            <label id="gift-initial-wrap">موجودی اولیه
+                <input type="number" id="gift-initial" class="sa-input" dir="ltr" min="0" required>
+            </label>
+            <label id="gift-balance-wrap" hidden>موجودی فعلی
+                <input type="number" id="gift-balance" class="sa-input" dir="ltr" min="0">
+            </label>
+            <label>پایان اعتبار
+                <input type="datetime-local" id="gift-valid-until" class="sa-input" dir="ltr">
+            </label>
+            <label class="sa-check-inline">
+                <input type="checkbox" id="gift-active" checked>
+                فعال
+            </label>
+            <div class="sa-form-actions">
+                <button type="submit" class="sa-btn" value="save">ذخیره</button>
+                <button type="button" class="sa-btn sa-btn-ghost" id="gift-cancel">انصراف</button>
+            </div>
+        </form>
+    </dialog>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="/static/js/store_admin/discounts.js"></script>
+{% endblock %}

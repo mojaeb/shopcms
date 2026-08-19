@@ -1,0 +1,21 @@
+{% extends "admin/docs/base.html" %}
+
+{% block docs_content %}
+<header class="mb-6">
+  <h1 class="text-xl font-semibold text-font-important-light dark:text-font-important-dark">مستندات ShopCMS</h1>
+  <p class="mt-2 max-w-2xl text-sm text-font-subtle-light dark:text-font-subtle-dark">
+    راهنمای تنظیمات فروشگاه، پرداخت، ارسال و قالب‌های JSON آماده برای کپی.
+  </p>
+</header>
+
+<div class="grid gap-3 sm:grid-cols-2">
+  {% for page in doc_pages %}
+  <a href="{% url 'admin:shopcms_docs_page' page.slug %}"
+     class="block rounded-default border border-base-200 bg-white p-4 hover:border-primary-500/40 dark:border-base-800 dark:bg-base-900">
+    <span class="material-symbols-outlined mb-2 block text-primary-600 dark:text-primary-500">{{ page.icon }}</span>
+    <span class="block font-semibold text-font-important-light dark:text-font-important-dark">{{ page.title }}</span>
+    <span class="mt-1 block text-sm text-font-subtle-light dark:text-font-subtle-dark">{{ page.summary }}</span>
+  </a>
+  {% endfor %}
+</div>
+{% endblock %}

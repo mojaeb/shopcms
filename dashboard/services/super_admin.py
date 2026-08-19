@@ -265,6 +265,8 @@ class SuperAdminService:
             "post": {"mode": "fixed", "fixed_price": 0, "distance_table": []},
             "tipax": {"mode": "distance", "api_key": ""},
             "free_shipping_threshold": 0,
+            "base_package_weight_kg": 0,
+            "origin": {},
         }
         saved = self.get_group_settings(store_id, "shipping")
         return {**defaults, **saved}

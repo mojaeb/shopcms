@@ -1,6 +1,7 @@
 """Products tests."""
 
 import json
+from decimal import Decimal
 
 import pytest
 
@@ -338,6 +339,36 @@ def test_storefront_product_page(client, store, product_data):
 
 @pytest.mark.django_db
 def test_storefront_category_page(client, store, product_data):
-    response = client.get("/category/electronics/", HTTP_HOST="products.local")
+    response = client.get("/products/electronics/", HTTP_HOST="products.local")
     assert response.status_code == 200
     assert "galaxy-s24" in response.content.decode() or "Galaxy S24" in response.content.decode()
+
+
+@pytest.mark.django_db
+def test_product_weight_kg_default_and_set(store):
+    product = Product.objects.create(
+        store=store,
+        name="Scale",
+        slug="scale",
+        product_type=ProductType.SIMPLE,
+        status=ProductStatus.ACTIVE,
+        base_price=10000,
+    )
+    assert product.weight_kg == Decimal("0.5")
+    product.weight_kg = Decimal("2.250")
+    product.save(update_fields=["weight_kg"])
+    product.refresh_from_db()
+    assert product.weight_kg == Decimal("2.250")
+
+
+@pytest.mark.django_db
+def test_variant_weight_kg_nullable(store, product_data):
+    from products.models import ProductVariant
+
+    product = product_data["product"]
+    variant = ProductVariant.objects.create(product=product, price=1000)
+    assert variant.weight_kg is None
+    variant.weight_kg = Decimal("1.100")
+    variant.save(update_fields=["weight_kg"])
+    variant.refresh_from_db()
+    assert variant.weight_kg == Decimal("1.100")

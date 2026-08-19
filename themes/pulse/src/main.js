@@ -38,6 +38,9 @@ import {
   Pencil,
   Layers,
   Trash2,
+  Maximize2,
+  ZoomIn,
+  ZoomOut,
 } from "lucide";
 import gsap from "gsap";
 import Swiper from "swiper";
@@ -92,6 +95,9 @@ const pulseIcons = {
   Pencil,
   Layers,
   Trash2,
+  Maximize2,
+  ZoomIn,
+  ZoomOut,
 };
 
 window.htmx = htmx;

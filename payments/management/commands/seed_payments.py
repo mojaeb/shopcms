@@ -23,12 +23,20 @@ class Command(BaseCommand):
             return
 
         settings = {
-            "gateways": ["zarinpal", "idpay", "mellat", "pasargad"],
+            "gateways": ["zarinpal", "idpay", "mellat", "pasargad", "sina"],
             "default_gateway": "zarinpal",
-            "zarinpal": {"merchant_id": "sandbox-merchant", "sandbox": True},
+            "zarinpal": {
+                "merchant_id": "sandbox-merchant",
+                "sandbox": True,
+                "api_base": "",
+                "start_pay_url": "",
+                "graphql_url": "",
+            },
+            "callback_base_url": "",
             "idpay": {"api_key": "sandbox-key", "sandbox": True},
             "mellat": {"terminal_id": "sandbox-terminal", "sandbox": True},
             "pasargad": {"merchant_code": "sandbox-pasargad", "sandbox": True},
+            "sina": {"terminal_id": "sandbox-sina", "sandbox": True},
         }
 
         for key, value in settings.items():

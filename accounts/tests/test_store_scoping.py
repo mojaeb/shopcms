@@ -154,6 +154,28 @@ def test_admin_store_list_scoped(manager_of_store1, store1, store2):
 
 
 @pytest.mark.django_db
+def test_store_staff_cannot_open_django_admin(client, store1, store_admin_role):
+    user = User.objects.create_user(phone="09121117777", is_staff=True, password="x")
+    StoreMembership.objects.create(
+        user=user,
+        store=store1,
+        role=store_admin_role,
+        status=MembershipStatus.ACTIVE,
+        is_primary=True,
+    )
+    apply_store_admin_scoping()
+    client.force_login(user)
+
+    store_resp = client.get("/admin/tenants/store/")
+    assert store_resp.status_code == 302
+    assert "/admin/login/" in store_resp.headers.get("Location", "")
+
+    index_resp = client.get("/admin/")
+    assert index_resp.status_code == 302
+    assert "/admin/login/" in index_resp.headers.get("Location", "")
+
+
+@pytest.mark.django_db
 def test_admin_multi_store_assignment(manager_of_store1, store1, store2, manager_role, products):
     apply_store_admin_scoping()
     StoreMembership.objects.create(

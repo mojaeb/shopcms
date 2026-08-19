@@ -4,7 +4,7 @@ from django.core.validators import MinValueValidator
 from django.db import models
 
 from core.models import TimeStampedModel
-from shipping.enums import CalculationMode, ShippingProviderType
+from shipping.enums import CalculationMode, ShippingPaymentType, ShippingProviderType, ShippingZoneTier
 from tenants.models import Store
 
 
@@ -60,6 +60,12 @@ class ShippingMethod(TimeStampedModel):
         verbose_name="آستانه ارسال رایگان",
     )
     estimated_days = models.PositiveIntegerField(default=3, verbose_name="زمان تحویل (روز)")
+    payment_type = models.CharField(
+        max_length=10,
+        choices=ShippingPaymentType.choices,
+        default=ShippingPaymentType.PREPAID,
+        verbose_name="نوع پرداخت کرایه",
+    )
 
     class Meta:
         verbose_name = "روش ارسال"
@@ -80,6 +86,12 @@ class ShippingPrice(TimeStampedModel):
     )
     from_city = models.CharField(max_length=100, blank=True, verbose_name="شهر مبدا")
     to_city = models.CharField(max_length=100, blank=True, verbose_name="شهر مقصد")
+    zone_tier = models.CharField(
+        max_length=10,
+        choices=ShippingZoneTier.choices,
+        blank=True,
+        verbose_name="سطح منطقه",
+    )
     weight_min_kg = models.DecimalField(
         max_digits=8, decimal_places=2, default=0, validators=[MinValueValidator(0)], verbose_name="حداقل وزن (کیلو)",
     )

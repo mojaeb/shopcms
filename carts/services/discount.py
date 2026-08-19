@@ -9,7 +9,6 @@ from carts.enums import DiscountScope, DiscountType
 from carts.models import Cart, Coupon, CouponUsage, GiftCard
 from orders.enums import OrderStatus
 from orders.models import Order
-from tenants.models import StorePlugin
 
 logger = logging.getLogger(__name__)
 
@@ -32,6 +31,27 @@ class DiscountService:
         from plugins.services.plugin import PluginService
 
         return PluginService().is_enabled(store, "coupon")
+
+    def sync_plugin(self, store) -> None:
+        """Enable the coupon plugin so created codes work at checkout."""
+        from plugins.services.plugin import PluginError, PluginService
+        from tenants.models import Plugin
+
+        plugin, _ = Plugin.objects.get_or_create(
+            codename="coupon",
+            defaults={
+                "name": "کوپن و کارت هدیه",
+                "description": "کد تخفیف و کارت هدیه",
+                "is_active": True,
+            },
+        )
+        if not plugin.is_active:
+            plugin.is_active = True
+            plugin.save(update_fields=["is_active"])
+        try:
+            PluginService().set_enabled(store, "coupon", True)
+        except (Plugin.DoesNotExist, PluginError):
+            logger.warning("Could not enable coupon plugin for store %s", getattr(store, "slug", store))
 
     def validate_coupon(self, cart: Cart, code: str, user=None) -> Coupon:
         if not self.is_coupon_plugin_active(cart.store):

@@ -155,3 +155,5 @@ class ShippingSettingsSchema(Schema):
     post: dict = {}
     tipax: dict = {}
     free_shipping_threshold: float = 0
+    base_package_weight_kg: float = 0
+    origin: dict = {}

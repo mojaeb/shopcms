@@ -72,6 +72,44 @@
                     </div>
                 </div>
             </section>
+
+            <section class="ns-panel ns-checkout-panel ns-checkout-discount-panel" aria-label="کد تخفیف و کارت هدیه">
+                <h2>
+                    <span class="ns-checkout-step-icon" aria-hidden="true"><i data-lucide="ticket-percent"></i></span>
+                    کد تخفیف / کارت هدیه
+                </h2>
+                <div class="ns-discount-tabs" role="tablist">
+                    <button type="button" class="ns-discount-tab ns-discount-tab--active" role="tab" aria-selected="true" data-tab="coupon">
+                        <i data-lucide="ticket-percent" aria-hidden="true"></i>
+                        کد تخفیف
+                    </button>
+                    <button type="button" class="ns-discount-tab" role="tab" aria-selected="false" data-tab="gift">
+                        <i data-lucide="gift" aria-hidden="true"></i>
+                        کارت هدیه
+                    </button>
+                </div>
+                <div class="ns-discount-panel" data-panel="coupon">
+                    <div class="ns-discount-input-wrap">
+                        <input type="text" id="coupon-code" class="ns-input ns-discount-input" placeholder="کد تخفیف را وارد کنید" aria-label="کد کوپن" autocomplete="off" spellcheck="false">
+                        <button type="button" class="ns-btn ns-discount-apply" id="apply-coupon">اعمال</button>
+                    </div>
+                    <button type="button" class="ns-discount-remove" id="remove-coupon" hidden>
+                        <i data-lucide="x" aria-hidden="true"></i>
+                        حذف کد تخفیف
+                    </button>
+                </div>
+                <div class="ns-discount-panel" data-panel="gift" hidden>
+                    <div class="ns-discount-input-wrap">
+                        <input type="text" id="gift-code" class="ns-input ns-discount-input" placeholder="کد کارت هدیه را وارد کنید" aria-label="کد کارت هدیه" autocomplete="off" spellcheck="false">
+                        <button type="button" class="ns-btn ns-discount-apply" id="apply-gift">اعمال</button>
+                    </div>
+                    <button type="button" class="ns-discount-remove" id="remove-gift" hidden>
+                        <i data-lucide="x" aria-hidden="true"></i>
+                        حذف کارت هدیه
+                    </button>
+                </div>
+                <p id="coupon-message" class="ns-discount-msg" role="status" aria-live="polite"></p>
+            </section>
         </div>
 
         <aside class="ns-panel ns-checkout-summary-card" aria-label="خلاصه سفارش">
@@ -81,6 +119,8 @@
             </h2>
             <div id="checkout-summary" class="ns-checkout-summary">
                 <p><span>سبد خرید</span> <span id="cart-subtotal" class="money-slot">—</span></p>
+                <p id="discount-row" style="display:none;"><span>تخفیف</span> <span id="discount-cost" class="money-slot">—</span></p>
+                <p id="applied-code-row" class="muted" style="display:none;"><span id="applied-code-label">کد</span> <strong id="applied-code-value"></strong></p>
                 <p><span>هزینه ارسال</span> <span id="shipping-cost" class="money-slot">—</span></p>
                 <p id="tax-row" style="display:none;"><span>مالیات</span> <span id="tax-cost" class="money-slot">—</span></p>
                 <p class="ns-checkout-total">

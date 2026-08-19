@@ -17,3 +17,14 @@ class CalculationMode(models.TextChoices):
     WEIGHT = "weight", "وزن"
     DISTANCE_WEIGHT = "distance_weight", "مسافت + وزن"
     API = "api", "API"
+
+
+class ShippingPaymentType(models.TextChoices):
+    PREPAID = "prepaid", "پیش‌کرایه"
+    POSTPAID = "postpaid", "پس‌کرایه"
+
+
+class ShippingZoneTier(models.TextChoices):
+    SAME = "same", "هم‌استان"
+    ADJACENT = "adjacent", "استان مجاور"
+    FAR = "far", "دورافتاده"

@@ -11,6 +11,14 @@
                 <p class="muted">در حال بارگذاری آدرس...</p>
             </div>
             <a href="/addresses/" class="btn btn-outline" style="margin-top:0.75rem;">مدیریت آدرس‌ها</a>
+            <div style="margin-top:0.75rem;">
+                <button type="button" class="btn btn-outline" id="gps-location-btn" style="font-size:0.9rem;">
+                    📍 دریافت موقعیت من از GPS
+                </button>
+                <p id="gps-location-msg" class="muted" style="margin-top:0.4rem;font-size:0.85rem;"></p>
+                <input type="hidden" id="gps-latitude" name="latitude">
+                <input type="hidden" id="gps-longitude" name="longitude">
+            </div>
         </section>
 
         <section class="card">
@@ -34,10 +42,27 @@
             </div>
         </section>
 
+        <section class="card" aria-label="کد تخفیف و کارت هدیه">
+            <h2>کد تخفیف / کارت هدیه</h2>
+            <div class="input-row" style="margin-top:0.5rem;">
+                <input type="text" id="coupon-code" placeholder="کد کوپن" aria-label="کد کوپن" autocomplete="off">
+                <button type="button" class="btn" id="apply-coupon">اعمال کوپن</button>
+                <button type="button" class="btn btn-outline" id="remove-coupon">حذف کوپن</button>
+            </div>
+            <div class="input-row" style="margin-top:0.75rem;">
+                <input type="text" id="gift-code" placeholder="کد کارت هدیه" aria-label="کد کارت هدیه" autocomplete="off">
+                <button type="button" class="btn" id="apply-gift">اعمال کارت هدیه</button>
+                <button type="button" class="btn btn-outline" id="remove-gift">حذف کارت</button>
+            </div>
+            <p id="coupon-message" class="muted" style="margin-top:0.5rem;" role="status"></p>
+        </section>
+
         <section class="card">
             <h2>خلاصه سفارش</h2>
             <div id="checkout-summary">
                 <p>سبد: <span id="cart-subtotal" class="money-slot">—</span></p>
+                <p id="discount-row" style="display:none;">تخفیف: <span id="discount-cost" class="money-slot">—</span></p>
+                <p id="applied-code-row" class="muted" style="display:none;"><span id="applied-code-label">کد</span>: <strong id="applied-code-value"></strong></p>
                 <p>هزینه ارسال: <span id="shipping-cost" class="money-slot">—</span></p>
                 <p id="tax-row" style="display:none;">مالیات: <span id="tax-cost" class="money-slot">—</span></p>
                 <p style="font-size:1.2rem; margin-top:0.5rem; font-weight:bold;">
@@ -72,4 +97,46 @@
 {% endblock %}
 {% block extra_js %}
 <script src="/static/js/checkout.js"></script>
+<script>
+(function () {
+    var btn = document.getElementById('gps-location-btn');
+    var msg = document.getElementById('gps-location-msg');
+    var latInput = document.getElementById('gps-latitude');
+    var lngInput = document.getElementById('gps-longitude');
+    if (!btn) return;
+    btn.addEventListener('click', function () {
+        if (!navigator.geolocation) {
+            msg.textContent = 'مرورگر شما از موقعیت‌یابی پشتیبانی نمی‌کند.';
+            return;
+        }
+        btn.disabled = true;
+        msg.textContent = 'در حال دریافت موقعیت...';
+        navigator.geolocation.getCurrentPosition(
+            function (pos) {
+                var lat = pos.coords.latitude;
+                var lng = pos.coords.longitude;
+                latInput.value = lat;
+                lngInput.value = lng;
+                msg.textContent = 'موقعیت دریافت شد: ' + lat.toFixed(5) + '، ' + lng.toFixed(5);
+                btn.disabled = false;
+                // پیش‌نمایش فاصله از مبدا فروشگاه
+                fetch('/api/shipping/distance-preview/', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({latitude: lat, longitude: lng})
+                }).then(function (r) { return r.json(); }).then(function (data) {
+                    if (data.distance_km) {
+                        msg.textContent += ' — فاصله تا فروشگاه: ' + data.distance_km + ' کیلومتر';
+                    }
+                }).catch(function () {});
+            },
+            function (err) {
+                msg.textContent = 'دسترسی به موقعیت مکانی رد شد.';
+                btn.disabled = false;
+            },
+            {enableHighAccuracy: true, timeout: 10000}
+        );
+    });
+})();
+</script>
 {% endblock %}

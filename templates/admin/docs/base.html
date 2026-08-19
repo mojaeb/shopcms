@@ -1,0 +1,36 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block extrahead %}{{ block.super }}
+<style>
+  .shopcms-docs-layout { display: flex; flex-direction: column; gap: 1.5rem; }
+  @media (min-width: 1024px) {
+    .shopcms-docs-layout { flex-direction: row; align-items: flex-start; }
+    .shopcms-docs-nav { width: 15rem; flex-shrink: 0; position: sticky; top: 1rem; }
+    .shopcms-docs-main { flex: 1; min-width: 0; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="shopcms-docs-layout" dir="rtl">
+  <aside class="shopcms-docs-nav rounded-default border border-base-200 bg-white p-3 dark:border-base-800 dark:bg-base-900">
+    <p class="mb-2 text-xs font-semibold text-font-subtle-light dark:text-font-subtle-dark">مستندات</p>
+    <nav class="flex flex-col gap-1">
+      <a href="{{ docs_index_url }}"
+         class="rounded-default px-2.5 py-2 text-sm {% if not active_doc_slug %}bg-primary-50 font-medium text-primary-700 dark:bg-primary-500/10 dark:text-primary-300{% else %}text-font-subtle-light hover:bg-base-50 dark:text-font-subtle-dark dark:hover:bg-base-800{% endif %}">
+        فهرست
+      </a>
+      {% for page in doc_pages %}
+      <a href="{% url 'admin:shopcms_docs_page' page.slug %}"
+         class="rounded-default px-2.5 py-2 text-sm {% if active_doc_slug == page.slug %}bg-primary-50 font-medium text-primary-700 dark:bg-primary-500/10 dark:text-primary-300{% else %}text-font-subtle-light hover:bg-base-50 dark:text-font-subtle-dark dark:hover:bg-base-800{% endif %}">
+        {{ page.title }}
+      </a>
+      {% endfor %}
+    </nav>
+  </aside>
+  <div class="shopcms-docs-main">
+    {% block docs_content %}{% endblock %}
+  </div>
+</div>
+{% endblock %}

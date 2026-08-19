@@ -212,11 +212,18 @@
         Alpine.data("vgQty", function (start) {
             return {
                 qty: Number(start) || 1,
+                adding: false,
+                justAdded: false,
                 inc: function () {
                     this.qty += 1;
                 },
                 dec: function () {
                     if (this.qty > 1) this.qty -= 1;
+                },
+                cartLabel: function () {
+                    if (this.adding) return "در حال افزودن...";
+                    if (this.justAdded) return "اضافه شد";
+                    return "افزودن به سبد";
                 },
             };
         });
@@ -230,6 +237,8 @@
                 basePrice: "0",
                 baseComparePrice: "",
                 qty: 1,
+                adding: false,
+                justAdded: false,
 
                 boot: function () {
                     var root = this.$el;
@@ -471,6 +480,12 @@
 
                 canAddToCart: function () {
                     return !!(this.selectedVariant && this.selectedVariant.in_stock);
+                },
+
+                cartLabel: function () {
+                    if (this.adding) return "در حال افزودن...";
+                    if (this.justAdded) return "اضافه شد";
+                    return this.canAddToCart() ? "افزودن به سبد" : "ناموجود";
                 },
 
                 incQty: function () {

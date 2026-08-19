@@ -1,0 +1,9 @@
+{% extends "admin/docs/base.html" %}
+
+{% block docs_content %}
+<header class="mb-4">
+  <h1 class="text-xl font-semibold text-font-important-light dark:text-font-important-dark">{{ doc.title }}</h1>
+  <p class="mt-2 max-w-3xl text-sm text-font-subtle-light dark:text-font-subtle-dark">{{ doc.summary }}</p>
+</header>
+{% include "admin/docs/includes/json_templates.html" %}
+{% endblock %}

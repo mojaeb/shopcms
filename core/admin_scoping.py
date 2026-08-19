@@ -113,12 +113,35 @@ def object_belongs_to_user_stores(obj, user, store_lookup: str | None) -> bool:
     return store_id in store_ids
 
 
+def is_platform_only_nav_model(app_label: str, model_name: str) -> bool:
+    """True if Unfold sidebar should hide this model from store staff."""
+    needle = f"{app_label}.{model_name}".lower()
+    return any(label.lower() == needle for label in PLATFORM_ONLY_LABELS)
+
+
+def is_store_staff_user(user) -> bool:
+    """Active store-role membership (not superuser)."""
+    if not user or not getattr(user, "is_authenticated", False):
+        return False
+    if getattr(user, "is_superuser", False):
+        return False
+    if not getattr(user, "is_staff", False):
+        return False
+    return bool(PermissionService().get_staff_store_ids(user))
+
+
 def _bound_original(model_admin, name: str):
     """Return the unbound original method from the class MRO (pre-patch)."""
     for cls in type(model_admin).mro():
         if name in cls.__dict__ and not getattr(cls.__dict__[name], "_shopcms_scoped", False):
             return cls.__dict__[name]
     return getattr(type(model_admin), name)
+
+
+def _grant_store_staff_object_perm(user, obj, store_lookup: str | None) -> bool:
+    if obj is None:
+        return True
+    return object_belongs_to_user_stores(obj, user, store_lookup)
 
 
 def patch_model_admin(model_admin, store_lookup: str | None) -> None:
@@ -141,17 +164,42 @@ def patch_model_admin(model_admin, store_lookup: str | None) -> None:
 
         def make_perm(orig):
             def has_perm(self, request, obj=None):
+                user = request.user
+                if is_store_staff_user(user):
+                    return _grant_store_staff_object_perm(user, obj, store_lookup)
                 if not orig(self, request, obj):
                     return False
-                if obj is None or request.user.is_superuser:
+                if obj is None or user.is_superuser:
                     return True
-                return object_belongs_to_user_stores(obj, request.user, store_lookup)
+                return object_belongs_to_user_stores(obj, user, store_lookup)
 
             has_perm._shopcms_scoped = True  # type: ignore[attr-defined]
             return has_perm
 
         patched = make_perm(original_perm)
         setattr(model_admin, perm_name, patched.__get__(model_admin, type(model_admin)))
+
+    original_add = _bound_original(model_admin, "has_add_permission")
+
+    def has_add_permission(self, request):
+        if is_store_staff_user(request.user):
+            return True
+        return original_add(self, request)
+
+    has_add_permission._shopcms_scoped = True  # type: ignore[attr-defined]
+    model_admin.has_add_permission = has_add_permission.__get__(model_admin, type(model_admin))
+
+    original_module = _bound_original(model_admin, "has_module_permission")
+
+    def has_module_permission(self, request):
+        if is_store_staff_user(request.user):
+            return True
+        return original_module(self, request)
+
+    has_module_permission._shopcms_scoped = True  # type: ignore[attr-defined]
+    model_admin.has_module_permission = has_module_permission.__get__(
+        model_admin, type(model_admin)
+    )
 
     original_formfield = _bound_original(model_admin, "formfield_for_foreignkey")
 
@@ -217,6 +265,27 @@ def patch_user_admin(model_admin) -> None:
 
     get_queryset._shopcms_scoped = True  # type: ignore[attr-defined]
     model_admin.get_queryset = get_queryset.__get__(model_admin, type(model_admin))
+
+    for perm_name in (
+        "has_module_permission",
+        "has_view_permission",
+        "has_add_permission",
+        "has_change_permission",
+        "has_delete_permission",
+    ):
+        original_perm = _bound_original(model_admin, perm_name)
+
+        def make_user_perm(orig):
+            def has_perm(self, request, *args, **kwargs):
+                if is_store_staff_user(request.user):
+                    return True
+                return orig(self, request, *args, **kwargs)
+
+            has_perm._shopcms_scoped = True  # type: ignore[attr-defined]
+            return has_perm
+
+        patched = make_user_perm(original_perm)
+        setattr(model_admin, perm_name, patched.__get__(model_admin, type(model_admin)))
 
 
 def apply_store_admin_scoping() -> None:

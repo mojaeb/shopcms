@@ -167,15 +167,24 @@
                     data-add-to-cart
                     data-product="{{ product.slug }}"
                     :data-variant="selectedVariant ? selectedVariant.id : ''"
-                    :disabled="!canAddToCart()"
-                    :class="{ 'is-disabled': !canAddToCart() }"
+                    :disabled="!canAddToCart() || adding"
+                    :class="{ 'is-disabled': !canAddToCart(), 'is-busy': adding }"
+                    :aria-busy="adding"
                 >
                     <i data-lucide="shopping-bag"></i>
-                    <span x-text="canAddToCart() ? 'افزودن به سبد' : 'ناموجود'"></span>
+                    <span data-cart-label x-text="cartLabel()">افزودن به سبد</span>
                 </button>
                 {% elif product.in_stock %}
-                <button class="ns-btn" data-add-to-cart data-product="{{ product.slug }}">
-                    <i data-lucide="shopping-bag"></i> افزودن به سبد
+                <button
+                    class="ns-btn"
+                    data-add-to-cart
+                    data-product="{{ product.slug }}"
+                    :disabled="adding"
+                    :class="{ 'is-busy': adding }"
+                    :aria-busy="adding"
+                >
+                    <i data-lucide="shopping-bag"></i>
+                    <span data-cart-label x-text="cartLabel()">افزودن به سبد</span>
                 </button>
                 {% else %}
                 <span class="ns-badge ns-badge--muted">ناموجود</span>

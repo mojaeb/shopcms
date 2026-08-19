@@ -100,6 +100,8 @@ class AddressService:
         return None
 
     def serialize_address(self, address: CustomerAddress) -> dict:
+        lat = address.latitude
+        lng = address.longitude
         return {
             "id": address.id,
             "full_name": address.full_name,
@@ -113,6 +115,8 @@ class AddressService:
             "label": address.label,
             "is_default": address.is_default,
             "full_address": address.full_address,
+            "latitude": float(lat) if lat is not None else None,
+            "longitude": float(lng) if lng is not None else None,
         }
 
     def _clear_defaults(self, user, store, exclude_id: int | None = None):

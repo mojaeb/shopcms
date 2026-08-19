@@ -1,0 +1,113 @@
+{% extends "admin/docs/base.html" %}
+
+{% block docs_content %}
+<article class="max-w-3xl space-y-5 text-sm" dir="rtl">
+  <h1 class="text-xl font-semibold text-font-important-light dark:text-font-important-dark">{{ doc.title }}</h1>
+  <p class="text-font-subtle-light dark:text-font-subtle-dark">{{ doc.summary }}</p>
+
+  {# ── تب ارسال فروشگاه ───────────────────────────────────────────── #}
+  <section class="rounded-default border border-base-200 p-4 dark:border-base-800 space-y-2">
+    <h2 class="font-semibold text-font-important-light dark:text-font-important-dark">تب «ارسال» فروشگاه</h2>
+    <ul class="list-disc space-y-1 pr-5 text-font-subtle-light dark:text-font-subtle-dark">
+      <li><strong>استان/شهر مبدا</strong> — برای محاسبه <span dir="ltr" class="font-mono text-xs">zone_tier</span> (هم‌استان / مجاور / دورافتاده)</li>
+      <li><strong>وزن بسته‌بندی</strong> (<span dir="ltr" class="font-mono text-xs">base_package_weight_kg</span>) — به وزن محاسبه‌شده اضافه می‌شود</li>
+      <li><strong>آستانه ارسال رایگان</strong> — برای کل فروشگاه (مستقل از هر روش)</li>
+      <li><strong>ارائه‌دهندگان فعال</strong> — فهرست پرووایدرهای قابل انتخاب برای این فروشگاه</li>
+    </ul>
+  </section>
+
+  {# ── تعرفه منطقه‌ای zone_tier ───────────────────────────────────── #}
+  <section class="rounded-default border border-base-200 p-4 dark:border-base-800 space-y-3">
+    <h2 class="font-semibold text-font-important-light dark:text-font-important-dark">تعرفه منطقه‌ای (zone_tier)</h2>
+    <p class="text-font-subtle-light dark:text-font-subtle-dark">
+      در هر ردیف «تعرفه ارسال» فیلد <span dir="ltr" class="font-mono text-xs">zone_tier</span> را ست کنید و <span dir="ltr" class="font-mono text-xs">to_city</span> را خالی بگذارید:
+    </p>
+    <div class="overflow-x-auto">
+      <table class="w-full text-xs border-collapse">
+        <thead>
+          <tr class="bg-base-50 dark:bg-base-950 text-right">
+            <th class="border border-base-200 dark:border-base-700 px-3 py-2">مقدار zone_tier</th>
+            <th class="border border-base-200 dark:border-base-700 px-3 py-2">معنا</th>
+          </tr>
+        </thead>
+        <tbody class="text-font-subtle-light dark:text-font-subtle-dark">
+          <tr><td class="border border-base-200 dark:border-base-700 px-3 py-1.5 font-mono" dir="ltr">same</td><td class="border border-base-200 dark:border-base-700 px-3 py-1.5">هم‌استان مبدا</td></tr>
+          <tr><td class="border border-base-200 dark:border-base-700 px-3 py-1.5 font-mono" dir="ltr">adjacent</td><td class="border border-base-200 dark:border-base-700 px-3 py-1.5">استان مجاور</td></tr>
+          <tr><td class="border border-base-200 dark:border-base-700 px-3 py-1.5 font-mono" dir="ltr">far</td><td class="border border-base-200 dark:border-base-700 px-3 py-1.5">دورافتاده (پیش‌فرض اگر همسایه نباشد)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="text-font-subtle-light dark:text-font-subtle-dark text-xs">
+      ردیف شهر به شهر (<span dir="ltr" class="font-mono">from_city + to_city</span>) همیشه اولویت بالاتر از zone_tier دارد.
+    </p>
+  </section>
+
+  {# ── کلیدهای config روش ارسال ────────────────────────────────────── #}
+  <section class="rounded-default border border-base-200 p-4 dark:border-base-800 space-y-2">
+    <h2 class="font-semibold text-font-important-light dark:text-font-important-dark">کلیدهای <span dir="ltr" class="font-mono text-sm">config</span> روش ارسال</h2>
+    <div class="overflow-x-auto">
+      <table class="w-full text-xs border-collapse">
+        <thead>
+          <tr class="bg-base-50 dark:bg-base-950 text-right">
+            <th class="border border-base-200 dark:border-base-700 px-3 py-2">کلید</th>
+            <th class="border border-base-200 dark:border-base-700 px-3 py-2">پروایدر</th>
+            <th class="border border-base-200 dark:border-base-700 px-3 py-2">توضیح</th>
+          </tr>
+        </thead>
+        <tbody class="text-font-subtle-light dark:text-font-subtle-dark">
+          <tr><td class="border border-base-200 dark:border-base-700 px-3 py-1.5 font-mono" dir="ltr">fixed_price</td><td class="border border-base-200 dark:border-base-700 px-3 py-1.5">همه</td><td class="border border-base-200 dark:border-base-700 px-3 py-1.5">قیمت ثابت (fallback)</td></tr>
+          <tr><td class="border border-base-200 dark:border-base-700 px-3 py-1.5 font-mono" dir="ltr">extra_cost_flat</td><td class="border border-base-200 dark:border-base-700 px-3 py-1.5">همه</td><td class="border border-base-200 dark:border-base-700 px-3 py-1.5">هزینه ثابت اضافه (تومان)</td></tr>
+          <tr><td class="border border-base-200 dark:border-base-700 px-3 py-1.5 font-mono" dir="ltr">extra_cost_percent</td><td class="border border-base-200 dark:border-base-700 px-3 py-1.5">همه</td><td class="border border-base-200 dark:border-base-700 px-3 py-1.5">درصد هزینه اضافه روی تعرفه نهایی</td></tr>
+          <tr><td class="border border-base-200 dark:border-base-700 px-3 py-1.5 font-mono" dir="ltr">max_weight_kg</td><td class="border border-base-200 dark:border-base-700 px-3 py-1.5">پست</td><td class="border border-base-200 dark:border-base-700 px-3 py-1.5">سقف وزن — سبد سنگین‌تر این روش را نمی‌بیند</td></tr>
+          <tr><td class="border border-base-200 dark:border-base-700 px-3 py-1.5 font-mono" dir="ltr">delivery_cities</td><td class="border border-base-200 dark:border-base-700 px-3 py-1.5">پیک</td><td class="border border-base-200 dark:border-base-700 px-3 py-1.5">لیست شهرهای پوشش پیک؛ خالی = همه شهرها</td></tr>
+          <tr><td class="border border-base-200 dark:border-base-700 px-3 py-1.5 font-mono" dir="ltr">base_weight_kg</td><td class="border border-base-200 dark:border-base-700 px-3 py-1.5">distance_weight</td><td class="border border-base-200 dark:border-base-700 px-3 py-1.5">وزن پایه برای محاسبه مازاد کیلو (پیش‌فرض ۱ کیلو)</td></tr>
+          <tr><td class="border border-base-200 dark:border-base-700 px-3 py-1.5 font-mono" dir="ltr">fallback_price</td><td class="border border-base-200 dark:border-base-700 px-3 py-1.5">API</td><td class="border border-base-200 dark:border-base-700 px-3 py-1.5">قیمت fallback تا اتصال API خارجی</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="text-xs text-font-subtle-light dark:text-font-subtle-dark">
+      <strong>payment_type:</strong> <span dir="ltr" class="font-mono">prepaid</span> (پیش‌کرایه) یا <span dir="ltr" class="font-mono">postpaid</span> (پس‌کرایه) — روی خود روش ارسال، نه در config.
+    </p>
+  </section>
+
+  {# ── Bulk import/export API ──────────────────────────────────────── #}
+  <section class="rounded-default border border-base-200 p-4 dark:border-base-800 space-y-3">
+    <h2 class="font-semibold text-font-important-light dark:text-font-important-dark">import/export گروهی تعرفه (API)</h2>
+    <p class="text-font-subtle-light dark:text-font-subtle-dark">
+      به‌جای ویرایش یک‌به‌یک ردیف‌ها، می‌توانید تمام جدول تعرفه را با یک درخواست جایگزین کنید:
+    </p>
+    <div class="space-y-2">
+      <div class="rounded-default bg-base-50 dark:bg-base-950 p-3 font-mono text-xs" dir="ltr">
+        GET /api/v1/store-admin/shipping/methods/{id}/prices/export
+      </div>
+      <p class="text-xs text-font-subtle-light dark:text-font-subtle-dark">خروجی JSON آماده‌ی ویرایش و re-upload.</p>
+      <div class="rounded-default bg-base-50 dark:bg-base-950 p-3 font-mono text-xs" dir="ltr">
+        POST /api/v1/store-admin/shipping/methods/{id}/prices/bulk
+      </div>
+      <p class="text-xs text-font-subtle-light dark:text-font-subtle-dark">
+        <strong>replace_all: true</strong> → کل جدول پاک و جایگزین می‌شود.<br>
+        <strong>replace_all: false (پیش‌فرض)</strong> → upsert بر اساس کلید (from_city + to_city + zone_tier + weight_min_kg).<br>
+        اگر weight_min ≥ weight_max باشد ۴۰۰ برمی‌گرداند. هم‌پوشانی بازه وزنی در <span dir="ltr" class="font-mono">warnings</span> هشدار می‌دهد اما رد نمی‌کند.
+      </p>
+      <pre class="rounded-default bg-base-50 dark:bg-base-950 p-3 text-xs" dir="ltr">{
+  "replace_all": true,
+  "rows": [
+    {"from_city": "مشهد", "to_city": "تهران", "zone_tier": "", "weight_min_kg": 0, "weight_max_kg": 5, "price": 120000, "extra_per_kg": 0},
+    {"from_city": "", "to_city": "", "zone_tier": "same", "weight_min_kg": 0, "price": 60000}
+  ]
+}</pre>
+    </div>
+    <p class="text-xs text-font-subtle-light dark:text-font-subtle-dark">
+      لیست استان‌ها برای فرم select:
+      <span dir="ltr" class="font-mono">GET /api/v1/store-admin/shipping/locations</span>
+    </p>
+  </section>
+
+  {# ── لینک JSON templates ─────────────────────────────────────────── #}
+  <p class="text-xs text-font-subtle-light dark:text-font-subtle-dark">
+    قالب‌های آماده JSON را از
+    <a class="text-primary-600 underline" href="{% url 'admin:shopcms_docs_page' 'json-templates' %}">کتابخانه قالب‌ها</a>
+    (دسته «روش‌ارسال») کپی کنید.
+  </p>
+</article>
+{% endblock %}

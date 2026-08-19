@@ -75,7 +75,7 @@
         const label = window.ShopMoney ? window.ShopMoney.formatAmount(n) : String(n);
         document.querySelectorAll("[data-cart-count]").forEach((el) => {
             el.textContent = label;
-            el.style.display = n > 0 ? "inline-block" : "none";
+            el.style.display = n > 0 ? "" : "none";
         });
     }
 
@@ -198,6 +198,61 @@
             `;
     }
 
+    const pendingCartItems = new Set();
+
+    function getAlpineState(el) {
+        const host = el && el.closest("[x-data]");
+        if (host && host._x_dataStack && host._x_dataStack.length) {
+            return host._x_dataStack[0];
+        }
+        return null;
+    }
+
+    function setCartItemBusy(itemId, busy) {
+        const row = document.querySelector('.cart-item[data-item-id="' + itemId + '"]');
+        if (!row) return;
+        row.classList.toggle("is-busy", busy);
+        if (busy) row.setAttribute("aria-busy", "true");
+        else row.removeAttribute("aria-busy");
+        row.querySelectorAll("button").forEach((b) => {
+            b.disabled = busy;
+        });
+    }
+
+    function setAddToCartBusy(btn, busy) {
+        if (!btn) return;
+        btn.classList.toggle("is-busy", busy);
+        if (busy) btn.setAttribute("aria-busy", "true");
+        else btn.removeAttribute("aria-busy");
+        const state = getAlpineState(btn);
+        if (state && Object.prototype.hasOwnProperty.call(state, "adding")) {
+            state.adding = busy;
+        }
+        if (busy) {
+            btn.disabled = true;
+        } else if (!btn.classList.contains("is-disabled")) {
+            btn.disabled = false;
+        }
+    }
+
+    function markAddToCartAdded(btn) {
+        const state = getAlpineState(btn);
+        if (state && Object.prototype.hasOwnProperty.call(state, "justAdded")) {
+            state.justAdded = true;
+            setTimeout(() => {
+                state.justAdded = false;
+            }, 1500);
+            return;
+        }
+        const label = btn.querySelector("[data-cart-label], span");
+        if (!label || label.hasAttribute("x-text")) return;
+        const original = label.textContent;
+        label.textContent = "اضافه شد";
+        setTimeout(() => {
+            label.textContent = original;
+        }, 1500);
+    }
+
     function bindCartItemActions(container, cart) {
         container.querySelectorAll(".qty-minus").forEach((btn) => {
             btn.addEventListener("click", () => {
@@ -247,26 +302,72 @@
     }
 
     function updateQuantity(itemId, quantity) {
+        if (pendingCartItems.has(itemId)) return;
+        pendingCartItems.add(itemId);
+        setCartItemBusy(itemId, true);
         apiFetch("/update", {
             method: "POST",
             body: JSON.stringify({ item_id: itemId, quantity }),
-        }).then(({ ok, data }) => {
-            if (ok) renderCart(data, getCurrency());
-        });
+        })
+            .then(({ ok, data }) => {
+                if (ok) {
+                    renderCart(data, getCurrency());
+                    return;
+                }
+                if (window.ShopToast) {
+                    window.ShopToast.error(data.detail || "به‌روزرسانی تعداد انجام نشد");
+                }
+                setCartItemBusy(itemId, false);
+            })
+            .catch(() => {
+                if (window.ShopToast) window.ShopToast.error("به‌روزرسانی تعداد انجام نشد");
+                setCartItemBusy(itemId, false);
+            })
+            .finally(() => {
+                pendingCartItems.delete(itemId);
+            });
     }
 
     function removeItem(itemId) {
+        if (pendingCartItems.has(itemId)) return;
+        pendingCartItems.add(itemId);
+        setCartItemBusy(itemId, true);
         apiFetch("/remove", {
             method: "POST",
             body: JSON.stringify({ item_id: itemId }),
-        }).then(({ ok, data }) => {
-            if (ok) renderCart(data, getCurrency());
-        });
+        })
+            .then(({ ok, data }) => {
+                if (ok) {
+                    renderCart(data, getCurrency());
+                    return;
+                }
+                if (window.ShopToast) {
+                    window.ShopToast.error(data.detail || "حذف از سبد انجام نشد");
+                }
+                setCartItemBusy(itemId, false);
+            })
+            .catch(() => {
+                if (window.ShopToast) window.ShopToast.error("حذف از سبد انجام نشد");
+                setCartItemBusy(itemId, false);
+            })
+            .finally(() => {
+                pendingCartItems.delete(itemId);
+            });
     }
 
     function getCurrency() {
-        const root = document.getElementById("cart-page") || document.body;
+        const root =
+            document.getElementById("cart-page") ||
+            document.getElementById("checkout-page") ||
+            document.body;
         return root.dataset.currency || "";
+    }
+
+    function notifyCartUpdated(cart) {
+        if (document.getElementById("cart-container")) {
+            renderCart(cart, getCurrency());
+        }
+        document.dispatchEvent(new CustomEvent("shop:cart-updated", { detail: cart }));
     }
 
     function loadCart() {
@@ -286,7 +387,7 @@
             if (ok) {
                 if (msg) msg.textContent = "کوپن اعمال شد";
                 if (window.ShopToast) window.ShopToast.success("کوپن اعمال شد");
-                renderCart(data, getCurrency());
+                notifyCartUpdated(data);
             } else {
                 const err = data.detail || "کوپن نامعتبر است";
                 if (msg) msg.textContent = err;
@@ -300,7 +401,7 @@
             if (ok) {
                 const msg = document.getElementById("coupon-message");
                 if (msg) msg.textContent = "";
-                renderCart(data, getCurrency());
+                notifyCartUpdated(data);
             }
         });
     }
@@ -316,7 +417,7 @@
             if (ok) {
                 if (msg) msg.textContent = "کارت هدیه اعمال شد";
                 if (window.ShopToast) window.ShopToast.success("کارت هدیه اعمال شد");
-                renderCart(data, getCurrency());
+                notifyCartUpdated(data);
             } else {
                 const err = data.detail || "کارت هدیه نامعتبر است";
                 if (msg) msg.textContent = err;
@@ -330,7 +431,7 @@
             if (ok) {
                 const msg = document.getElementById("coupon-message");
                 if (msg) msg.textContent = "";
-                renderCart(data, getCurrency());
+                notifyCartUpdated(data);
             }
         });
     }
@@ -358,45 +459,47 @@
 
     document.querySelectorAll("[data-add-to-cart]").forEach((btn) => {
         btn.addEventListener("click", () => {
+            if (btn.disabled || btn.classList.contains("is-disabled") || btn.classList.contains("is-busy")) {
+                return;
+            }
+
             const slug = btn.dataset.product;
             let variantId = btn.dataset.variant ? Number(btn.dataset.variant) : null;
             let quantity = 1;
 
-            // Prefer live Alpine state (multi-variant + qty) when present
-            const alpineHost = btn.closest("[x-data]");
-            if (alpineHost && alpineHost._x_dataStack && alpineHost._x_dataStack.length) {
-                const state = alpineHost._x_dataStack[0];
-                if (state && state.selectedVariant && state.selectedVariant.id) {
+            const state = getAlpineState(btn);
+            if (state) {
+                if (state.selectedVariant && state.selectedVariant.id) {
                     variantId = Number(state.selectedVariant.id);
                 }
-                if (state && state.qty) {
+                if (state.qty) {
                     quantity = Math.max(1, Number(state.qty) || 1);
                 }
             }
 
-            // Pulse / data-attribute qty (set by qty.js / variants.js)
             if (btn.dataset.quantity) {
                 quantity = Math.max(1, Number(btn.dataset.quantity) || quantity);
             }
 
-            if (btn.disabled || btn.classList.contains("is-disabled")) return;
             if (!isLoggedIn()) {
                 requireLogin();
                 return;
             }
-            btn.disabled = true;
-            addToCart(slug, variantId, quantity).then((result) => {
-                if (result.authRequired) return;
-                btn.disabled = false;
-                if (result.ok) {
-                    const label = btn.querySelector("span") || btn;
-                    const original = label.textContent;
-                    label.textContent = "اضافه شد";
-                    setTimeout(() => { label.textContent = original; }, 1500);
-                } else if (window.ShopToast) {
-                    window.ShopToast.error(result.error || "خطا");
-                }
-            });
+            setAddToCartBusy(btn, true);
+            addToCart(slug, variantId, quantity)
+                .then((result) => {
+                    if (result.authRequired) return;
+                    setAddToCartBusy(btn, false);
+                    if (result.ok) {
+                        markAddToCartAdded(btn);
+                    } else if (window.ShopToast) {
+                        window.ShopToast.error(result.error || "خطا");
+                    }
+                })
+                .catch(() => {
+                    setAddToCartBusy(btn, false);
+                    if (window.ShopToast) window.ShopToast.error("افزودن به سبد انجام نشد");
+                });
         });
     });
 
@@ -404,6 +507,18 @@
     document.getElementById("remove-coupon")?.addEventListener("click", removeCoupon);
     document.getElementById("apply-gift")?.addEventListener("click", applyGiftCard);
     document.getElementById("remove-gift")?.addEventListener("click", removeGiftCard);
+    document.getElementById("coupon-code")?.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            applyCoupon();
+        }
+    });
+    document.getElementById("gift-code")?.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            applyGiftCard();
+        }
+    });
 
     if (document.getElementById("cart-page")) {
         loadCart();

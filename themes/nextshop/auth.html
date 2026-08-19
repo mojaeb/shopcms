@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}{{ store.name }} - {% if auth_mode == 'register' %}ثبت‌نام{% else %}ورود{% endif %}{% endblock %}
 {% block content %}
-<div class="ns-auth" id="auth-page" data-mode="{{ auth_mode|default:'login' }}">
+<div class="ns-auth" id="auth-page" data-mode="{{ auth_mode|default:'login' }}" data-unified="1">
     <div class="ns-auth-card">
         <div class="ns-auth-brand">
             <span class="ns-auth-brand-mark" aria-hidden="true"><i data-lucide="smartphone"></i></span>
@@ -30,7 +30,7 @@
 
             <button type="submit" class="ns-btn" id="auth-send-btn">
                 <i data-lucide="message-square" aria-hidden="true"></i>
-                دریافت کد
+                ادامه
             </button>
         </form>
 

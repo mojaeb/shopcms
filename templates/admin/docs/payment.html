@@ -1,0 +1,100 @@
+{% extends "admin/docs/base.html" %}
+
+{% block docs_content %}
+<article class="max-w-3xl space-y-5 text-sm" dir="rtl">
+  <h1 class="text-xl font-semibold text-font-important-light dark:text-font-important-dark">{{ doc.title }}</h1>
+  <p class="text-font-subtle-light dark:text-font-subtle-dark">{{ doc.summary }}</p>
+
+  {# ── درگاه‌های فعال ──────────────────────────────────────────────── #}
+  <section class="rounded-default border border-base-200 p-4 dark:border-base-800 space-y-3">
+    <h2 class="font-semibold text-font-important-light dark:text-font-important-dark">درگاه‌های پشتیبانی‌شده</h2>
+    <div class="overflow-x-auto">
+      <table class="w-full text-xs border-collapse">
+        <thead>
+          <tr class="bg-base-50 dark:bg-base-950 text-right">
+            <th class="border border-base-200 dark:border-base-700 px-3 py-2">درگاه</th>
+            <th class="border border-base-200 dark:border-base-700 px-3 py-2">وضعیت</th>
+            <th class="border border-base-200 dark:border-base-700 px-3 py-2">توضیح</th>
+          </tr>
+        </thead>
+        <tbody class="text-font-subtle-light dark:text-font-subtle-dark">
+          <tr>
+            <td class="border border-base-200 dark:border-base-700 px-3 py-1.5 font-mono" dir="ltr">zarinpal</td>
+            <td class="border border-base-200 dark:border-base-700 px-3 py-1.5 text-green-600 dark:text-green-400">✓ آماده</td>
+            <td class="border border-base-200 dark:border-base-700 px-3 py-1.5">زرین‌پال — sandbox + live + inquiry + refund GraphQL</td>
+          </tr>
+          <tr>
+            <td class="border border-base-200 dark:border-base-700 px-3 py-1.5 font-mono" dir="ltr">mellat</td>
+            <td class="border border-base-200 dark:border-base-700 px-3 py-1.5 text-yellow-600 dark:text-yellow-400">⚠ skeleton</td>
+            <td class="border border-base-200 dark:border-base-700 px-3 py-1.5">حالت sandbox فعال؛ live نیاز به پیاده‌سازی SOAP دارد</td>
+          </tr>
+          <tr>
+            <td class="border border-base-200 dark:border-base-700 px-3 py-1.5 font-mono" dir="ltr">pasargad</td>
+            <td class="border border-base-200 dark:border-base-700 px-3 py-1.5 text-yellow-600 dark:text-yellow-400">⚠ skeleton</td>
+            <td class="border border-base-200 dark:border-base-700 px-3 py-1.5">حالت sandbox فعال؛ live نیاز به RSA + REST دارد</td>
+          </tr>
+          <tr>
+            <td class="border border-base-200 dark:border-base-700 px-3 py-1.5 font-mono" dir="ltr">sina</td>
+            <td class="border border-base-200 dark:border-base-700 px-3 py-1.5 text-yellow-600 dark:text-yellow-400">⚠ skeleton</td>
+            <td class="border border-base-200 dark:border-base-700 px-3 py-1.5">حالت sandbox فعال؛ live طبق مستندات سینا بانک پیاده شود</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="text-xs text-font-subtle-light dark:text-font-subtle-dark">
+      endpoint <span dir="ltr" class="font-mono">GET /api/v1/store-admin/payments/gateways</span> فیلد <span dir="ltr" class="font-mono">implemented</span> را برمی‌گرداند — درگاه‌های skeleton مقدار <span dir="ltr" class="font-mono">false</span> دارند.
+    </p>
+  </section>
+
+  {# ── تنظیمات زرین‌پال ────────────────────────────────────────────── #}
+  <section class="rounded-default border border-base-200 p-4 dark:border-base-800 space-y-3">
+    <h2 class="font-semibold text-font-important-light dark:text-font-important-dark">تنظیمات زرین‌پال</h2>
+    <pre class="overflow-auto rounded-default bg-base-50 dark:bg-base-950 p-3 text-left text-xs" dir="ltr">{
+  "merchant_id": "YOUR-MERCHANT-ID",
+  "sandbox": true,
+  "api_base": "",
+  "start_pay_url": "",
+  "graphql_url": "",
+  "access_token": ""
+}</pre>
+    <ul class="list-disc space-y-1 pr-5 text-xs text-font-subtle-light dark:text-font-subtle-dark">
+      <li><span dir="ltr" class="font-mono">sandbox: true</span> — پرداخت آزمایشی (پول واقعی کسر نمی‌شود)</li>
+      <li><span dir="ltr" class="font-mono">api_base / start_pay_url / graphql_url</span> — اگر خالی باشند، endpoint رسمی زرین‌پال استفاده می‌شود</li>
+      <li><span dir="ltr" class="font-mono">access_token</span> — فقط برای refund GraphQL لازم است (از پنل زرین‌پال دریافت کنید)</li>
+    </ul>
+  </section>
+
+  {# ── Callback URL ────────────────────────────────────────────────── #}
+  <section class="rounded-default border border-base-200 p-4 dark:border-base-800 space-y-2">
+    <h2 class="font-semibold text-font-important-light dark:text-font-important-dark">آدرس Callback</h2>
+    <p class="text-font-subtle-light dark:text-font-subtle-dark">
+      پس از پرداخت، کاربر به این آدرس برمی‌گردد. دامنه فروشگاه باید عمومی و HTTPS باشد:
+    </p>
+    <div class="rounded-default bg-base-50 dark:bg-base-950 p-3 font-mono text-xs" dir="ltr">
+      https://your-store.com/api/v1/payments/callback/{gateway}/
+    </div>
+    <p class="text-xs text-font-subtle-light dark:text-font-subtle-dark">
+      در تنظیمات زرین‌پال پنل، آدرس Callback را دقیقاً روی همین URL ست کنید.
+    </p>
+  </section>
+
+  {# ── inquiry و reconcile ─────────────────────────────────────────── #}
+  <section class="rounded-default border border-base-200 p-4 dark:border-base-800 space-y-2">
+    <h2 class="font-semibold text-font-important-light dark:text-font-important-dark">استعلام و تطبیق تراکنش‌های معلق</h2>
+    <p class="text-font-subtle-light dark:text-font-subtle-dark">
+      اگر کاربر پرداخت کرد اما به سایت برنگشت (قطع اینترنت، مرورگر بسته شد)، تراکنش در حالت <span dir="ltr" class="font-mono">REDIRECTED</span> می‌ماند.
+      Management command زیر تراکنش‌های قدیمی را بررسی و تایید می‌کند:
+    </p>
+    <div class="rounded-default bg-base-50 dark:bg-base-950 p-3 font-mono text-xs" dir="ltr">
+      python manage.py reconcile_pending_payments [--hours 24] [--dry-run]
+    </div>
+  </section>
+
+  {# ── لینک JSON templates ─────────────────────────────────────────── #}
+  <p class="text-xs text-font-subtle-light dark:text-font-subtle-dark">
+    قالب‌های JSON آماده از
+    <a class="text-primary-600 underline" href="{% url 'admin:shopcms_docs_page' 'json-templates' %}">کتابخانه قالب‌ها</a>
+    (دسته «پرداخت») کپی کنید.
+  </p>
+</article>
+{% endblock %}

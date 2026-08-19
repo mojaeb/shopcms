@@ -1,5 +1,7 @@
 """Product models."""
 
+from decimal import Decimal
+
 from django.core.validators import MinValueValidator
 from django.db import models
 
@@ -187,6 +189,13 @@ class Product(TimeStampedModel, SeoFieldsMixin):
         verbose_name="قیمت قبل تخفیف",
     )
     sku = models.CharField(max_length=100, blank=True, verbose_name="SKU")
+    weight_kg = models.DecimalField(
+        max_digits=8,
+        decimal_places=3,
+        default=Decimal("0.5"),
+        validators=[MinValueValidator(0)],
+        verbose_name="وزن (کیلوگرم)",
+    )
     is_featured = models.BooleanField(default=False, verbose_name="ویژه")
     tags = models.ManyToManyField(Tag, blank=True, related_name="products", verbose_name="برچسب‌ها")
 
@@ -238,6 +247,14 @@ class ProductVariant(TimeStampedModel):
         verbose_name="ویژگی‌ها",
     )
     is_active = models.BooleanField(default=True, verbose_name="فعال")
+    weight_kg = models.DecimalField(
+        max_digits=8,
+        decimal_places=3,
+        null=True,
+        blank=True,
+        validators=[MinValueValidator(0)],
+        verbose_name="وزن (کیلوگرم)",
+    )
 
     class Meta:
         verbose_name = "تنوع محصول"

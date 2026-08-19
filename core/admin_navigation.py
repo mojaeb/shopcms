@@ -8,20 +8,17 @@ from django.urls import reverse_lazy
 
 def can_access_admin(request: HttpRequest) -> bool:
     user = getattr(request, "user", None)
-    return bool(user and getattr(user, "is_authenticated", False) and user.is_staff)
+    return bool(
+        user
+        and getattr(user, "is_authenticated", False)
+        and getattr(user, "is_active", False)
+        and getattr(user, "is_superuser", False)
+    )
 
 
 def can_view_model(app_label: str, model_name: str):
-    view_perm = f"{app_label}.view_{model_name}"
-    change_perm = f"{app_label}.change_{model_name}"
-
     def _check(request: HttpRequest) -> bool:
-        user = getattr(request, "user", None)
-        if not user or not getattr(user, "is_authenticated", False):
-            return False
-        if user.is_superuser:
-            return True
-        return user.has_perm(view_perm) or user.has_perm(change_perm)
+        return can_access_admin(request)
 
     return _check
 
@@ -55,6 +52,7 @@ def get_navigation(request: HttpRequest | None = None) -> list[dict]:
                 ),
                 _item("تم‌ها", "palette", "admin:tenants_theme_changelist", "tenants", "theme"),
                 _item("افزونه‌ها", "extension", "admin:tenants_plugin_changelist", "tenants", "plugin"),
+                _item("مستندات", "menu_book", "admin:shopcms_docs"),
             ],
         },
         {

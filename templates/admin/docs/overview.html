@@ -1,0 +1,78 @@
+{% extends "admin/docs/base.html" %}
+
+{% block docs_content %}
+<article class="prose-docs max-w-3xl space-y-5 text-sm text-font-important-light dark:text-font-important-dark" dir="rtl">
+  <h1 class="text-xl font-semibold">{{ doc.title }}</h1>
+  <p class="text-font-subtle-light dark:text-font-subtle-dark">{{ doc.summary }}</p>
+
+  {# ── تب‌های فرم فروشگاه ──────────────────────────────────────────── #}
+  <section class="rounded-default border border-base-200 p-4 dark:border-base-800 space-y-2">
+    <h2 class="font-semibold">تب‌های فرم فروشگاه</h2>
+    <div class="overflow-x-auto">
+      <table class="w-full text-xs border-collapse">
+        <thead>
+          <tr class="bg-base-50 dark:bg-base-950 text-right">
+            <th class="border border-base-200 dark:border-base-700 px-3 py-2">تب</th>
+            <th class="border border-base-200 dark:border-base-700 px-3 py-2">آنچه اینجا تنظیم می‌شود</th>
+          </tr>
+        </thead>
+        <tbody class="text-font-subtle-light dark:text-font-subtle-dark">
+          <tr>
+            <td class="border border-base-200 dark:border-base-700 px-3 py-1.5">فروش و مالی</td>
+            <td class="border border-base-200 dark:border-base-700 px-3 py-1.5">درگاه‌های فعال، پیش‌فرض، Merchant ID و URLهای زرین‌پال</td>
+          </tr>
+          <tr>
+            <td class="border border-base-200 dark:border-base-700 px-3 py-1.5">ارسال</td>
+            <td class="border border-base-200 dark:border-base-700 px-3 py-1.5">مبدا ارسال، وزن بسته‌بندی، آستانه رایگان، ارائه‌دهندگان فعال</td>
+          </tr>
+          <tr>
+            <td class="border border-base-200 dark:border-base-700 px-3 py-1.5">دامنه و برندینگ</td>
+            <td class="border border-base-200 dark:border-base-700 px-3 py-1.5">لوگو، رنگ‌ها (اسلایدر تم از JSON پیشرفته)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  {# ── مدل‌های ارسال ───────────────────────────────────────────────── #}
+  <section class="rounded-default border border-base-200 p-4 dark:border-base-800 space-y-2">
+    <h2 class="font-semibold">بخش «ارسال» (ShippingMethod / ShippingPrice)</h2>
+    <p class="text-font-subtle-light dark:text-font-subtle-dark">
+      تعرفه منطقه‌ای، شهرهای پیک، پس‌کرایه، سقف وزن، import/export گروهی و محاسبه فاصله GPS روی این مدل‌ها است — نه در StoreSetting.
+    </p>
+    <a class="text-primary-600 underline text-xs" href="{% url 'admin:shopcms_docs_page' 'shipping' %}">← مستند کامل ارسال و تعرفه</a>
+  </section>
+
+  {# ── موقعیت مکانی ─────────────────────────────────────────────────── #}
+  <section class="rounded-default border border-base-200 p-4 dark:border-base-800 space-y-2">
+    <h2 class="font-semibold">موقعیت مکانی و فاصله GPS</h2>
+    <p class="text-font-subtle-light dark:text-font-subtle-dark">
+      مختصات مبدا فروشگاه روی مدل Store ذخیره می‌شود. آدرس مشتری هم می‌تواند lat/lng داشته باشد.
+      در حالت‌های distance و distance_weight فاصله واقعی محاسبه می‌شود.
+    </p>
+    <a class="text-primary-600 underline text-xs" href="{% url 'admin:shopcms_docs_page' 'location' %}">← مستند موقعیت مکانی و GPS</a>
+  </section>
+
+  {# ── اعلان‌ها ─────────────────────────────────────────────────────── #}
+  <section class="rounded-default border border-base-200 p-4 dark:border-base-800 space-y-2">
+    <h2 class="font-semibold">پیامک و اعلان‌ها</h2>
+    <p class="text-font-subtle-light dark:text-font-subtle-dark">
+      پیامک وضعیت مرسوله با کلید <span dir="ltr" class="font-mono text-xs">shipment_sms_enabled</span> در StoreSetting (گروه notifications) فعال می‌شود.
+      پیش‌فرض false است.
+    </p>
+    <a class="text-primary-600 underline text-xs" href="{% url 'admin:shopcms_docs_page' 'notifications' %}">← مستند اعلان‌ها و پیامک</a>
+  </section>
+
+  {# ── تنظیمات پیشرفته JSON ──────────────────────────────────────── #}
+  <section class="rounded-default border border-base-200 p-4 dark:border-base-800 space-y-2">
+    <h2 class="font-semibold">تنظیمات پیشرفته (JSON)</h2>
+    <p class="mb-2 text-font-subtle-light dark:text-font-subtle-dark">
+      کلیدهایی مثل <span dir="ltr" class="font-mono text-xs">theme.config</span>،
+      <span dir="ltr" class="font-mono text-xs">shipping.map.routing_api_key</span>،
+      <span dir="ltr" class="font-mono text-xs">notifications.shipment_sms_enabled</span>
+      و اسنیپت‌های config روش ارسال اینجا ویرایش می‌شوند.
+    </p>
+    <a class="text-primary-600 underline text-xs" href="{% url 'admin:shopcms_docs_page' 'json-templates' %}">← کتابخانه قالب‌های JSON آماده</a>
+  </section>
+</article>
+{% endblock %}
