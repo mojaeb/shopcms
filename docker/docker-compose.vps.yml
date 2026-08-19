@@ -1,15 +1,16 @@
-# VPS deployment — works behind Nginx Proxy Manager
-# NPM handles SSL + routing; this stack exposes web on host port 8000.
+# VPS deployment — works behind Nginx Proxy Manager or Traefik
+# The proxy network (created by proxy/docker-compose.yml) connects NPM/Traefik to this stack.
 #
 # On server: docker compose -f docker/docker-compose.vps.yml up -d
 #
-# NPM proxy hosts:
-#   shop1.yourdomain.com  → http://localhost:8000
-#   gohar.yourdomain.com  → http://localhost:8000  (same app, tenant routing)
+# NPM proxy host:
+#   shop.yourdomain.com  → http://shopcms-web:8000
+# Traefik labels are already on the web service (set DOMAIN env var).
 
 services:
   web:
     image: ghcr.io/${GHCR_OWNER:-youruser}/shopcms:latest
+    container_name: shopcms-web
     restart: unless-stopped
     command: >
       sh -c "python manage.py migrate --noinput &&
@@ -22,9 +23,9 @@ services:
       - REDIS_URL=redis://redis:6379/0
       - CELERY_BROKER_URL=redis://redis:6379/1
       - CELERY_RESULT_BACKEND=redis://redis:6379/2
-    ports:
-      # Exposed on host — NPM proxies to this port
-      - "127.0.0.1:8000:8000"
+    # No host port binding — proxy network handles routing
+    expose:
+      - "8000"
     volumes:
       - static_volume:/app/staticfiles
       - media_volume:/app/media
@@ -40,6 +41,17 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+    networks:
+      - internal
+      - proxy
+    # Traefik labels (only active when using Traefik instead of NPM)
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.shopcms.rule=Host(`${SHOP_DOMAIN:-shop.example.com}`)"
+      - "traefik.http.routers.shopcms.entrypoints=websecure"
+      - "traefik.http.routers.shopcms.tls.certresolver=letsencrypt"
+      - "traefik.http.services.shopcms.loadbalancer.server.port=8000"
+      - "traefik.docker.network=proxy"
 
   celery:
     image: ghcr.io/${GHCR_OWNER:-youruser}/shopcms:latest
@@ -60,6 +72,8 @@ services:
     depends_on:
       - db
       - redis
+    networks:
+      - internal
 
   celery-beat:
     image: ghcr.io/${GHCR_OWNER:-youruser}/shopcms:latest
@@ -76,6 +90,8 @@ services:
     depends_on:
       - db
       - redis
+    networks:
+      - internal
 
   db:
     image: postgres:16-alpine
@@ -91,6 +107,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - internal
 
   redis:
     image: redis:7-alpine
@@ -103,6 +121,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - internal
 
 volumes:
   postgres_data:
@@ -110,3 +130,12 @@ volumes:
   media_volume:
   backup_volume:
   redis_data:
+
+networks:
+  # Internal network — db, redis, celery only communicate here
+  internal:
+    internal: true
+  # Shared proxy network — created by proxy/docker-compose.yml on the VPS
+  proxy:
+    name: proxy
+    external: true
