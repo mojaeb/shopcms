@@ -358,6 +358,11 @@ textarea.ns-input {
 .ns-icon-btn svg {
     width: 1.2rem;
     height: 1.2rem;
+    pointer-events: none;
+}
+.ns-btn i,
+.ns-btn svg {
+    pointer-events: none;
 }
 
 /* â€”â€”â€” Header â€”â€”â€” */
@@ -3067,6 +3072,10 @@ body.theme-nextshop #checkout-page .shipping-option .muted {
     align-items: center;
     gap: 12px;
     margin: 16px 0 24px;
+}
+.ns-product-actions .ns-add-to-cart {
+    flex: 1 1 10rem;
+    min-width: 10rem;
 }
 .ns-wishlist-btn.is-active,
 .ns-wishlist-btn.active {

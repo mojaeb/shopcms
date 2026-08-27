@@ -44,14 +44,6 @@ services:
     networks:
       - internal
       - proxy
-    # Traefik labels (only active when using Traefik instead of NPM)
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.shopcms.rule=Host(`${SHOP_DOMAIN:-shop.example.com}`)"
-      - "traefik.http.routers.shopcms.entrypoints=websecure"
-      - "traefik.http.routers.shopcms.tls.certresolver=letsencrypt"
-      - "traefik.http.services.shopcms.loadbalancer.server.port=8000"
-      - "traefik.docker.network=proxy"
 
   celery:
     image: ghcr.io/${GHCR_OWNER:-youruser}/shopcms:latest

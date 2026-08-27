@@ -58,6 +58,8 @@ import Alpine from "alpinejs";
 
 import "./styles/main.css";
 import { initDiscountTabs } from "./modules/discount.js";
+import { registerAlpineData } from "./modules/alpine-data.js";
+import { initQty } from "./modules/qty.js";
 
 // ─── Icons ──────────────────────────────────────────────────────────────────
 
@@ -159,17 +161,30 @@ Alpine.data("nsHeader", () => ({
   closeSearch() { this.searchOpen = false; },
 }));
 
+registerAlpineData(Alpine, refreshIcons);
 window.Alpine = Alpine;
 
-// ─── Boot ────────────────────────────────────────────────────────────────────
+document.addEventListener("alpine:initialized", () => {
+  refreshIcons();
+});
 
-document.addEventListener("DOMContentLoaded", () => {
+function boot() {
   refreshIcons();
   initHeroSwipers();
   initCarouselSwipers();
   initDiscountTabs();
-  Alpine.start();
-});
+  if (!document.documentElement.__nsAlpineStarted) {
+    document.documentElement.__nsAlpineStarted = true;
+    Alpine.start();
+  }
+  initQty();
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", boot);
+} else {
+  boot();
+}
 
 window.NextShopTheme = { refreshIcons };
 

@@ -150,41 +150,37 @@
             {% endif %}
 
             <div class="ns-product-actions" {% if product.product_type != 'variable' %}x-data="vgQty(1)"{% endif %}>
-                <div class="ns-qty">
-                    {% if product.product_type == 'variable' %}
-                    <button type="button" class="ns-icon-btn" @click="decQty()" aria-label="کاهش"><i data-lucide="minus"></i></button>
-                    <span x-text="qty" class="ns-qty-val"></span>
-                    <button type="button" class="ns-icon-btn" @click="incQty()" aria-label="افزایش"><i data-lucide="plus"></i></button>
-                    {% else %}
-                    <button type="button" class="ns-icon-btn" @click="dec()" aria-label="کاهش"><i data-lucide="minus"></i></button>
-                    <span x-text="qty" class="ns-qty-val"></span>
-                    <button type="button" class="ns-icon-btn" @click="inc()" aria-label="افزایش"><i data-lucide="plus"></i></button>
-                    {% endif %}
+                <div class="ns-qty" data-ns-qty data-qty="1">
+                    <button type="button" class="ns-icon-btn" data-ns-qty-dec aria-label="کاهش"><i data-lucide="minus"></i></button>
+                    <span class="ns-qty-val" data-ns-qty-value>۱</span>
+                    <button type="button" class="ns-icon-btn" data-ns-qty-inc aria-label="افزایش"><i data-lucide="plus"></i></button>
                 </div>
                 {% if product.product_type == 'variable' %}
                 <button
-                    class="ns-btn"
+                    type="button"
+                    class="ns-btn ns-add-to-cart"
                     data-add-to-cart
                     data-product="{{ product.slug }}"
                     :data-variant="selectedVariant ? selectedVariant.id : ''"
-                    :disabled="!canAddToCart() || adding"
-                    :class="{ 'is-disabled': !canAddToCart(), 'is-busy': adding }"
+                    :disabled="typeof canAddToCart === 'function' ? (!canAddToCart() || adding) : false"
+                    :class="{ 'is-disabled': typeof canAddToCart === 'function' && !canAddToCart(), 'is-busy': adding }"
                     :aria-busy="adding"
                 >
                     <i data-lucide="shopping-bag"></i>
-                    <span data-cart-label x-text="cartLabel()">افزودن به سبد</span>
+                    <span data-cart-label x-text="typeof cartLabel === 'function' ? cartLabel() : 'افزودن به سبد'">افزودن به سبد</span>
                 </button>
                 {% elif product.in_stock %}
                 <button
-                    class="ns-btn"
+                    type="button"
+                    class="ns-btn ns-add-to-cart"
                     data-add-to-cart
                     data-product="{{ product.slug }}"
-                    :disabled="adding"
-                    :class="{ 'is-busy': adding }"
-                    :aria-busy="adding"
+                    :disabled="!!adding"
+                    :class="{ 'is-busy': !!adding }"
+                    :aria-busy="!!adding"
                 >
                     <i data-lucide="shopping-bag"></i>
-                    <span data-cart-label x-text="cartLabel()">افزودن به سبد</span>
+                    <span data-cart-label x-text="typeof cartLabel === 'function' ? cartLabel() : 'افزودن به سبد'">افزودن به سبد</span>
                 </button>
                 {% else %}
                 <span class="ns-badge ns-badge--muted">ناموجود</span>
