@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page.seo.meta_title|default:page.title }} - {{ store.name }}{% endblock %}
+
+{% block content %}
+<div class="mn-page em-cms{% if page.slug == 'contact' %} em-cms--contact{% elif page.slug == 'about' %} em-cms--about{% endif %}">
+    <header class="mn-page-head">
+        <nav class="em-crumb" aria-label="مسیر صفحه">
+            <a href="/">خانه</a>
+            <span class="em-crumb-sep" aria-hidden="true">/</span>
+            <span aria-current="page">{{ page.title }}</span>
+        </nav>
+        <h1 class="mn-page-title">{{ page.title }}</h1>
+        {% if page.meta_description %}
+        <p class="mn-page-desc">{{ page.meta_description }}</p>
+        {% endif %}
+    </header>
+
+    <article class="em-cms-body page-content">
+        {{ page.content|safe }}
+    </article>
+
+    {% for block in page.blocks %}
+    <section class="em-cms-block">
+        {% if block.title %}<h2>{{ block.title }}</h2>{% endif %}
+        {% if block.type == "html" %}{{ block.content.html|default:""|safe }}
+        {% elif block.type == "text" %}<p>{{ block.content.text|default:"" }}</p>
+        {% else %}<pre>{{ block.content }}</pre>{% endif %}
+    </section>
+    {% endfor %}
+</div>
+{% endblock %}

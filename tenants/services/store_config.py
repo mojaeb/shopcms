@@ -20,6 +20,7 @@ PAYMENT_GROUP = "payment"
 SHIPPING_GROUP = "shipping"
 TAX_GROUP = "tax"
 STORAGE_GROUP = "storage"
+NOTIFICATIONS_GROUP = "notifications"
 
 CONTACT_KEYS = (
     "phone",
@@ -68,6 +69,7 @@ STRUCTURED_ADMIN_SETTING_KEYS: frozenset[tuple[str, str]] = frozenset(
         (SHIPPING_GROUP, "tipax"),
         (SHIPPING_GROUP, "peyk"),
         (STORAGE_GROUP, "driver"),
+        (NOTIFICATIONS_GROUP, "sms"),
     }
 )
 
@@ -238,6 +240,9 @@ class StoreConfigService:
         else:
             peyk_cities_csv = _as_str(peyk_cities)
 
+        notifications = self._group_map(store, NOTIFICATIONS_GROUP)
+        sms = notifications.get("sms") if isinstance(notifications.get("sms"), dict) else {}
+
         return {
             "theme_logo": _as_str(theme.get("logo")),
             "theme_color_primary": _as_str(colors.get("primary"), "#0f766e"),
@@ -316,6 +321,11 @@ class StoreConfigService:
             "theme_hero_slides_json": _pretty_json(hero_slides) if hero_slides else "[]",
             "theme_hero_use_json": False,
             "storage_driver": _as_str(_get_setting(store, STORAGE_GROUP, "driver", "local"), "local"),
+            "sms_otp_provider": _as_str(sms.get("provider"), "console_sms") or "console_sms",
+            "sms_payamak_username": _as_str(sms.get("username")),
+            "sms_payamak_password": "",
+            "sms_payamak_body_id": _as_str(sms.get("body_id")),
+            "sms_otp_template": _as_str(sms.get("otp_template")) or "کد ورود ShopCMS: {code}\nاعتبار: ۲ دقیقه",
             "layout_use_custom_header": bool(layout.use_custom_header) if layout else False,
             "layout_use_custom_footer": bool(layout.use_custom_footer) if layout else False,
             "layout_header_html": layout.header_html if layout else "",
@@ -331,6 +341,7 @@ class StoreConfigService:
         self._save_payment(store, data)
         self._save_shipping(store, data)
         self._save_storage(store, data)
+        self._save_sms(store, data)
         self._save_layout(store, data)
         self.cache_service.invalidate_store(store)
 
@@ -408,6 +419,11 @@ class StoreConfigService:
             "theme_hero_slides_json": "[]",
             "theme_hero_use_json": False,
             "storage_driver": "local",
+            "sms_otp_provider": "console_sms",
+            "sms_payamak_username": "",
+            "sms_payamak_password": "",
+            "sms_payamak_body_id": "",
+            "sms_otp_template": "کد ورود ShopCMS: {code}\nاعتبار: ۲ دقیقه",
             "layout_use_custom_header": False,
             "layout_use_custom_footer": False,
             "layout_header_html": "",
@@ -716,6 +732,44 @@ class StoreConfigService:
             "driver",
             _as_str(data.get("storage_driver"), "local") or "local",
             description="درایور ذخیره‌سازی رسانه",
+        )
+
+    def _save_sms(self, store: Store, data: dict[str, Any]) -> None:
+        from notifications.enums import ChannelType
+        from notifications.models import NotificationChannel
+
+        current = self._group_map(store, NOTIFICATIONS_GROUP)
+        existing = current.get("sms") if isinstance(current.get("sms"), dict) else {}
+        provider = _as_str(data.get("sms_otp_provider"), "console_sms") or "console_sms"
+        if provider not in {"console_sms", "payamak"}:
+            provider = "console_sms"
+        password = _as_str(data.get("sms_payamak_password")) or _as_str(existing.get("password"))
+        otp_template = _as_str(data.get("sms_otp_template")) or "کد ورود ShopCMS: {code}\nاعتبار: ۲ دقیقه"
+        payload = {
+            "provider": provider,
+            "username": _as_str(data.get("sms_payamak_username")),
+            "password": password,
+            "body_id": _as_str(data.get("sms_payamak_body_id")),
+            "otp_template": otp_template,
+        }
+        _set_setting(store, NOTIFICATIONS_GROUP, "sms", payload, description="تنظیمات پیامک OTP")
+
+        channel_config = {
+            "username": payload["username"],
+            "password": payload["password"],
+            "body_id": payload["body_id"],
+            "otp_template": payload["otp_template"],
+        }
+        NotificationChannel.objects.filter(store=store, channel_type=ChannelType.SMS).update(is_default=False)
+        NotificationChannel.objects.update_or_create(
+            store=store,
+            channel_type=ChannelType.SMS,
+            provider=provider,
+            defaults={
+                "config": channel_config,
+                "is_default": True,
+                "is_active": True,
+            },
         )
 
     def _save_layout(self, store: Store, data: dict[str, Any]) -> None:

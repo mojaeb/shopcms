@@ -46,6 +46,24 @@ value: true</pre>
     </ul>
   </section>
 
+    {# ── پیامک OTP ───────────────────────────────────────────────────── #}
+  <section class="rounded-default border border-base-200 p-4 dark:border-base-800 space-y-3">
+    <h2 class="font-semibold text-font-important-light dark:text-font-important-dark">پیامک OTP (ورود / ثبت‌نام)</h2>
+    <p class="text-font-subtle-light dark:text-font-subtle-dark">
+      از تب <strong>فروشگاه → پیامک OTP</strong> ارسال‌کننده را انتخاب کنید.
+      برای ملی‌پیامک، پترن اشتراکی (<span dir="ltr" class="font-mono">BaseServiceNumber</span>) با
+      <span dir="ltr" class="font-mono">bodyId</span> استفاده می‌شود و فقط خودِ کد به‌عنوان
+      <span dir="ltr" class="font-mono">text</span> می‌رود.
+    </p>
+    <pre class="rounded-default bg-base-50 dark:bg-base-950 p-3 text-xs overflow-x-auto" dir="ltr">POST https://rest.payamak-panel.com/api/SendSMS/BaseServiceNumber
+username / password / text=&lt;otp&gt; / to=&lt;09…&gt; / bodyId=&lt;پترن&gt;</pre>
+    <ul class="list-disc space-y-1 pr-5 text-xs text-font-subtle-light dark:text-font-subtle-dark">
+      <li>اگر ارسال‌کننده «فقط لاگ» باشد، کد در ترمینال چاپ می‌شود و پیامک واقعی نمی‌رود</li>
+      <li>متن آزاد با <span dir="ltr" class="font-mono">{code}</span> فقط وقتی پترن خالی باشد استفاده می‌شود</li>
+      <li>رمز عبور اگر خالی ذخیره شود، مقدار قبلی حفظ می‌شود</li>
+    </ul>
+  </section>
+
   {# ── کانال SMS ───────────────────────────────────────────────────── #}
   <section class="rounded-default border border-base-200 p-4 dark:border-base-800 space-y-2">
     <h2 class="font-semibold text-font-important-light dark:text-font-important-dark">تنظیم کانال SMS فروشگاه</h2>
@@ -54,9 +72,9 @@ value: true</pre>
       اگر کانال SMS فعال تعریف نشده باشد، سیستم از پروایدر <span dir="ltr" class="font-mono">console_sms</span> (چاپ در ترمینال) استفاده می‌کند.
     </p>
     <ul class="list-disc space-y-1 pr-5 text-xs text-font-subtle-light dark:text-font-subtle-dark">
-      <li>از پنل ادمین → <strong>NotificationChannel</strong> یک کانال با نوع <span dir="ltr" class="font-mono">sms</span> بسازید</li>
-      <li>Provider مناسب (kavenegar، melipayamak و…) را انتخاب کنید</li>
-      <li>config مربوط (api_key و…) را پر کنید</li>
+      <li>از پنل ادمین → فروشگاه → تب <strong>پیامک OTP</strong>، یا مدل <strong>NotificationChannel</strong></li>
+      <li>Provider مناسب (<span dir="ltr" class="font-mono">payamak</span>، console_sms، kavenegar) را انتخاب کنید</li>
+      <li>برای ملی‌پیامک: <span dir="ltr" class="font-mono">username</span>، <span dir="ltr" class="font-mono">password</span>، <span dir="ltr" class="font-mono">body_id</span></li>
       <li><span dir="ltr" class="font-mono">is_default: true</span> → برای همه پیامک‌های فروشگاه استفاده می‌شود</li>
     </ul>
   </section>

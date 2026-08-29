@@ -11,8 +11,10 @@
             <span aria-hidden="true">/</span>
             <span>{{ page.title }}</span>
         </nav>
-        <p class="ns-cms-kicker">{% if page.slug == 'about' %}داستان فروشگاه{% else %}ارتباط با فروشگاه{% endif %}</p>
         <h1 class="ns-cms-hero-title">{{ page.title }}</h1>
+        {% if page.meta_description %}
+        <p class="ns-cms-hero-desc">{{ page.meta_description }}</p>
+        {% endif %}
     </header>
 
     <article class="ns-page ns-width ns-cms ns-cms--{{ page.slug }}">

@@ -52,28 +52,8 @@
     </div>
     <div class="em-search" id="em-search">
         <form action="/search/" method="get">
-            <input type="search" name="q" placeholder="جستجوی محصول..." aria-label="جستجو" autofocus>
+            <input type="search" name="q" placeholder="جستجوی محصول..." aria-label="جستجو">
             <button type="submit" class="btn">جستجو</button>
         </form>
     </div>
 </header>
-<script>
-(function () {
-    var header = document.getElementById("em-header");
-    var navBtn = document.getElementById("em-nav-toggle");
-    var searchBtn = document.getElementById("em-search-toggle");
-    if (navBtn) {
-        navBtn.addEventListener("click", function () {
-            var open = header.classList.toggle("is-nav");
-            navBtn.setAttribute("aria-expanded", open ? "true" : "false");
-        });
-    }
-    if (searchBtn) {
-        searchBtn.addEventListener("click", function () {
-            header.classList.toggle("is-search");
-            var input = header.querySelector(".em-search input");
-            if (header.classList.contains("is-search") && input) input.focus();
-        });
-    }
-})();
-</script>

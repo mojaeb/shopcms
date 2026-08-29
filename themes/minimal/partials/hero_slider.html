@@ -1,16 +1,17 @@
-{% comment %}Ecomus-style image+content hero slider for minimal theme.{% endcomment %}
-<section class="em-hero-slider" aria-label="اسلایدر هیرو" data-em-hero>
+{% comment %}Ecomus-style split hero slider for minimal theme.{% endcomment %}
+<section class="em-hero-slider" aria-label="اسلایدر هیرو" data-em-hero tabindex="0">
     <div class="em-hero-track">
         {% for slide in hero_slides %}
-        <article class="em-hero-slide{% if forloop.first %} is-active{% endif %}" data-em-slide style="--slide-bg: {{ slide.background_color|default:'#1c1c1c' }};">
+        <article class="em-hero-slide{% if forloop.first %} is-active{% endif %}" data-em-slide aria-hidden="{% if forloop.first %}false{% else %}true{% endif %}">
             <div class="em-hero-copy">
                 {% if slide.title %}
                 <h2 class="em-hero-title">{{ slide.title }}</h2>
                 {% endif %}
-                {% if slide.text or slide.subtitle %}
-                <p class="em-hero-text">{{ slide.text|default:slide.subtitle }}</p>
+                {% firstof slide.text slide.subtitle as hero_text %}
+                {% if hero_text %}
+                <p class="em-hero-text">{{ hero_text }}</p>
                 {% endif %}
-                <a href="{{ slide.button_link|default:slide.link|default:'/category/' }}" class="em-hero-cta">
+                <a href="{% firstof slide.button_link slide.link '/category/' %}" class="em-hero-cta">
                     <span>{{ slide.button_text|default:"خرید کالکشن" }}</span>
                     <svg width="12" height="12" viewBox="0 0 64 64" fill="currentColor" aria-hidden="true"><path d="M52,56.43,27.52,32,52,7.52,44.47,0,12.39,32,44.47,64Z"></path></svg>
                 </a>
@@ -18,9 +19,9 @@
             <div class="em-hero-media">
                 {% if slide.image %}
                 <img
-                    src="{{ slide.thumbnail|default:slide.image }}"
+                    src="{% firstof slide.thumbnail slide.image %}"
                     data-full="{{ slide.image }}"
-                    alt="{{ slide.title|default:store.name }}"
+                    alt="{% firstof slide.title store.name %}"
                     loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
                     decoding="async"
                 >
@@ -33,13 +34,16 @@
     </div>
 
     {% if hero_slides|length > 1 %}
+    <div class="em-hero-progress" aria-hidden="true">
+        <span data-em-progress></span>
+    </div>
     <div class="em-hero-controls">
         <button type="button" class="em-hero-nav" data-em-prev aria-label="اسلاید قبلی">
             <svg width="14" height="14" viewBox="0 0 64 64" fill="currentColor" aria-hidden="true"><path d="M52,56.43,27.52,32,52,7.52,44.47,0,12.39,32,44.47,64Z"></path></svg>
         </button>
         <div class="em-hero-dots" role="tablist" aria-label="اسلایدها">
             {% for slide in hero_slides %}
-            <button type="button" class="em-hero-dot{% if forloop.first %} is-active{% endif %}" data-em-dot="{{ forloop.counter0 }}" aria-label="اسلاید {{ forloop.counter }}"></button>
+            <button type="button" class="em-hero-dot{% if forloop.first %} is-active{% endif %}" data-em-dot="{{ forloop.counter0 }}" aria-label="اسلاید {{ forloop.counter }}" aria-current="{% if forloop.first %}true{% else %}false{% endif %}"></button>
             {% endfor %}
         </div>
         <button type="button" class="em-hero-nav" data-em-next aria-label="اسلاید بعدی">
@@ -48,56 +52,3 @@
     </div>
     {% endif %}
 </section>
-
-<script>
-(function () {
-    var root = document.querySelector("[data-em-hero]");
-    if (!root) return;
-    var slides = Array.prototype.slice.call(root.querySelectorAll("[data-em-slide]"));
-    var dots = Array.prototype.slice.call(root.querySelectorAll("[data-em-dot]"));
-    if (slides.length < 2) return;
-    var i = 0;
-    var timer;
-
-    function show(n) {
-        i = (n + slides.length) % slides.length;
-        slides.forEach(function (el, idx) {
-            el.classList.toggle("is-active", idx === i);
-        });
-        dots.forEach(function (el, idx) {
-            el.classList.toggle("is-active", idx === i);
-        });
-    }
-
-    function next() { show(i + 1); }
-    function prev() { show(i - 1); }
-
-    function arm() {
-        clearInterval(timer);
-        timer = setInterval(next, 5200);
-    }
-
-    var nextBtn = root.querySelector("[data-em-next]");
-    var prevBtn = root.querySelector("[data-em-prev]");
-    if (nextBtn) nextBtn.addEventListener("click", function () { next(); arm(); });
-    if (prevBtn) prevBtn.addEventListener("click", function () { prev(); arm(); });
-    dots.forEach(function (dot) {
-        dot.addEventListener("click", function () {
-            show(parseInt(dot.getAttribute("data-em-dot"), 10) || 0);
-            arm();
-        });
-    });
-
-    root.addEventListener("mouseenter", function () { clearInterval(timer); });
-    root.addEventListener("mouseleave", arm);
-    arm();
-
-    root.querySelectorAll("img[data-full]").forEach(function (img) {
-        var full = img.getAttribute("data-full");
-        if (!full || img.src === full) return;
-        var hi = new Image();
-        hi.onload = function () { img.src = full; };
-        hi.src = full;
-    });
-})();
-</script>

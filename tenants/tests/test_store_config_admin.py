@@ -78,6 +78,11 @@ def test_store_config_service_roundtrip(store):
             "shipping_default_provider": "post",
             "shipping_base_package_weight_kg": "0.100",
             "storage_driver": "local",
+            "sms_otp_provider": "payamak",
+            "sms_payamak_username": "user1",
+            "sms_payamak_password": "secret",
+            "sms_payamak_body_id": "226930",
+            "sms_otp_template": "کد ورود: {code}",
             "layout_use_custom_header": True,
             "layout_use_custom_footer": False,
             "layout_header_html": "<header>hi</header>",
@@ -103,6 +108,17 @@ def test_store_config_service_roundtrip(store):
     assert initial["shipping_base_package_weight_kg"] == "0.1"
     assert initial["layout_use_custom_header"] is True
     assert initial["layout_header_html"] == "<header>hi</header>"
+    assert initial["sms_otp_provider"] == "payamak"
+    assert initial["sms_payamak_username"] == "user1"
+    assert initial["sms_payamak_body_id"] == "226930"
+    assert initial["sms_payamak_password"] == ""
+
+    from notifications.models import NotificationChannel
+
+    channel = NotificationChannel.objects.get(store=store, provider="payamak")
+    assert channel.is_default is True
+    assert channel.config["body_id"] == "226930"
+    assert channel.config["password"] == "secret"
 
     theme = ThemeSettingsService().get_theme_settings(store)
     assert theme["logo"] == "https://cdn.example/logo.png"
@@ -115,6 +131,35 @@ def test_store_config_service_roundtrip(store):
     )
     layout = LayoutSettings.objects.get(store=store)
     assert layout.use_custom_header is True
+
+
+@pytest.mark.django_db
+def test_sms_password_preserved_when_blank_on_resave(store):
+    service = StoreConfigService()
+    service.save_admin_data(
+        store,
+        {
+            **service.get_admin_initial(store),
+            "sms_otp_provider": "payamak",
+            "sms_payamak_username": "user1",
+            "sms_payamak_password": "secret",
+            "sms_payamak_body_id": "226930",
+        },
+    )
+    service.save_admin_data(
+        store,
+        {
+            **service.get_admin_initial(store),
+            "sms_otp_provider": "payamak",
+            "sms_payamak_username": "user1",
+            "sms_payamak_password": "",
+            "sms_payamak_body_id": "226930",
+        },
+    )
+    from notifications.models import NotificationChannel
+
+    channel = NotificationChannel.objects.get(store=store, provider="payamak")
+    assert channel.config["password"] == "secret"
 
 
 @pytest.mark.django_db
@@ -236,6 +281,7 @@ def test_store_admin_fieldsets_use_persian_tabs(store):
         "اطلاعات پایه",
         "دامنه و برندینگ",
         "تماس و شبکه‌های اجتماعی",
+        "پیامک OTP",
         "فروش و مالی",
         "ارسال",
         "سئو و متا",

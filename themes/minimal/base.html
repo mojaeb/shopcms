@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ store.name|default:"ShopCMS" }}{% endblock %}</title>
+    {% include "partials/google_verification.html" %}
+    {% if seo %}
+    <meta name="description" content="{{ seo.meta_description }}">
+    <meta name="keywords" content="{{ seo.meta_keywords }}">
+    <meta name="robots" content="{{ seo.robots }}">
+    {% if seo.og_image %}<meta property="og:image" content="{{ seo.og_image }}">{% endif %}
+    {% if seo.canonical_url %}<link rel="canonical" href="{{ seo.canonical_url }}">{% endif %}
+    {{ seo.head_scripts|safe }}
+    {% endif %}
+    {% include "partials/styles.html" %}
+    <link rel="stylesheet" href="/static/themes/minimal/css/theme.css">
+    {% if theme_settings.colors %}
+    <style>
+        :root {
+            {% if theme_settings.colors.primary %}
+            --primary: {{ theme_settings.colors.primary }};
+            --accent: {{ theme_settings.colors.primary }};
+            --em-ink: {{ theme_settings.colors.primary }};
+            {% endif %}
+            {% if theme_settings.colors.background %}--bg: {{ theme_settings.colors.background }};{% endif %}
+            {% if theme_settings.colors.text %}--text: {{ theme_settings.colors.text }}; --em-ink-soft: {{ theme_settings.colors.text }};{% endif %}
+        }
+    </style>
+    {% endif %}
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="theme-{{ theme_slug|default:'minimal' }}"{% if user.is_authenticated %} data-authenticated="1"{% endif %}>
+    {% csrf_token %}
+    {% include "partials/currency_sprite.html" %}
+    {% include "partials/cms_header.html" %}
+    <main class="site-main">
+        {% block content %}{% endblock %}
+    </main>
+    {% include "partials/cms_footer.html" %}
+    {% if seo %}{{ seo.footer_scripts|safe }}{% endif %}
+    <script src="/static/js/money.js"></script>
+    <script src="/static/js/toast.js"></script>
+    <script src="/static/js/cart.js"></script>
+    <script src="/static/js/wishlist.js"></script>
+    <script src="/static/js/auth-header.js"></script>
+    <script type="module" src="/static/themes/minimal/js/theme.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

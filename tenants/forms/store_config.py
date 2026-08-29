@@ -446,6 +446,42 @@ class StoreConfigForm(forms.ModelForm):
         widget=UnfoldAdminTextInputWidget(attrs={"placeholder": "local", "dir": "ltr"}),
     )
 
+    sms_otp_provider = forms.ChoiceField(
+        required=False,
+        label="ارسال‌کننده OTP",
+        choices=(
+            ("console_sms", "فقط لاگ (محیط توسعه)"),
+            ("payamak", "ملی‌پیامک / Payamak"),
+        ),
+        initial="console_sms",
+        widget=UnfoldAdminSelectWidget,
+    )
+    sms_payamak_username = forms.CharField(
+        required=False,
+        label="ملی‌پیامک — نام کاربری",
+        widget=UnfoldAdminTextInputWidget(attrs={"dir": "ltr", "autocomplete": "off"}),
+    )
+    sms_payamak_password = forms.CharField(
+        required=False,
+        label="ملی‌پیامک — رمز عبور",
+        help_text="خالی بگذارید تا رمز قبلی حفظ شود.",
+        widget=UnfoldAdminTextInputWidget(
+            attrs={"dir": "ltr", "autocomplete": "new-password", "type": "password"}
+        ),
+    )
+    sms_payamak_body_id = forms.CharField(
+        required=False,
+        label="ملی‌پیامک — شناسه پترن (bodyId)",
+        help_text="از پنل ملی‌پیامک → خدمات اشتراکی. برای OTP فقط خود کد به‌عنوان text ارسال می‌شود.",
+        widget=UnfoldAdminTextInputWidget(attrs={"dir": "ltr", "placeholder": "226930"}),
+    )
+    sms_otp_template = forms.CharField(
+        required=False,
+        label="متن پیامک OTP",
+        help_text="برای ارسال متن آزاد از {code} استفاده کنید. اگر پترن bodyId ست باشد این متن برای OTP استفاده نمی‌شود.",
+        widget=UnfoldAdminTextareaWidget(attrs={"rows": 3}),
+    )
+
     layout_use_custom_header = forms.BooleanField(
         required=False,
         label="هدر سفارشی",
@@ -588,3 +624,20 @@ class StoreConfigForm(forms.ModelForm):
         except SeoError as exc:
             raise forms.ValidationError(str(exc)) from exc
         return raw
+
+    def clean(self):
+        cleaned = super().clean()
+        if (cleaned.get("sms_otp_provider") or "console_sms") != "payamak":
+            return cleaned
+        if not (cleaned.get("sms_payamak_username") or "").strip():
+            self.add_error("sms_payamak_username", "برای ملی‌پیامک نام کاربری لازم است.")
+        if not (cleaned.get("sms_payamak_body_id") or "").strip():
+            self.add_error("sms_payamak_body_id", "شناسه پترن (bodyId) لازم است.")
+        password = (cleaned.get("sms_payamak_password") or "").strip()
+        if not password and self.instance and self.instance.pk:
+            existing = StoreConfigService()._group_map(self.instance, "notifications")
+            sms = existing.get("sms") if isinstance(existing.get("sms"), dict) else {}
+            password = str(sms.get("password") or "").strip()
+        if not password:
+            self.add_error("sms_payamak_password", "رمز عبور ملی‌پیامک لازم است.")
+        return cleaned

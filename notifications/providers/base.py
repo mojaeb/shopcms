@@ -18,7 +18,7 @@ class NotificationProvider(ABC):
     channel_type: str = ""
 
     @abstractmethod
-    def send(self, recipient: str, body: str, config: dict, subject: str = "") -> SendResult:
+    def send(self, recipient: str, body: str, config: dict, subject: str = "", metadata: dict | None = None) -> SendResult:
         pass
 
     def validate_config(self, config: dict) -> None:

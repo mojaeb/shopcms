@@ -256,6 +256,22 @@ class StoreAdmin(ModelAdmin):
             },
         ),
         (
+            "پیامک OTP",
+            {
+                "classes": ["tab"],
+                "description": (
+                    "ارسال کد ورود با ملی‌پیامک (پترن BaseServiceNumber). "
+                    "نام کاربری، رمز و bodyId را از پنل rest.payamak-panel.com بگیرید."
+                ),
+                "fields": (
+                    "sms_otp_provider",
+                    ("sms_payamak_username", "sms_payamak_password"),
+                    "sms_payamak_body_id",
+                    "sms_otp_template",
+                ),
+            },
+        ),
+        (
             "فروش و مالی",
             {
                 "classes": ["tab"],

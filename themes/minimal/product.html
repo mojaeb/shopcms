@@ -3,26 +3,106 @@
 {% block content %}
 <div class="mn-page">
     <div class="em-pdp">
-        <div class="em-pdp-gallery">
+        <div class="em-pdp-gallery" data-em-gallery>
             {% if product.images %}
-            <img src="{{ product.images.0.image }}" alt="{{ product.name }}">
+            <div class="em-pdp-gallery-main">
+                <img
+                    src="{{ product.images.0.image }}"
+                    alt="{{ product.images.0.alt_text|default:product.name }}"
+                    data-em-gallery-main
+                >
+            </div>
+            {% if product.images|length > 1 %}
+            <div class="em-pdp-thumbs">
+                {% for img in product.images %}
+                <button
+                    type="button"
+                    class="em-pdp-thumb{% if forloop.first %} is-active{% endif %}"
+                    data-em-gallery-thumb
+                    data-src="{{ img.image }}"
+                    data-alt="{{ img.alt_text|default:product.name }}"
+                    aria-label="تصویر {{ forloop.counter }}"
+                >
+                    <img src="{{ img.image }}" alt="" loading="lazy">
+                </button>
+                {% endfor %}
+            </div>
+            {% endif %}
             {% else %}
             <div class="em-pdp-empty">بدون تصویر</div>
             {% endif %}
         </div>
 
-        <div class="em-pdp-summary">
+        <div
+            class="em-pdp-summary"
+            {% if product.product_type == 'variable' %}
+            data-em-variants
+            data-base-price="{{ product.base_price }}"
+            data-base-compare-price="{{ product.compare_price|default:'' }}"
+            {% endif %}
+        >
+            {% if product.product_type == 'variable' %}
+            {{ product.variants|json_script:"em-product-variants" }}
+            {{ product.attribute_options|json_script:"em-product-attribute-options" }}
+            {% endif %}
+
             {% if product.brand %}
             <div class="em-pdp-brand">برند: <a href="/search/?q={{ product.brand }}">{{ product.brand }}</a></div>
             {% endif %}
+
+            <div class="em-pdp-badges">
+                {% if product.discount_percent %}
+                <span class="em-pdp-badge em-pdp-badge--sale">{{ product.discount_percent }}٪ تخفیف</span>
+                {% endif %}
+                {% if product.is_featured %}
+                <span class="em-pdp-badge">ویژه</span>
+                {% endif %}
+                {% if product.in_stock %}
+                <span class="em-pdp-badge em-pdp-badge--ok">موجود</span>
+                {% else %}
+                <span class="em-pdp-badge em-pdp-badge--sold">ناموجود</span>
+                {% endif %}
+            </div>
+
             <h1 class="mn-page-title">{{ product.name }}</h1>
+
+            {% if product.product_type == 'variable' %}
+            <p class="em-pdp-price">
+                <span class="{% if product.compare_price %}is-sale{% endif %}" data-em-variant-price>{% money product.base_price %}</span>
+                <s data-em-variant-compare {% if not product.compare_price %}hidden{% endif %}>{% if product.compare_price %}{% money product.compare_price %}{% endif %}</s>
+            </p>
+            {% else %}
             <p class="em-pdp-price">
                 <span class="{% if product.compare_price %}is-sale{% endif %}">{% money product.base_price %}</span>
                 {% if product.compare_price %}<s>{% money product.compare_price %}</s>{% endif %}
             </p>
-            <div class="em-pdp-actions">
-                {% if product.in_stock %}
-                <button class="btn" data-add-to-cart data-product="{{ product.slug }}">افزودن به سبد</button>
+            {% endif %}
+
+            {% if product.short_description %}
+            <p class="em-pdp-short">{{ product.short_description }}</p>
+            {% endif %}
+
+            {% if product.product_type == 'variable' %}
+            <div class="em-variant-groups" data-em-variant-groups></div>
+            <p class="em-variant-summary" data-em-variant-summary hidden>
+                <span data-em-variant-summary-text></span>
+            </p>
+            {% endif %}
+
+            <div class="em-pdp-actions" data-em-product-actions>
+                <div class="em-qty" data-em-qty data-qty="1"{% if product.product_type == 'variable' %} data-em-variant-qty{% endif %}>
+                    <button type="button" class="em-icon-btn" data-em-qty-dec aria-label="کاهش">−</button>
+                    <span class="em-qty-val" data-em-qty-value>۱</span>
+                    <button type="button" class="em-icon-btn" data-em-qty-inc aria-label="افزایش">+</button>
+                </div>
+                {% if product.product_type == 'variable' %}
+                <button type="button" class="btn is-disabled" data-add-to-cart data-product="{{ product.slug }}" disabled>
+                    <span data-em-cart-label>افزودن به سبد</span>
+                </button>
+                {% elif product.in_stock %}
+                <button type="button" class="btn" data-add-to-cart data-product="{{ product.slug }}">
+                    <span data-em-cart-label>افزودن به سبد</span>
+                </button>
                 {% else %}
                 <span class="badge badge-muted">ناموجود</span>
                 {% endif %}
@@ -30,6 +110,7 @@
                     <span data-wishlist-label data-idle-label="افزودن به علاقه‌مندی">افزودن به علاقه‌مندی</span>
                 </button>
             </div>
+
             {% if product.description %}
             <div class="em-pdp-desc rich-content">{{ product.description|safe }}</div>
             {% endif %}

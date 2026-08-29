@@ -6,6 +6,7 @@ from ninja.errors import HttpError
 from dashboard.authentication_store import store_settings_auth
 from notifications.enums import ChannelType
 from notifications.models import NotificationChannel
+from notifications.providers.registry import get_provider
 from notifications.services.notification import NotificationError, NotificationService
 from tenants.context import get_current_store
 
@@ -62,6 +63,13 @@ def create_channel(request, payload: ChannelCreateSchema):
     store = _store(request)
     if payload.channel_type not in ChannelType.values:
         raise HttpError(400, "نوع کانال نامعتبر است")
+    provider = get_provider(payload.provider)
+    if not provider:
+        raise HttpError(400, "ارائه‌دهنده نامعتبر است")
+    try:
+        provider.validate_config(payload.config or {})
+    except ValueError as exc:
+        raise HttpError(400, str(exc)) from exc
 
     if payload.is_default:
         NotificationChannel.objects.filter(store=store, channel_type=payload.channel_type).update(is_default=False)

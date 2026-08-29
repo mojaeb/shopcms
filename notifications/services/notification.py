@@ -10,6 +10,7 @@ from notifications.providers.registry import get_provider, list_providers
 
 logger = logging.getLogger(__name__)
 
+DEFAULT_OTP_TEMPLATE = "کد ورود ShopCMS: {code}\nاعتبار: ۲ دقیقه"
 DEFAULT_PROVIDERS = {
     ChannelType.SMS: "console_sms",
     ChannelType.EMAIL: "console_email",
@@ -73,7 +74,13 @@ class NotificationService:
         )
 
         try:
-            result = provider.send(recipient, body, config, subject=subject)
+            result = provider.send(
+                recipient,
+                body,
+                config,
+                subject=subject,
+                metadata=metadata or {},
+            )
             if result.success:
                 log.status = NotificationStatus.SENT
                 log.sent_at = timezone.now()
@@ -99,8 +106,19 @@ class NotificationService:
         return self.send(ChannelType.EMAIL, email, body, store=store, subject=subject)
 
     def send_otp_sms(self, phone: str, code: str, store=None) -> NotificationLog:
-        message = f"کد ورود ShopCMS: {code}\nاعتبار: ۲ دقیقه"
-        return self.send_sms(phone, message, store=store, metadata={"purpose": "otp"})
+        provider, config = self.get_channel(store, ChannelType.SMS) if store else self._platform_channel(ChannelType.SMS)
+        template = (config.get("otp_template") or DEFAULT_OTP_TEMPLATE).strip() or DEFAULT_OTP_TEMPLATE
+        try:
+            message = template.format(code=code)
+        except (KeyError, IndexError, ValueError):
+            message = f"{template}\n{code}"
+        return self.send(
+            ChannelType.SMS,
+            phone,
+            message,
+            store=store,
+            metadata={"purpose": "otp", "otp_code": code},
+        )
 
     def list_logs(self, store, channel_type: str | None = None, limit: int = 50):
         qs = NotificationLog.objects.filter(store=store)

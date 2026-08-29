@@ -11,6 +11,7 @@ from django.core.mail import send_mail
 from notifications.enums import ChannelType
 from notifications.providers.base import NotificationProvider, SendResult
 from notifications.providers.registry import register
+from notifications.providers.payamak import PayamakSmsProvider  # noqa: F401
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +22,7 @@ class ConsoleSmsProvider(NotificationProvider):
     label = "Console SMS"
     channel_type = ChannelType.SMS
 
-    def send(self, recipient: str, body: str, config: dict, subject: str = "") -> SendResult:
+    def send(self, recipient: str, body: str, config: dict, subject: str = "", metadata: dict | None = None) -> SendResult:
         logger.info("SMS to %s: %s", recipient, body)
         return SendResult(success=True, message="logged", external_id="console")
 
@@ -36,7 +37,7 @@ class KavenegarSmsProvider(NotificationProvider):
         if not config.get("api_key"):
             raise ValueError("api_key is required")
 
-    def send(self, recipient: str, body: str, config: dict, subject: str = "") -> SendResult:
+    def send(self, recipient: str, body: str, config: dict, subject: str = "", metadata: dict | None = None) -> SendResult:
         raise RuntimeError("Kavenegar driver requires HTTP integration and store config")
 
 
@@ -46,7 +47,7 @@ class ConsoleEmailProvider(NotificationProvider):
     label = "Console Email"
     channel_type = ChannelType.EMAIL
 
-    def send(self, recipient: str, body: str, config: dict, subject: str = "") -> SendResult:
+    def send(self, recipient: str, body: str, config: dict, subject: str = "", metadata: dict | None = None) -> SendResult:
         logger.info("Email to %s [%s]: %s", recipient, subject, body)
         return SendResult(success=True, message="logged", external_id="console")
 
@@ -57,7 +58,7 @@ class SmtpEmailProvider(NotificationProvider):
     label = "SMTP"
     channel_type = ChannelType.EMAIL
 
-    def send(self, recipient: str, body: str, config: dict, subject: str = "") -> SendResult:
+    def send(self, recipient: str, body: str, config: dict, subject: str = "", metadata: dict | None = None) -> SendResult:
         from_email = config.get("from_email") or getattr(settings, "DEFAULT_FROM_EMAIL", "noreply@shopcms.local")
         try:
             send_mail(subject or "ShopCMS", body, from_email, [recipient], fail_silently=False)
@@ -76,12 +77,12 @@ class WebhookProvider(NotificationProvider):
         if not config.get("url"):
             raise ValueError("url is required")
 
-    def send(self, recipient: str, body: str, config: dict, subject: str = "") -> SendResult:
+    def send(self, recipient: str, body: str, config: dict, subject: str = "", metadata: dict | None = None) -> SendResult:
         payload = {
             "recipient": recipient,
             "subject": subject,
             "body": body,
-            "metadata": config.get("metadata", {}),
+            "metadata": metadata or config.get("metadata", {}),
         }
         data = json.dumps(payload).encode("utf-8")
         req = urllib.request.Request(
@@ -103,7 +104,7 @@ class ConsolePushProvider(NotificationProvider):
     label = "Console Push"
     channel_type = ChannelType.PUSH
 
-    def send(self, recipient: str, body: str, config: dict, subject: str = "") -> SendResult:
+    def send(self, recipient: str, body: str, config: dict, subject: str = "", metadata: dict | None = None) -> SendResult:
         logger.info("Push to %s [%s]: %s", recipient, subject, body)
         return SendResult(success=True, message="logged", external_id="console")
 
@@ -118,5 +119,5 @@ class TelegramProvider(NotificationProvider):
         if not config.get("bot_token"):
             raise ValueError("bot_token is required")
 
-    def send(self, recipient: str, body: str, config: dict, subject: str = "") -> SendResult:
+    def send(self, recipient: str, body: str, config: dict, subject: str = "", metadata: dict | None = None) -> SendResult:
         raise RuntimeError("Telegram driver requires HTTP integration and store config")

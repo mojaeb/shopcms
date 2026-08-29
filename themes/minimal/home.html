@@ -12,9 +12,9 @@
     {% include "partials/hero_slider.html" %}
     {% endwith %}
 {% else %}
-<section class="em-hero-slider" aria-label="اسلایدر هیرو" data-em-hero>
+<section class="em-hero-slider" aria-label="اسلایدر هیرو" data-em-hero tabindex="0">
     <div class="em-hero-track">
-        <article class="em-hero-slide is-active" data-em-slide style="--slide-bg:#1c1c1c;">
+        <article class="em-hero-slide is-active" data-em-slide aria-hidden="false">
             <div class="em-hero-copy">
                 <h2 class="em-hero-title">استایل خود را پیدا کنید</h2>
                 <p class="em-hero-text">تابستان فصل جشن و انتخاب‌های تازه است.</p>
@@ -27,7 +27,7 @@
                 <img src="/static/themes/minimal/img/hero-slide-1.webp" alt="{{ store.name }}" loading="eager" decoding="async">
             </div>
         </article>
-        <article class="em-hero-slide" data-em-slide style="--slide-bg:#1c1c1c;">
+        <article class="em-hero-slide" data-em-slide aria-hidden="true">
             <div class="em-hero-copy">
                 <h2 class="em-hero-title">زیبایی خانه</h2>
                 <p class="em-hero-text">با دکورهای منتخب، فضای زندگی‌تان را ارتقا دهید.</p>
@@ -40,7 +40,7 @@
                 <img src="/static/themes/minimal/img/hero-slide-2.webp" alt="{{ store.name }}" loading="lazy" decoding="async">
             </div>
         </article>
-        <article class="em-hero-slide" data-em-slide style="--slide-bg:#1c1c1c;">
+        <article class="em-hero-slide" data-em-slide aria-hidden="true">
             <div class="em-hero-copy">
                 <h2 class="em-hero-title">هر گوشه، یک حس تازه</h2>
                 <p class="em-hero-text">لمس ظریف زیبایی برای هر اتاق.</p>
@@ -54,48 +54,23 @@
             </div>
         </article>
     </div>
+    <div class="em-hero-progress" aria-hidden="true">
+        <span data-em-progress></span>
+    </div>
     <div class="em-hero-controls">
         <button type="button" class="em-hero-nav" data-em-prev aria-label="اسلاید قبلی">
             <svg width="14" height="14" viewBox="0 0 64 64" fill="currentColor" aria-hidden="true"><path d="M52,56.43,27.52,32,52,7.52,44.47,0,12.39,32,44.47,64Z"></path></svg>
         </button>
         <div class="em-hero-dots" role="tablist" aria-label="اسلایدها">
-            <button type="button" class="em-hero-dot is-active" data-em-dot="0" aria-label="اسلاید ۱"></button>
-            <button type="button" class="em-hero-dot" data-em-dot="1" aria-label="اسلاید ۲"></button>
-            <button type="button" class="em-hero-dot" data-em-dot="2" aria-label="اسلاید ۳"></button>
+            <button type="button" class="em-hero-dot is-active" data-em-dot="0" aria-label="اسلاید ۱" aria-current="true"></button>
+            <button type="button" class="em-hero-dot" data-em-dot="1" aria-label="اسلاید ۲" aria-current="false"></button>
+            <button type="button" class="em-hero-dot" data-em-dot="2" aria-label="اسلاید ۳" aria-current="false"></button>
         </div>
         <button type="button" class="em-hero-nav" data-em-next aria-label="اسلاید بعدی">
             <svg width="14" height="14" viewBox="0 0 64 64" fill="currentColor" aria-hidden="true"><path d="M12,56.43,36.48,32,12,7.52,19.53,0,51.61,32,19.53,64Z"></path></svg>
         </button>
     </div>
 </section>
-<script>
-(function () {
-    var root = document.querySelector("[data-em-hero]");
-    if (!root) return;
-    var slides = Array.prototype.slice.call(root.querySelectorAll("[data-em-slide]"));
-    var dots = Array.prototype.slice.call(root.querySelectorAll("[data-em-dot]"));
-    var i = 0, timer;
-    function show(n) {
-        i = (n + slides.length) % slides.length;
-        slides.forEach(function (el, idx) { el.classList.toggle("is-active", idx === i); });
-        dots.forEach(function (el, idx) { el.classList.toggle("is-active", idx === i); });
-    }
-    function next() { show(i + 1); }
-    function prev() { show(i - 1); }
-    function arm() { clearInterval(timer); timer = setInterval(next, 5200); }
-    root.querySelector("[data-em-next]").addEventListener("click", function () { next(); arm(); });
-    root.querySelector("[data-em-prev]").addEventListener("click", function () { prev(); arm(); });
-    dots.forEach(function (dot) {
-        dot.addEventListener("click", function () {
-            show(parseInt(dot.getAttribute("data-em-dot"), 10) || 0);
-            arm();
-        });
-    });
-    root.addEventListener("mouseenter", function () { clearInterval(timer); });
-    root.addEventListener("mouseleave", arm);
-    arm();
-})();
-</script>
 {% endif %}
 
 <div class="mn-home">
