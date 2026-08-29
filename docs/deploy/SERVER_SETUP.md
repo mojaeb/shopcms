@@ -86,14 +86,27 @@ DATABASE_URL=postgres://shopcms:STRONG_PASSWORD@db:5432/shopcms
 REDIS_URL=redis://redis:6379/0
 CELERY_BROKER_URL=redis://redis:6379/1
 POSTGRES_PASSWORD=STRONG_PASSWORD
-GHCR_OWNER=your-github-username
+SHOPCMS_IMAGE=shopcms:latest
 ```
 
-اجرا:
+اگر Docker Hub فیلتر است (خطای `denied` هنگام pull)، اول imageها را از آینه بگیرید یا `postgres:17` موجود روی سرور را تگ کنید. بعد اپ را لوکال بیلد کنید:
 
 ```bash
-docker compose -f docker/docker-compose.vps.yml up -d
+# postgres/redis از آینه (اگر Hub denied شد)
+docker pull mirror.gcr.io/library/python:3.12-slim
+docker tag  mirror.gcr.io/library/python:3.12-slim python:3.12-slim
+docker pull mirror.gcr.io/library/redis:7-alpine
+docker tag  mirror.gcr.io/library/redis:7-alpine redis:7-alpine
+docker pull mirror.gcr.io/library/postgres:16-alpine
+docker tag  mirror.gcr.io/library/postgres:16-alpine postgres:16-alpine
+# یا اگر postgres:17 از قبل هست:
+# docker tag postgres:17 postgres:16-alpine
+
+docker build -t shopcms:latest -f docker/Dockerfile .
+docker compose -f docker/docker-compose.vps.yml --env-file .env.production up -d --pull never
 ```
+
+بدون `--pull never`، Compose سعی می‌کند `ghcr.io/youruser/shopcms` را بگیرد و با `denied` می‌ایستد.
 
 ---
 
@@ -107,7 +120,7 @@ docker compose -f docker/docker-compose.vps.yml up -d
 |------|-------|
 | Domain Names | `shop1.yourdomain.com` |
 | Scheme | `http` |
-| Forward Hostname / IP | `127.0.0.1` |
+| Forward Hostname / IP | `shopcms-web` |
 | Forward Port | `8000` |
 | Block Common Exploits | ✓ |
 | Websockets Support | ✓ |

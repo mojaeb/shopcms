@@ -1,15 +1,15 @@
 # VPS deployment — works behind Nginx Proxy Manager or Traefik
-# The proxy network (created by proxy/docker-compose.yml) connects NPM/Traefik to this stack.
 #
-# On server: docker compose -f docker/docker-compose.vps.yml up -d
+# Local first deploy (no GHCR):
+#   docker build -t shopcms:latest -f docker/Dockerfile .
+#   docker compose -f docker/docker-compose.vps.yml --env-file .env.production up -d --pull never
 #
-# NPM proxy host:
-#   shop.yourdomain.com  → http://shopcms-web:8000
-# Traefik labels are already on the web service (set DOMAIN env var).
+# NPM proxy host: shop.yourdomain.com → http://shopcms-web:8000  (same Docker network: proxy)
 
 services:
   web:
-    image: ghcr.io/${GHCR_OWNER:-youruser}/shopcms:latest
+    image: ${SHOPCMS_IMAGE:-shopcms:latest}
+    pull_policy: missing
     container_name: shopcms-web
     restart: unless-stopped
     command: >
@@ -46,7 +46,8 @@ services:
       - proxy
 
   celery:
-    image: ghcr.io/${GHCR_OWNER:-youruser}/shopcms:latest
+    image: ${SHOPCMS_IMAGE:-shopcms:latest}
+    pull_policy: missing
     restart: unless-stopped
     command: celery -A config worker -l info -c 2
     env_file:
@@ -68,7 +69,8 @@ services:
       - internal
 
   celery-beat:
-    image: ghcr.io/${GHCR_OWNER:-youruser}/shopcms:latest
+    image: ${SHOPCMS_IMAGE:-shopcms:latest}
+    pull_policy: missing
     restart: unless-stopped
     command: celery -A config beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
     env_file:
@@ -86,7 +88,8 @@ services:
       - internal
 
   db:
-    image: postgres:16-alpine
+    image: ${POSTGRES_IMAGE:-postgres:16-alpine}
+    pull_policy: missing
     restart: unless-stopped
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -103,7 +106,8 @@ services:
       - internal
 
   redis:
-    image: redis:7-alpine
+    image: ${REDIS_IMAGE:-redis:7-alpine}
+    pull_policy: missing
     restart: unless-stopped
     command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
     volumes:
