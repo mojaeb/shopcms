@@ -10,7 +10,7 @@
         <a href="/manage/products/" class="sa-link-muted">← بازگشت به محصولات</a>
     </div>
 
-    <form id="product-form" class="sa-form sa-editor">
+    <form id="product-form" class="sa-form sa-editor" novalidate>
         <input type="hidden" id="product-id" value="{{ product_id|default_if_none:'' }}">
 
         <section class="sa-editor-section">
@@ -29,6 +29,7 @@
                         <option value="variable">متغیر (با واریانت)</option>
                         <option value="digital">دیجیتال</option>
                     </select>
+                    <span id="product-type-hint" class="sa-field-hint" hidden>قیمت و موجودی هر ترکیب را در بخش واریانت‌ها وارد کنید.</span>
                 </label>
                 <label>وضعیت
                     <select id="product-status" class="sa-input">
@@ -50,14 +51,20 @@
                     <input type="number" id="product-stock" min="0" step="1" value="0" class="sa-input">
                 </label>
                 <label>دسته‌بندی
-                    <select id="product-category" class="sa-input">
-                        <option value="">— بدون دسته —</option>
-                    </select>
+                    <div class="sa-select-add">
+                        <select id="product-category" class="sa-input">
+                            <option value="">— بدون دسته —</option>
+                        </select>
+                        <button type="button" class="sa-btn sa-btn-ghost sa-btn-sm" id="product-add-category">+ دسته</button>
+                    </div>
                 </label>
                 <label>برند
-                    <select id="product-brand" class="sa-input">
-                        <option value="">— بدون برند —</option>
-                    </select>
+                    <div class="sa-select-add">
+                        <select id="product-brand" class="sa-input">
+                            <option value="">— بدون برند —</option>
+                        </select>
+                        <button type="button" class="sa-btn sa-btn-ghost sa-btn-sm" id="product-add-brand">+ برند</button>
+                    </div>
                 </label>
             </div>
             <label class="sa-check-inline">
@@ -95,21 +102,22 @@
             <div class="sa-editor-section-head">
                 <div>
                     <h2>واریانت‌ها</h2>
-                    <p class="sa-section-desc is-tight">ابتدا ویژگی‌ها را تعریف کنید، سپس برای هر ترکیب موجود یک واریانت بسازید.</p>
+                    <p class="sa-section-desc is-tight">اول ویژگی بسازید، بعد ترکیب‌های موجود را یکجا یا تکی اضافه کنید.</p>
                 </div>
+                <span id="variant-count" class="sa-badge sa-badge-muted">۰ ترکیب</span>
             </div>
 
             <div class="sa-variant-steps">
                 <div class="sa-variant-step">
                     <div class="sa-variant-step-label">
                         <span class="sa-variant-step-num">۱</span>
-                        ویژگی‌ها (رنگ، حافظه و …)
+                        ویژگی‌ها
                     </div>
                     <div class="sa-editor-section-head is-spaced">
-                        <p class="sa-muted sa-variant-step-hint">هر ویژگی چند مقدار دارد و در فروشگاه به مشتری نشان داده می‌شود.</p>
+                        <p class="sa-muted sa-variant-step-hint">رنگ، حافظه، سایز و مقدارهایی که مشتری می‌بیند.</p>
                         <button type="button" class="sa-btn sa-btn-ghost sa-btn-sm" id="attr-toggle-form">+ ویژگی جدید</button>
                     </div>
-                    <div id="attributes-list"></div>
+                    <div id="attributes-list" class="sa-attr-list"></div>
                     <div id="attr-create-form" class="sa-attr-create-box" hidden>
                         <div class="sa-grid-2">
                             <label>نام ویژگی
@@ -123,7 +131,7 @@
                                     <option value="list">لیست</option>
                                     <option value="color">رنگ</option>
                                     <option value="button">دکمه</option>
-                                    <option value="select">انتخاب (legacy)</option>
+                                    <option value="select">منوی کشویی</option>
                                 </select>
                             </label>
                             <label id="attr-button-style-wrap" class="sa-hidden">سبک دکمه
@@ -151,11 +159,25 @@
                         ترکیب‌های موجود
                     </div>
                     <div class="sa-editor-section-head is-spaced-lg">
-                        <p class="sa-muted sa-variant-step-hint">فقط ترکیب‌هایی که واقعاً می‌فروشید را اضافه کنید.</p>
-                        <button type="button" class="sa-btn sa-btn-sm" id="product-add-variant">+ افزودن واریانت</button>
+                        <p class="sa-muted sa-variant-step-hint">فقط حالت‌هایی که واقعاً می‌فروشید را نگه دارید.</p>
+                        <div class="sa-actions">
+                            <button type="button" class="sa-btn sa-btn-ghost sa-btn-sm" id="product-generate-variants">ساخت همه ترکیب‌ها</button>
+                            <button type="button" class="sa-btn sa-btn-sm" id="product-add-variant">+ افزودن</button>
+                        </div>
                     </div>
-                    <div id="product-variants"></div>
-                    <div id="product-variants-empty" class="sa-variant-empty">هنوز واریانتی نیست. بعد از تعریف ویژگی‌ها، یک ترکیب اضافه کنید.</div>
+                    <div class="sa-variant-table" id="product-variants-table">
+                        <div class="sa-variant-table-head" id="product-variants-head" hidden>
+                            <span>ترکیب</span>
+                            <span>SKU</span>
+                            <span>قیمت</span>
+                            <span>قبل تخفیف</span>
+                            <span>موجودی</span>
+                            <span>فعال</span>
+                            <span></span>
+                        </div>
+                        <div id="product-variants" class="sa-variant-table-body"></div>
+                    </div>
+                    <div id="product-variants-empty" class="sa-variant-empty">ابتدا یک ویژگی بسازید، بعد ترکیب‌ها را بسازید.</div>
                 </div>
             </div>
         </section>
@@ -169,7 +191,7 @@
                 </label>
                 <label>تصویر OG
                     <div class="sa-url-row">
-                        <input type="url" id="product-og-image" class="sa-input" placeholder="https://..." dir="ltr">
+                        <input type="text" id="product-og-image" class="sa-input" inputmode="url" placeholder="/media/... یا https://..." dir="ltr">
                         <button type="button" class="sa-btn sa-btn-ghost sa-btn-sm" id="product-pick-og" title="از رسانه">رسانه</button>
                     </div>
                 </label>
@@ -194,6 +216,22 @@
         </div>
     </div>
 
+    <dialog id="catalog-quick-dialog" class="sa-dialog">
+        <form id="catalog-quick-form" class="sa-form sa-quick-form">
+            <h2 id="catalog-quick-title" class="sa-picker-title">مورد جدید</h2>
+            <label>نام
+                <input type="text" id="catalog-quick-name" class="sa-input" required autocomplete="off">
+            </label>
+            <label>اسلاگ
+                <input type="text" id="catalog-quick-slug" class="sa-input" dir="ltr" placeholder="اختیاری — خودکار ساخته می‌شود">
+            </label>
+            <div class="sa-form-actions">
+                <button type="button" class="sa-btn sa-btn-ghost" id="catalog-quick-cancel">انصراف</button>
+                <button type="submit" class="sa-btn" id="catalog-quick-save">ثبت</button>
+            </div>
+        </form>
+    </dialog>
+
     <dialog id="media-picker" class="sa-dialog sa-picker-dialog">
         <div class="sa-picker-body">
             <div class="sa-editor-section-head">
@@ -202,11 +240,15 @@
             </div>
             <div class="sa-picker-toolbar">
                 <button type="button" class="sa-btn sa-btn-sm" id="picker-upload-btn">آپلود تصویر</button>
-                <input type="file" id="picker-file-input" accept="image/*" hidden>
-                <span class="sa-muted sa-text-sm">روی تصویر کلیک کنید تا انتخاب شود.</span>
+                <input type="file" id="picker-file-input" accept="image/*" multiple hidden>
+                <span class="sa-muted sa-text-sm" id="picker-hint">چند تصویر را انتخاب کنید، سپس افزودن را بزنید.</span>
             </div>
             <div id="picker-grid" class="sa-picker-grid">
                 <div class="sa-loading">در حال بارگذاری...</div>
+            </div>
+            <div class="sa-picker-footer" id="picker-footer">
+                <button type="button" class="sa-btn sa-btn-ghost sa-btn-sm" id="picker-cancel">انصراف</button>
+                <button type="button" class="sa-btn sa-btn-sm" id="picker-confirm">افزودن تصاویر</button>
             </div>
         </div>
     </dialog>
@@ -218,7 +260,7 @@
             </div>
             <div class="sa-image-card-body">
                 <label>آدرس تصویر
-                    <input type="url" name="image" class="sa-input" required placeholder="https://..." dir="ltr">
+                    <input type="text" name="image" class="sa-input" inputmode="url" placeholder="/media/... یا https://..." dir="ltr">
                 </label>
                 <label>متن جایگزین
                     <input type="text" name="alt_text" class="sa-input">
@@ -237,35 +279,32 @@
     <template id="product-variant-template">
         <div class="sa-variant-row">
             <input type="hidden" name="variant_id" value="">
-            <div class="sa-variant-row-head">
-                <div class="sa-variant-row-title">
-                    <span class="js-variant-index">واریانت</span>
-                    <span class="sa-muted js-variant-summary">— انتخاب ویژگی‌ها</span>
-                </div>
-                <button type="button" class="sa-btn sa-btn-danger sa-btn-sm js-remove-variant">حذف</button>
-            </div>
-            <div class="sa-variant-row-body">
+            <div class="sa-variant-combo">
+                <strong class="js-variant-summary">انتخاب ویژگی‌ها</strong>
                 <div class="js-variant-attrs sa-variant-attrs"></div>
-                <div class="sa-variant-fields">
-                    <label>SKU
-                        <input type="text" name="sku" class="sa-input" dir="ltr" placeholder="اختیاری">
-                    </label>
-                    <label>قیمت
-                        <input type="number" name="price" min="0" step="1" class="sa-input" required>
-                    </label>
-                    <label>قبل تخفیف
-                        <input type="number" name="compare_price" min="0" step="1" class="sa-input">
-                    </label>
-                    <label>موجودی
-                        <input type="number" name="stock" min="0" step="1" value="0" class="sa-input">
-                    </label>
-                </div>
-                <div class="sa-variant-row-foot">
-                    <label class="sa-check-inline sa-mt-0">
-                        <input type="checkbox" name="is_active" checked> فعال در فروشگاه
-                    </label>
-                </div>
+                <p class="sa-variant-dup js-variant-dup" hidden>این ترکیب تکراری است</p>
             </div>
+            <label class="sa-variant-cell">
+                <span>SKU</span>
+                <input type="text" name="sku" class="sa-input" dir="ltr" placeholder="SKU">
+            </label>
+            <label class="sa-variant-cell">
+                <span>قیمت</span>
+                <input type="number" name="price" min="0" step="1" class="sa-input" required>
+            </label>
+            <label class="sa-variant-cell">
+                <span>قبل تخفیف</span>
+                <input type="number" name="compare_price" min="0" step="1" class="sa-input">
+            </label>
+            <label class="sa-variant-cell">
+                <span>موجودی</span>
+                <input type="number" name="stock" min="0" step="1" value="0" class="sa-input">
+            </label>
+            <label class="sa-variant-cell sa-variant-cell-check">
+                <span>فعال</span>
+                <input type="checkbox" name="is_active" checked>
+            </label>
+            <button type="button" class="sa-btn sa-btn-ghost sa-btn-sm sa-variant-remove js-remove-variant">حذف</button>
         </div>
     </template>
 </div>

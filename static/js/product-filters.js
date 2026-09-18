@@ -127,7 +127,7 @@
                 : '<span class="ns-price-was ns-price-was--empty" aria-hidden="true">&nbsp;</span>';
             return `
                 <a href="/product/${product.slug}/" class="ns-card">
-                    <div class="ns-card-media">${image}${badge}</div>
+                    <div class="ns-card-media">${image}${badge}<span class="ns-card-peek" aria-hidden="true"><i data-lucide="arrow-left"></i> مشاهده</span></div>
                     <div class="ns-card-body">
                         ${cat}
                         <h3 class="ns-card-title">${product.name}</h3>

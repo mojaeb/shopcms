@@ -93,6 +93,15 @@ def manage_product_edit(request, product_id: int):
 
 
 @store_staff_required
+def manage_catalog(request):
+    return render(
+        request,
+        "store_admin/catalog.html",
+        _ctx(request, page_title="دسته‌ها و برندها", active_nav="catalog"),
+    )
+
+
+@store_staff_required
 def manage_orders(request):
     return render(
         request,

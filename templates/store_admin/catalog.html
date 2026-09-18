@@ -1,0 +1,52 @@
+{% extends "store_admin/base.html" %}
+{% block content %}
+<div id="sa-catalog" class="sa-page sa-catalog">
+    <p class="sa-muted sa-form-intro">دسته‌بندی و برند را اینجا بسازید یا حذف کنید. بعداً هنگام ثبت محصول از همین فهرست انتخاب می‌شوند.</p>
+
+    <div class="sa-catalog-grid">
+        <section class="sa-form sa-card">
+            <h2>دسته‌بندی‌ها</h2>
+            <form id="category-create-form" class="sa-catalog-create">
+                <label>نام دسته
+                    <input type="text" id="cat-name" class="sa-input" required placeholder="مثلاً موبایل">
+                </label>
+                <label>اسلاگ
+                    <input type="text" id="cat-slug" class="sa-input" placeholder="mobile" dir="ltr">
+                </label>
+                <label>تصویر (اختیاری)
+                    <input type="text" id="cat-image" class="sa-input" inputmode="url" placeholder="/media/... یا https://..." dir="ltr">
+                </label>
+                <label class="sa-check-inline sa-mt-0">
+                    <input type="checkbox" id="cat-is-custom"> دسته سفارشی
+                </label>
+                <div class="sa-form-actions">
+                    <button type="submit" class="sa-btn">افزودن دسته</button>
+                </div>
+            </form>
+            <div id="categories-list" class="sa-catalog-list"></div>
+        </section>
+
+        <section class="sa-form sa-card">
+            <h2>برندها</h2>
+            <form id="brand-create-form" class="sa-catalog-create">
+                <label>نام برند
+                    <input type="text" id="brand-name" class="sa-input" required placeholder="مثلاً سامسونگ">
+                </label>
+                <label>اسلاگ
+                    <input type="text" id="brand-slug" class="sa-input" placeholder="samsung" dir="ltr">
+                </label>
+                <label>لوگو (اختیاری)
+                    <input type="text" id="brand-logo" class="sa-input" inputmode="url" placeholder="/media/... یا https://..." dir="ltr">
+                </label>
+                <div class="sa-form-actions">
+                    <button type="submit" class="sa-btn">افزودن برند</button>
+                </div>
+            </form>
+            <div id="brands-list" class="sa-catalog-list"></div>
+        </section>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="/static/js/store_admin/catalog.js"></script>
+{% endblock %}

@@ -10,6 +10,10 @@
         {% elif product.is_featured %}
         <span class="ns-badge ns-badge--feat ns-card-badge">ویژه</span>
         {% endif %}
+        <span class="ns-card-peek" aria-hidden="true">
+            <i data-lucide="arrow-left"></i>
+            مشاهده
+        </span>
     </div>
     <div class="ns-card-body">
         <span class="ns-card-cat">{% if product.category %}{{ product.category }}{% else %}&nbsp;{% endif %}</span>

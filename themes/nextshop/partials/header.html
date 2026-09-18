@@ -24,17 +24,16 @@
                     {% endif %}
                     <span class="ns-brand-text">
                         <span class="ns-brand-name">{{ store.name }}</span>
-                        <span class="ns-brand-sub">موبایل و لوازم جانبی</span>
+                        <span class="ns-brand-sub">خرید مطمئن، ارسال سریع</span>
                     </span>
                 </a>
             </div>
 
             <form class="ns-search ns-search--desktop" action="/search/" method="get" role="search">
-                <span class="ns-search-icon" aria-hidden="true">
+                <input type="search" name="q" placeholder="جستجو در محصولات…" autocomplete="off" x-ref="searchInput" aria-label="جستجو در محصولات">
+                <button type="submit" class="ns-search-submit" aria-label="جستجو">
                     <i data-lucide="search"></i>
-                </span>
-                <input type="search" name="q" placeholder="جستجو در محصولات..." autocomplete="off" x-ref="searchInput">
-                <button type="submit" class="ns-search-submit">جستجو</button>
+                </button>
             </form>
 
             <div class="ns-header-end">
@@ -53,10 +52,9 @@
                 </div>
                 <div class="ns-header-auth">
                     {% if user.is_authenticated %}
-                    <a href="/dashboard/" class="ns-user-chip">
+                    <a href="/dashboard/" class="ns-user-chip" title="حساب کاربری">
                         <span class="ns-user-meta">
                             <strong>{{ user.full_name }}</strong>
-                            <span>{{ user.phone }}</span>
                         </span>
                         <span class="ns-user-avatar">{{ user.full_name|slice:":1" }}</span>
                     </a>
@@ -74,10 +72,7 @@
         </div>
 
         <form class="ns-search ns-search--mobile ns-width" action="/search/" method="get" role="search">
-            <span class="ns-search-icon" aria-hidden="true">
-                <i data-lucide="search"></i>
-            </span>
-            <input type="search" name="q" placeholder="جستجو در محصولات..." autocomplete="off">
+            <input type="search" name="q" placeholder="جستجو در محصولات…" autocomplete="off" aria-label="جستجو در محصولات">
             <button type="submit" class="ns-search-submit" aria-label="جستجو">
                 <i data-lucide="search"></i>
             </button>
@@ -111,12 +106,9 @@
                     <a class="ns-nav-item" href="/blog/">وبلاگ</a>
                 {% endif %}
             </nav>
-            <a href="/page/contact/" class="ns-support" aria-label="پشتیبانی و تماس">
-                <span class="ns-support-icon" aria-hidden="true"><i data-lucide="phone"></i></span>
-                <span class="ns-support-text">
-                    <span class="ns-support-label">پشتیبانی</span>
-                    <span class="ns-support-value">مشاوره خرید</span>
-                </span>
+            <a href="/page/contact/" class="ns-support">
+                <span class="ns-support-icon" aria-hidden="true"><i data-lucide="headphones"></i></span>
+                <span class="ns-support-value">مشاوره خرید و پشتیبانی</span>
             </a>
         </div>
     </div>

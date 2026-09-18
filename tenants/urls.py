@@ -18,6 +18,7 @@ urlpatterns = [
     path("manage/products/", manage.manage_products, name="store_admin_products"),
     path("manage/products/new/", manage.manage_product_new, name="store_admin_product_new"),
     path("manage/products/<int:product_id>/edit/", manage.manage_product_edit, name="store_admin_product_edit"),
+    path("manage/catalog/", manage.manage_catalog, name="store_admin_catalog"),
     path("manage/files/", manage.manage_files, name="store_admin_files"),
     path("manage/orders/", manage.manage_orders, name="store_admin_orders"),
     path("manage/orders/<int:order_id>/", manage.manage_order_detail, name="store_admin_order_detail"),

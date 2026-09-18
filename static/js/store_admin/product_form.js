@@ -27,6 +27,7 @@
     let attributes = [];
     let pickerTarget = null;
     let pickerMode = "gallery";
+    let pickerSelected = [];
 
     function slugify(text) {
         return String(text || "")
@@ -146,6 +147,30 @@
         });
     }
 
+    const catalogQuick = document.getElementById("catalog-quick-dialog");
+    const catalogQuickForm = document.getElementById("catalog-quick-form");
+    const catalogQuickName = document.getElementById("catalog-quick-name");
+    const catalogQuickSlug = document.getElementById("catalog-quick-slug");
+    let catalogQuickKind = "category";
+
+    function openCatalogQuick(kind) {
+        catalogQuickKind = kind === "brand" ? "brand" : "category";
+        document.getElementById("catalog-quick-title").textContent =
+            catalogQuickKind === "brand" ? "برند جدید" : "دسته جدید";
+        catalogQuickName.value = "";
+        catalogQuickSlug.value = "";
+        catalogQuickSlug.dataset.touched = "";
+        if (typeof catalogQuick.showModal === "function") catalogQuick.showModal();
+        else catalogQuick.setAttribute("open", "");
+        catalogQuickName.focus();
+    }
+
+    function closeCatalogQuick() {
+        if (!catalogQuick) return;
+        if (typeof catalogQuick.close === "function") catalogQuick.close();
+        else catalogQuick.removeAttribute("open");
+    }
+
     function isVariable() {
         return document.getElementById("product-type").value === "variable";
     }
@@ -154,6 +179,8 @@
         const variable = isVariable();
         document.getElementById("product-stock-wrap").hidden = variable;
         document.getElementById("product-variants-section").hidden = !variable;
+        const typeHint = document.getElementById("product-type-hint");
+        if (typeHint) typeHint.hidden = !variable;
         if (variable) {
             renderAttributesSummary();
             refreshVariantAttrSelects();
@@ -161,24 +188,122 @@
         }
     }
 
+    function hasAttrValues() {
+        return attributes.some(function (a) {
+            return (a.values || []).length > 0;
+        });
+    }
+
+    function syncGenerateBtn() {
+        const btn = document.getElementById("product-generate-variants");
+        if (!btn) return;
+        const ready = hasAttrValues();
+        btn.disabled = !ready;
+        btn.title = ready ? "همه ترکیب‌های ممکن از ویژگی‌ها ساخته می‌شود" : "ابتدا یک ویژگی با مقدار بسازید";
+    }
+
     function syncVariantsEmpty() {
         const empty = document.getElementById("product-variants-empty");
-        if (!empty) return;
-        empty.hidden = variantsEl.children.length > 0;
-        if (!attributes.length) {
-            empty.textContent = "ابتدا در مرحله ۱ حداقل یک ویژگی بسازید.";
-        } else if (!variantsEl.children.length) {
-            empty.textContent = "هنوز واریانتی نیست. یک ترکیب اضافه کنید.";
+        const head = document.getElementById("product-variants-head");
+        const countEl = document.getElementById("variant-count");
+        const n = variantsEl.children.length;
+        if (empty) {
+            empty.hidden = n > 0;
+            if (!attributes.length) {
+                empty.innerHTML =
+                    "<strong>اول ویژگی بسازید</strong><span>رنگ یا سایز را در مرحله ۱ تعریف کنید، بعد ترکیب‌ها ساخته می‌شوند.</span>";
+            } else if (!n) {
+                empty.innerHTML =
+                    "<strong>ترکیبی نیست</strong><span>با «ساخت همه ترکیب‌ها» همه حالت‌ها را یکجا بسازید، یا یکی اضافه کنید.</span>";
+            }
         }
+        if (head) head.hidden = n === 0;
+        if (countEl) countEl.textContent = api.formatNumber(n) + " ترکیب";
+        syncGenerateBtn();
+        markDuplicateVariants();
+    }
+
+    function variantComboKey(row) {
+        return Array.from(row.querySelectorAll(".js-variant-attrs select"))
+            .map(function (el) {
+                return el.value || "";
+            })
+            .join("|");
+    }
+
+    function markDuplicateVariants() {
+        const rows = Array.from(variantsEl.querySelectorAll(".sa-variant-row"));
+        const counts = {};
+        rows.forEach(function (row) {
+            const key = variantComboKey(row);
+            counts[key] = (counts[key] || 0) + 1;
+        });
+        rows.forEach(function (row) {
+            const key = variantComboKey(row);
+            const incomplete = !key || key.split("|").some(function (part) {
+                return !part;
+            });
+            const dup = !incomplete && counts[key] > 1;
+            row.classList.toggle("is-duplicate", dup);
+            const msg = row.querySelector(".js-variant-dup");
+            if (msg) msg.hidden = !dup;
+        });
+    }
+
+    function cartesian(sets) {
+        return sets.reduce(
+            function (acc, set) {
+                const out = [];
+                acc.forEach(function (prefix) {
+                    set.forEach(function (item) {
+                        out.push(prefix.concat([item]));
+                    });
+                });
+                return out;
+            },
+            [[]]
+        );
+    }
+
+    function generateAllVariants() {
+        const sets = attributes
+            .map(function (a) {
+                return (a.values || []).map(function (v) {
+                    return v.id;
+                });
+            })
+            .filter(function (set) {
+                return set.length > 0;
+            });
+        if (!sets.length) {
+            api.flash("ابتدا حداقل یک ویژگی با مقدار بسازید", true);
+            return;
+        }
+        const combos = cartesian(sets);
+        if (combos.length > 48) {
+            api.flash("تعداد ترکیب‌ها بیش از ۴۸ است. ویژگی‌ها را کمتر کنید یا دستی اضافه کنید.", true);
+            return;
+        }
+        const existing = new Set(
+            Array.from(variantsEl.querySelectorAll(".sa-variant-row")).map(variantComboKey)
+        );
+        let added = 0;
+        combos.forEach(function (ids) {
+            const key = ids.map(String).join("|");
+            if (existing.has(key)) return;
+            addVariantRow({ attribute_value_ids: ids });
+            existing.add(key);
+            added += 1;
+        });
+        if (!added) api.flash("همه ترکیب‌ها از قبل وجود دارند");
+        else api.flash(api.formatNumber(added) + " ترکیب ساخته شد");
     }
 
     function renumberVariants() {
-        const rows = variantsEl.querySelectorAll(".sa-variant-row");
-        rows.forEach(function (row, idx) {
-            const indexEl = row.querySelector(".js-variant-index");
-            if (indexEl) indexEl.textContent = "واریانت " + api.formatNumber(idx + 1);
+        variantsEl.querySelectorAll(".sa-variant-row").forEach(function (row) {
             updateVariantSummary(row);
         });
+        markDuplicateVariants();
     }
 
     function updateVariantSummary(row) {
@@ -190,7 +315,8 @@
             const opt = sel.options[sel.selectedIndex];
             if (sel.value && opt) parts.push(opt.textContent);
         });
-        summaryEl.textContent = parts.length ? "— " + parts.join(" · ") : "— انتخاب ویژگی‌ها";
+        summaryEl.textContent = parts.length ? parts.join(" · ") : "انتخاب ویژگی‌ها";
+        markDuplicateVariants();
     }
 
     function syncImagesEmpty() {
@@ -230,7 +356,8 @@
         const el = document.getElementById("attributes-list");
         if (!attributes.length) {
             el.innerHTML =
-                '<div class="sa-variant-empty sa-mt-0">هنوز ویژگی‌ای تعریف نشده. با دکمه «ویژگی جدید» شروع کنید.</div>';
+                '<div class="sa-variant-empty sa-mt-0"><strong>ویژگی ندارید</strong><span>با «ویژگی جدید» رنگ، سایز یا حافظه را بسازید.</span></div>';
+            syncGenerateBtn();
             return;
         }
         el.innerHTML = attributes
@@ -255,6 +382,7 @@
                 );
             })
             .join("");
+        syncGenerateBtn();
     }
 
     function buildAttrSelects(container, selectedIds) {
@@ -463,29 +591,74 @@
         return (prefer && prefer.url) || file.url || "";
     }
 
+    function galleryImageUrls() {
+        return new Set(
+            Array.from(imagesEl.querySelectorAll('[name="image"]'))
+                .map(function (el) {
+                    return el.value.trim();
+                })
+                .filter(Boolean)
+        );
+    }
+
     function applyPickedUrl(url, alt) {
+        if (!url) return false;
         if (pickerMode === "og") {
             document.getElementById("product-og-image").value = url;
-            return;
+            return true;
         }
         if (pickerMode === "row" && pickerTarget) {
             pickerTarget.querySelector('[name="image"]').value = url;
             const altInput = pickerTarget.querySelector('[name="alt_text"]');
             if (alt && !altInput.value) altInput.value = alt;
             updateImagePreview(pickerTarget);
-            return;
+            return true;
         }
+        if (galleryImageUrls().has(url)) return false;
         const row = addImageRow({
             image: url,
             alt_text: alt || "",
             is_primary: imagesEl.children.length === 0,
         });
         updateImagePreview(row);
+        return true;
+    }
+
+    function isGalleryPicker() {
+        return pickerMode === "gallery";
+    }
+
+    function syncPickerSelection() {
+        const selected = new Set(
+            pickerSelected.map(function (item) {
+                return item.url;
+            })
+        );
+        pickerGrid.querySelectorAll(".sa-picker-item").forEach(function (btn) {
+            btn.classList.toggle("is-selected", selected.has(btn.getAttribute("data-url")));
+        });
+        const confirm = document.getElementById("picker-confirm");
+        const footer = document.getElementById("picker-footer");
+        if (!confirm || !footer) return;
+        footer.hidden = !isGalleryPicker();
+        const n = pickerSelected.length;
+        confirm.disabled = n === 0;
+        confirm.textContent = n
+            ? "افزودن " + api.formatNumber(n) + " تصویر"
+            : "افزودن تصاویر";
     }
 
     function openPicker(mode, targetRow) {
         pickerMode = mode || "gallery";
         pickerTarget = targetRow || null;
+        pickerSelected = [];
+        const hint = document.getElementById("picker-hint");
+        if (hint) {
+            hint.textContent = isGalleryPicker()
+                ? "چند تصویر را انتخاب کنید، سپس افزودن را بزنید."
+                : "روی تصویر کلیک کنید تا انتخاب شود.";
+        }
+        syncPickerSelection();
         if (typeof picker.showModal === "function") picker.showModal();
         else picker.setAttribute("open", "");
         loadPickerFiles();
@@ -495,6 +668,7 @@
         if (typeof picker.close === "function") picker.close();
         else picker.removeAttribute("open");
         pickerTarget = null;
+        pickerSelected = [];
     }
 
     function loadPickerFiles() {
@@ -530,6 +704,7 @@
                     );
                 })
                 .join("");
+            syncPickerSelection();
         });
     }
 
@@ -589,6 +764,62 @@
     document.getElementById("product-pick-og").addEventListener("click", function () {
         openPicker("og");
     });
+    document.getElementById("product-add-category").addEventListener("click", function () {
+        openCatalogQuick("category");
+    });
+    document.getElementById("product-add-brand").addEventListener("click", function () {
+        openCatalogQuick("brand");
+    });
+    if (catalogQuickName && catalogQuickSlug) {
+        catalogQuickName.addEventListener("input", function () {
+            if (!catalogQuickSlug.dataset.touched) {
+                catalogQuickSlug.value = slugify(catalogQuickName.value);
+            }
+        });
+        catalogQuickSlug.addEventListener("input", function () {
+            catalogQuickSlug.dataset.touched = "1";
+        });
+    }
+    if (document.getElementById("catalog-quick-cancel")) {
+        document.getElementById("catalog-quick-cancel").addEventListener("click", closeCatalogQuick);
+    }
+    if (catalogQuickForm) {
+        catalogQuickForm.addEventListener("submit", function (e) {
+            e.preventDefault();
+            const name = catalogQuickName.value.trim();
+            if (!name) {
+                api.flash("نام الزامی است", true);
+                return;
+            }
+            const isBrand = catalogQuickKind === "brand";
+            const path = isBrand
+                ? "/api/v1/store-admin/products/brands"
+                : "/api/v1/store-admin/products/categories";
+            const payload = {
+                name: name,
+                slug: catalogQuickSlug.value.trim(),
+            };
+            const saveBtn = document.getElementById("catalog-quick-save");
+            api.setBusy(saveBtn, true, "در حال ثبت...");
+            api.apiFetch(path, { method: "POST", body: JSON.stringify(payload) }).then(function ({ ok, data }) {
+                api.setBusy(saveBtn, false);
+                if (!ok) {
+                    api.flash(api.errorDetail(data, "ثبت ناموفق"), true);
+                    return;
+                }
+                if (isBrand) {
+                    brands.push(data);
+                    fillSelect("product-brand", brands, data.id, "— بدون برند —");
+                    api.flash("برند اضافه شد");
+                } else {
+                    categories.push(data);
+                    fillSelect("product-category", categories, data.id, "— بدون دسته —");
+                    api.flash("دسته اضافه شد");
+                }
+                closeCatalogQuick();
+            });
+        });
+    }
     document.getElementById("product-add-variant").addEventListener("click", function () {
         if (!attributes.length) {
             api.flash("ابتدا حداقل یک ویژگی بسازید", true);
@@ -596,6 +827,10 @@
         }
         addVariantRow({});
     });
+    const generateBtn = document.getElementById("product-generate-variants");
+    if (generateBtn) {
+        generateBtn.addEventListener("click", generateAllVariants);
+    }
 
     document.getElementById("attr-toggle-form").addEventListener("click", function () {
         const box = document.getElementById("attr-create-form");
@@ -667,55 +902,124 @@
     });
 
     document.getElementById("picker-close").addEventListener("click", closePicker);
+    const pickerCancel = document.getElementById("picker-cancel");
+    if (pickerCancel) pickerCancel.addEventListener("click", closePicker);
+    const pickerConfirm = document.getElementById("picker-confirm");
+    if (pickerConfirm) {
+        pickerConfirm.addEventListener("click", function () {
+            const chosen = pickerSelected.slice();
+            if (!chosen.length) {
+                api.flash("حداقل یک تصویر انتخاب کنید", true);
+                return;
+            }
+            let added = 0;
+            chosen.forEach(function (item) {
+                if (applyPickedUrl(item.url, item.alt)) added += 1;
+            });
+            closePicker();
+            if (added) api.flash(api.formatNumber(added) + " تصویر به گالری اضافه شد");
+            else api.flash("این تصاویر از قبل در گالری هستند", true);
+        });
+    }
     document.getElementById("picker-upload-btn").addEventListener("click", function () {
         pickerFileInput.click();
     });
     pickerFileInput.addEventListener("change", function () {
-        const file = pickerFileInput.files && pickerFileInput.files[0];
-        if (!file) return;
+        const files = Array.from(pickerFileInput.files || []);
+        if (!files.length) return;
         const uploadBtn = document.getElementById("picker-upload-btn");
-        const fd = new FormData();
-        fd.append("file", file);
-        fd.append("folder", "products");
-        fd.append("title", file.name);
-        fd.append("alt_text", "");
-        fd.append("is_public", "true");
         api.setBusy(uploadBtn, true, "آپلود...");
         api.flash("در حال آپلود...");
-        api.apiFetch("/api/v1/store-admin/files/upload", { method: "POST", body: fd }).then(function ({
-            ok,
-            data,
-        }) {
+        let lastError = "";
+        let chain = Promise.resolve([]);
+        files.forEach(function (file, index) {
+            chain = chain.then(function (acc) {
+                const fd = new FormData();
+                fd.append("file", file);
+                fd.append("folder", "products");
+                fd.append("title", file.name);
+                fd.append("alt_text", "");
+                fd.append("is_public", "true");
+                if (files.length > 1) {
+                    api.flash(
+                        "آپلود " +
+                            api.formatNumber(index + 1) +
+                            " از " +
+                            api.formatNumber(files.length) +
+                            "..."
+                    );
+                }
+                return api.apiFetch("/api/v1/store-admin/files/upload", { method: "POST", body: fd }).then(
+                    function ({ ok, data }) {
+                        if (ok) acc.push(data);
+                        else lastError = api.errorDetail(data, "آپلود ناموفق");
+                        return acc;
+                    }
+                );
+            });
+        });
+        chain.then(function (uploaded) {
             api.setBusy(uploadBtn, false);
             pickerFileInput.value = "";
-            if (!ok) {
-                api.flash((data && data.detail) || "آپلود ناموفق", true);
+            if (!uploaded.length) {
+                api.flash(lastError || "آپلود ناموفق", true);
                 return;
             }
-            api.flash("آپلود شد");
-            applyPickedUrl(data.url, data.alt_text || data.title || "");
+            let added = 0;
+            uploaded.forEach(function (data) {
+                if (applyPickedUrl(data.url, data.alt_text || data.title || "")) added += 1;
+            });
             closePicker();
+            if (added) api.flash(api.formatNumber(added) + " تصویر آپلود و اضافه شد");
+            else api.flash("آپلود شد");
+        }).catch(function () {
+            api.setBusy(uploadBtn, false);
+            pickerFileInput.value = "";
+            api.flash("آپلود ناموفق", true);
         });
     });
     pickerGrid.addEventListener("click", function (e) {
         const btn = e.target.closest(".sa-picker-item");
         if (!btn) return;
-        applyPickedUrl(btn.getAttribute("data-url"), btn.getAttribute("data-alt") || "");
-        closePicker();
-        api.flash("تصویر انتخاب شد");
+        const url = btn.getAttribute("data-url") || "";
+        const alt = btn.getAttribute("data-alt") || "";
+        if (!isGalleryPicker()) {
+            applyPickedUrl(url, alt);
+            closePicker();
+            api.flash("تصویر انتخاب شد");
+            return;
+        }
+        const idx = pickerSelected.findIndex(function (item) {
+            return item.url === url;
+        });
+        if (idx >= 0) pickerSelected.splice(idx, 1);
+        else pickerSelected.push({ url: url, alt: alt });
+        syncPickerSelection();
     });
 
     form.addEventListener("submit", function (e) {
         e.preventDefault();
         const id = document.getElementById("product-id").value;
+        const name = document.getElementById("product-name").value.trim();
+        const slug = document.getElementById("product-slug").value.trim();
+        if (!name) {
+            api.flash("نام محصول الزامی است", true);
+            document.getElementById("product-name").focus();
+            return;
+        }
+        if (!slug || !/^[a-z0-9\-]+$/.test(slug)) {
+            api.flash("اسلاگ را با حروف انگلیسی، عدد و خط تیره وارد کنید", true);
+            document.getElementById("product-slug").focus();
+            return;
+        }
         const categoryVal = document.getElementById("product-category").value;
         const brandVal = document.getElementById("product-brand").value;
         const compareVal = document.getElementById("product-compare").value;
         const productType = document.getElementById("product-type").value;
         const saveBtn = document.getElementById("product-save");
         const payload = {
-            name: document.getElementById("product-name").value.trim(),
-            slug: document.getElementById("product-slug").value.trim(),
+            name: name,
+            slug: slug,
             product_type: productType,
             base_price: Number(document.getElementById("product-price").value || 0),
             compare_price: compareVal === "" ? null : Number(compareVal),
@@ -759,7 +1063,7 @@
             api.setBusy(saveBtn, false);
             api.setPageLoading(root, false);
             if (!ok) {
-                api.flash((data && data.detail) || "ذخیره ناموفق", true);
+                api.flash(api.errorDetail(data, "ذخیره ناموفق"), true);
                 return;
             }
             api.flash(id ? "محصول به‌روز شد" : "محصول ایجاد شد");
@@ -768,6 +1072,10 @@
             } else {
                 window.location.href = "/manage/products/";
             }
+        }).catch(function () {
+            api.setBusy(saveBtn, false);
+            api.setPageLoading(root, false);
+            api.flash("ذخیره ناموفق", true);
         });
     });
 

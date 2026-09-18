@@ -372,3 +372,88 @@ def test_variant_weight_kg_nullable(store, product_data):
     variant.save(update_fields=["weight_kg"])
     variant.refresh_from_db()
     assert variant.weight_kg == Decimal("1.100")
+
+
+@pytest.mark.django_db
+def test_products_admin_create_with_relative_media_urls(client, store, products_token):
+    response = client.post(
+        "/api/v1/store-admin/products/",
+        data=json.dumps({
+            "name": "گالری رسانه",
+            "slug": "media-gallery",
+            "product_type": ProductType.SIMPLE,
+            "status": ProductStatus.DRAFT,
+            "base_price": 10000,
+            "initial_stock": 3,
+            "images": [
+                {
+                    "image": "/media/stores/product-shop/products/one.jpg",
+                    "alt_text": "اول",
+                    "is_primary": True,
+                },
+                {
+                    "image": "/media/stores/product-shop/products/two.jpg",
+                    "alt_text": "دوم",
+                },
+                {
+                    "image": "/media/stores/product-shop/products/three.jpg",
+                    "alt_text": "سوم",
+                },
+            ],
+        }),
+        content_type="application/json",
+        HTTP_AUTHORIZATION=f"Bearer {products_token}",
+        HTTP_HOST="products.local",
+    )
+    assert response.status_code == 200, response.content
+    created = response.json()
+    assert len(created["images"]) == 3
+    assert created["images"][0]["image"] == "/media/stores/product-shop/products/one.jpg"
+    assert ProductImage.objects.filter(product_id=created["id"]).count() == 3
+
+
+@pytest.mark.django_db
+def test_store_admin_category_and_brand_crud(client, store, products_token):
+    headers = {
+        "HTTP_AUTHORIZATION": f"Bearer {products_token}",
+        "HTTP_HOST": "products.local",
+    }
+    cat_res = client.post(
+        "/api/v1/store-admin/products/categories",
+        data=json.dumps({"name": "موبایل", "slug": "mobile"}),
+        content_type="application/json",
+        **headers,
+    )
+    assert cat_res.status_code == 200, cat_res.content
+    category_id = cat_res.json()["id"]
+
+    brand_res = client.post(
+        "/api/v1/store-admin/products/brands",
+        data=json.dumps({"name": "سامسونگ"}),
+        content_type="application/json",
+        **headers,
+    )
+    assert brand_res.status_code == 200, brand_res.content
+    brand = brand_res.json()
+    assert brand["name"] == "سامسونگ"
+    assert brand["slug"]
+
+    listed_cats = client.get("/api/v1/store-admin/products/categories/list", **headers)
+    assert listed_cats.status_code == 200
+    cats_payload = listed_cats.json()
+    cats = cats_payload if isinstance(cats_payload, list) else cats_payload.get("items", [])
+    assert any(c["id"] == category_id for c in cats)
+
+    listed_brands = client.get("/api/v1/store-admin/products/brands/list", **headers)
+    assert listed_brands.status_code == 200
+    brands_payload = listed_brands.json()
+    brands = brands_payload if isinstance(brands_payload, list) else brands_payload.get("items", [])
+    assert any(b["id"] == brand["id"] for b in brands)
+
+    del_cat = client.delete(f"/api/v1/store-admin/products/categories/{category_id}", **headers)
+    assert del_cat.status_code == 200, del_cat.content
+    assert Category.objects.filter(pk=category_id).count() == 0
+
+    del_brand = client.delete(f"/api/v1/store-admin/products/brands/{brand['id']}", **headers)
+    assert del_brand.status_code == 200, del_brand.content
+    assert Brand.objects.filter(pk=brand["id"]).count() == 0

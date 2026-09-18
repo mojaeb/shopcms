@@ -39,6 +39,9 @@ services:
       redis:
         condition: service_healthy
     restart: unless-stopped
+    networks:
+      - default
+      - proxy
     healthcheck:
       test:
         [
@@ -121,3 +124,8 @@ volumes:
   static_volume:
   media_volume:
   backup_volume:
+
+networks:
+  proxy:
+    name: proxy
+    external: true

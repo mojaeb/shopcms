@@ -267,7 +267,7 @@ class ProductVariant(TimeStampedModel):
 
 class ProductImage(TimeStampedModel):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="images", verbose_name="محصول")
-    image = models.URLField(verbose_name="تصویر")
+    image = models.CharField(max_length=500, verbose_name="تصویر")
     alt_text = models.CharField(max_length=200, blank=True, verbose_name="متن جایگزین")
     sort_order = models.IntegerField(default=0, verbose_name="ترتیب")
     is_primary = models.BooleanField(default=False, verbose_name="اصلی")

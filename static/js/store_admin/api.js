@@ -22,9 +22,31 @@
         return false;
     }
 
+    function errorDetail(data, fallback) {
+        const fallbackText = fallback || "خطا";
+        if (data == null) return fallbackText;
+        if (typeof data === "string" && data) return data;
+        const detail = data.detail != null ? data.detail : data.message;
+        if (typeof detail === "string" && detail) return detail;
+        if (Array.isArray(detail) && detail.length) {
+            return detail
+                .map(function (item) {
+                    if (typeof item === "string") return item;
+                    if (!item || typeof item !== "object") return "";
+                    return item.msg || item.message || item.detail || "";
+                })
+                .filter(Boolean)
+                .join(" — ") || fallbackText;
+        }
+        return fallbackText;
+    }
+
     function flash(message, isError) {
         const el = document.getElementById("sa-flash");
         if (!el) return;
+        if (message && typeof message !== "string") {
+            message = errorDetail(message, isError ? "خطا" : "");
+        }
         el.hidden = !message;
         el.textContent = message || "";
         el.classList.toggle("is-error", !!isError);
@@ -220,6 +242,7 @@
         apiFetch: apiFetch,
         unwrapList: unwrapList,
         flash: flash,
+        errorDetail: errorDetail,
         logout: logout,
         escapeHtml: escapeHtml,
         formatNumber: formatNumber,

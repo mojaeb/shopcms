@@ -1,6 +1,9 @@
 """Store admin products API."""
 
 from django.core.exceptions import ValidationError
+from django.db import IntegrityError
+from django.db.models import Count
+from django.utils.text import slugify as dj_slugify
 
 from ninja import Router, Schema
 from ninja.errors import HttpError
@@ -92,7 +95,7 @@ class ProductUpdateSchema(Schema):
 
 class CategoryCreateSchema(Schema):
     name: str
-    slug: str
+    slug: str = ""
     parent_id: int | None = None
     description: str = ""
     image: str = ""
@@ -114,8 +117,54 @@ class CategoryUpdateSchema(Schema):
 
 class BrandCreateSchema(Schema):
     name: str
-    slug: str
+    slug: str = ""
     logo: str = ""
+
+
+def _unique_slug(model, store, raw: str, fallback: str) -> str:
+    source = (raw or "").strip() or fallback or "item"
+    base = dj_slugify(source) or dj_slugify(fallback or "") or "item"
+    base = base[:180]
+    candidate = base
+    n = 2
+    while model.objects.filter(store=store, slug=candidate).exists():
+        suffix = f"-{n}"
+        candidate = base[: 180 - len(suffix)] + suffix
+        n += 1
+    return candidate
+
+
+def _product_count_of(obj) -> int:
+    n = getattr(obj, "_product_count", None)
+    if n is None:
+        n = obj.products.count()
+    return int(n)
+
+
+def _serialize_category(cat: Category) -> dict:
+    return {
+        "id": cat.id,
+        "name": cat.name,
+        "slug": cat.slug,
+        "parent_id": cat.parent_id,
+        "description": cat.description,
+        "image": cat.image,
+        "sort_order": cat.sort_order,
+        "is_active": cat.is_active,
+        "is_custom": cat.is_custom,
+        "product_count": _product_count_of(cat),
+    }
+
+
+def _serialize_brand(brand: Brand) -> dict:
+    return {
+        "id": brand.id,
+        "name": brand.name,
+        "slug": brand.slug,
+        "logo": brand.logo,
+        "is_active": brand.is_active,
+        "product_count": _product_count_of(brand),
+    }
 
 
 class AttributeValueInput(Schema):
@@ -163,21 +212,12 @@ def _attr_payload(attr: ProductAttribute) -> dict:
 @router.get("/categories/list")
 def list_categories(request):
     store = _store(request)
-    cats = Category.objects.filter(store=store).order_by("sort_order", "name")
-    return [
-        {
-            "id": c.id,
-            "name": c.name,
-            "slug": c.slug,
-            "parent_id": c.parent_id,
-            "description": c.description,
-            "image": c.image,
-            "sort_order": c.sort_order,
-            "is_active": c.is_active,
-            "is_custom": c.is_custom,
-        }
-        for c in cats
-    ]
+    cats = (
+        Category.objects.filter(store=store)
+        .annotate(_product_count=Count("products"))
+        .order_by("sort_order", "name")
+    )
+    return [_serialize_category(c) for c in cats]
 
 
 @router.post("/categories")
@@ -185,24 +225,26 @@ def create_category(request, payload: CategoryCreateSchema):
     store = _store(request)
     parent = None
     if payload.parent_id:
-        parent = Category.objects.get(pk=payload.parent_id, store=store)
-    cat = Category.objects.create(
-        store=store,
-        parent=parent,
-        name=payload.name,
-        slug=payload.slug,
-        description=payload.description,
-        image=payload.image,
-        sort_order=payload.sort_order,
-        is_custom=payload.is_custom,
-        is_active=payload.is_active,
-    )
-    return {
-        "id": cat.id,
-        "slug": cat.slug,
-        "name": cat.name,
-        "is_custom": cat.is_custom,
-    }
+        try:
+            parent = Category.objects.get(pk=payload.parent_id, store=store)
+        except Category.DoesNotExist:
+            raise HttpError(400, "دسته والد نامعتبر است")
+    slug = _unique_slug(Category, store, payload.slug, payload.name)
+    try:
+        cat = Category.objects.create(
+            store=store,
+            parent=parent,
+            name=payload.name.strip(),
+            slug=slug,
+            description=payload.description,
+            image=payload.image,
+            sort_order=payload.sort_order,
+            is_custom=payload.is_custom,
+            is_active=payload.is_active,
+        )
+    except IntegrityError as exc:
+        raise HttpError(400, "اسلاگ این دسته‌بندی تکراری است") from exc
+    return _serialize_category(cat)
 
 
 @router.patch("/categories/{category_id}")
@@ -223,26 +265,54 @@ def update_category(request, category_id: int, payload: CategoryUpdateSchema):
     for key, value in data.items():
         setattr(cat, key, value)
     cat.save()
-    return {
-        "id": cat.id,
-        "slug": cat.slug,
-        "name": cat.name,
-        "is_custom": cat.is_custom,
-        "is_active": cat.is_active,
-    }
+    return _serialize_category(cat)
+
+
+@router.delete("/categories/{category_id}")
+def delete_category(request, category_id: int):
+    store = _store(request)
+    try:
+        cat = Category.objects.get(pk=category_id, store=store)
+    except Category.DoesNotExist:
+        raise HttpError(404, "دسته‌بندی یافت نشد")
+    cat.delete()
+    return {"success": True, "detail": "دسته‌بندی حذف شد"}
 
 
 @router.get("/brands/list")
 def list_brands(request):
     store = _store(request)
-    return [{"id": b.id, "name": b.name, "slug": b.slug} for b in Brand.objects.filter(store=store)]
+    return [
+        _serialize_brand(b)
+        for b in Brand.objects.filter(store=store).annotate(_product_count=Count("products")).order_by("name")
+    ]
 
 
 @router.post("/brands")
 def create_brand(request, payload: BrandCreateSchema):
     store = _store(request)
-    brand = Brand.objects.create(store=store, name=payload.name, slug=payload.slug, logo=payload.logo)
-    return {"id": brand.id, "slug": brand.slug}
+    slug = _unique_slug(Brand, store, payload.slug, payload.name)
+    try:
+        brand = Brand.objects.create(
+            store=store,
+            name=payload.name.strip(),
+            slug=slug,
+            logo=payload.logo,
+        )
+    except IntegrityError as exc:
+        raise HttpError(400, "اسلاگ این برند تکراری است") from exc
+    return _serialize_brand(brand)
+
+
+@router.delete("/brands/{brand_id}")
+def delete_brand(request, brand_id: int):
+    store = _store(request)
+    try:
+        brand = Brand.objects.get(pk=brand_id, store=store)
+    except Brand.DoesNotExist:
+        raise HttpError(404, "برند یافت نشد")
+    brand.delete()
+    return {"success": True, "detail": "برند حذف شد"}
 
 
 @router.get("/attributes/list")

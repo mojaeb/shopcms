@@ -175,6 +175,11 @@
                 href: "/manage/products/new/",
             },
             {
+                title: "دسته‌ها و برندها",
+                desc: "افزودن یا حذف دسته و برند",
+                href: "/manage/catalog/",
+            },
+            {
                 title: "سفارش‌ها",
                 desc: "پیگیری و تغییر وضعیت",
                 href: "/manage/orders/",
