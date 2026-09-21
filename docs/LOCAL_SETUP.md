@@ -358,4 +358,4 @@ python manage.py runserver
 
 ---
 
-برای deploy روی سرور واقعی، فایل [DEPLOYMENT.md](./DEPLOYMENT.md) را ببینید.
+برای اجرا روی سرور واقعی، فایل [SERVER_SETUP.md](./SERVER_SETUP.md) را ببینید.
