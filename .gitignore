@@ -67,3 +67,5 @@ celerybeat.pid
 
 
 _temp
+# Impeccable scratch output (screenshots, headless Chrome profiles)
+.impeccable/review/
