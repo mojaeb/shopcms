@@ -25307,7 +25307,7 @@
       "file_type": "code",
       "norm_label": "boot()",
       "source_file": "themes/nextshop/src/main.js",
-      "source_location": "L179"
+      "source_location": "L200"
     },
     {
       "id": "themes_nextshop_src_main_closemobile",
@@ -25319,7 +25319,7 @@
       "file_type": "code",
       "norm_label": "closemobile()",
       "source_file": "themes/nextshop/src/main.js",
-      "source_location": "L159"
+      "source_location": "L180"
     },
     {
       "id": "themes_nextshop_src_main_closesearch",
@@ -25331,7 +25331,7 @@
       "file_type": "code",
       "norm_label": "closesearch()",
       "source_file": "themes/nextshop/src/main.js",
-      "source_location": "L169"
+      "source_location": "L190"
     },
     {
       "id": "themes_nextshop_src_main_createicons",
@@ -25355,7 +25355,7 @@
       "file_type": "code",
       "norm_label": "init()",
       "source_file": "themes/nextshop/src/main.js",
-      "source_location": "L152"
+      "source_location": "L173"
     },
     {
       "id": "themes_nextshop_src_main_initcarouselswipers",
@@ -25367,7 +25367,7 @@
       "file_type": "code",
       "norm_label": "initcarouselswipers()",
       "source_file": "themes/nextshop/src/main.js",
-      "source_location": "L127"
+      "source_location": "L140"
     },
     {
       "id": "themes_nextshop_src_main_initheroswipers",
@@ -25391,7 +25391,7 @@
       "file_type": "code",
       "norm_label": "openmobile()",
       "source_file": "themes/nextshop/src/main.js",
-      "source_location": "L158"
+      "source_location": "L179"
     },
     {
       "id": "themes_nextshop_src_main_refreshicons",
@@ -25415,7 +25415,7 @@
       "file_type": "code",
       "norm_label": "togglesearch()",
       "source_file": "themes/nextshop/src/main.js",
-      "source_location": "L160"
+      "source_location": "L181"
     },
     {
       "id": "themes_nextshop_src_modules_alpine_data_registeralpinedata",
@@ -254181,7 +254181,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "themes/nextshop/src/main.js",
-      "source_location": "L180",
+      "source_location": "L201",
       "weight": 1.0
     },
     {
@@ -254193,7 +254193,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "themes/nextshop/src/main.js",
-      "source_location": "L181",
+      "source_location": "L202",
       "weight": 1.0
     },
     {
@@ -254205,7 +254205,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "themes/nextshop/src/main.js",
-      "source_location": "L182",
+      "source_location": "L203",
       "weight": 1.0
     },
     {
@@ -254217,7 +254217,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "themes/nextshop/src/main.js",
-      "source_location": "L183",
+      "source_location": "L204",
       "weight": 1.0
     },
     {
@@ -254229,7 +254229,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "themes/nextshop/src/main.js",
-      "source_location": "L188",
+      "source_location": "L209",
       "weight": 1.0
     },
     {
@@ -254253,7 +254253,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "themes/nextshop/src/main.js",
-      "source_location": "L155",
+      "source_location": "L176",
       "weight": 1.0
     },
     {
@@ -425455,7 +425455,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "themes/nextshop/src/main.js",
-      "source_location": "L127",
+      "source_location": "L140",
       "weight": 1.0
     },
     {
@@ -425466,7 +425466,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "themes/nextshop/src/main.js",
-      "source_location": "L152",
+      "source_location": "L173",
       "weight": 1.0
     },
     {
@@ -425477,7 +425477,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "themes/nextshop/src/main.js",
-      "source_location": "L158",
+      "source_location": "L179",
       "weight": 1.0
     },
     {
@@ -425488,7 +425488,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "themes/nextshop/src/main.js",
-      "source_location": "L159",
+      "source_location": "L180",
       "weight": 1.0
     },
     {
@@ -425499,7 +425499,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "themes/nextshop/src/main.js",
-      "source_location": "L160",
+      "source_location": "L181",
       "weight": 1.0
     },
     {
@@ -425510,7 +425510,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "themes/nextshop/src/main.js",
-      "source_location": "L169",
+      "source_location": "L190",
       "weight": 1.0
     },
     {
@@ -455490,7 +455490,7 @@
       "confidence_score": 0.85,
       "context": "argument",
       "source_file": "themes/nextshop/src/main.js",
-      "source_location": "L192",
+      "source_location": "L213",
       "weight": 1.0
     },
     {
@@ -482946,5 +482946,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "7c551008af5b563b7478332196987e9dbb7bb8d4"
+  "built_at_commit": "2cdd4d3c0d054fb43056cbb3a63b35e6c42f4861"
 }

@@ -5,7 +5,7 @@
         <div class="swiper-slide ns-slider-slide">
             {% if slide.link %}<a href="{{ slide.link }}" class="ns-slider-link">{% endif %}
             {% if slide.image %}
-            <img src="{{ slide.image }}" alt="{{ slide.title|default:store.name }}" {% if not forloop.first %}loading="lazy"{% endif %}>
+            <img src="{{ slide.image }}" alt="{{ slide.title|default:store.name }}" draggable="false">
             {% else %}
             <div class="ns-slider-fallback"></div>
             {% endif %}
@@ -34,7 +34,7 @@
         <div class="swiper-slide ns-slider-slide" style="background:{{ slide.background_color|default:'#dbeafe' }}">
             {% if slide.button_link %}<a href="{{ slide.button_link }}" class="ns-slider-link">{% endif %}
             {% if slide.image %}
-            <img src="{{ slide.image }}" alt="{{ slide.title|default:store.name }}" {% if not forloop.first %}loading="lazy"{% endif %}>
+            <img src="{{ slide.image }}" alt="{{ slide.title|default:store.name }}" draggable="false">
             {% endif %}
             {% if slide.title or slide.text %}
             <div class="ns-slider-caption">

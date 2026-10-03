@@ -522,8 +522,10 @@ body.theme-nextshop #cart-page .empty-state {
 
 /* ——— Hero without side banners ——— */
 @media (min-width: 1024px) {
-    .ns-hero-grid--solo .ns-slider {
-        aspect-ratio: 3 / 1;
+    .ns-hero-grid--solo .ns-slider,
+    .ns-hero-grid--solo .ns-slider.swiper {
+        height: clamp(12rem, 32vw, 22rem);
+        aspect-ratio: auto;
         min-height: 12rem;
         max-height: 22rem;
     }
@@ -590,8 +592,10 @@ body.theme-nextshop #cart-page .empty-state {
 
 /* ——— Hero without side banners ——— */
 @media (min-width: 1024px) {
-    .ns-hero-grid--solo .ns-slider {
-        aspect-ratio: 3 / 1;
+    .ns-hero-grid--solo .ns-slider,
+    .ns-hero-grid--solo .ns-slider.swiper {
+        height: clamp(12rem, 32vw, 22rem);
+        aspect-ratio: auto;
         min-height: 12rem;
         max-height: 22rem;
     }

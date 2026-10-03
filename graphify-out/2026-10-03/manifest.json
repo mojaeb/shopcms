@@ -2916,10 +2916,10 @@
     "semantic_hash": "4846e064d95a9e5b1736d5a290c12794"
   },
   "products/tests/test_products.py": {
-    "mtime": 1789736286.2878368,
-    "seen": 1790973930.9639122,
-    "ast_hash": "4e7137681683e7dc7c72f097095bd011",
-    "semantic_hash": "4e7137681683e7dc7c72f097095bd011"
+    "mtime": 1791038056.6626213,
+    "seen": 1791038267.3971045,
+    "ast_hash": "e0d334dc39f322aaf737a5ae29a4e33e",
+    "semantic_hash": ""
   },
   "products/tests/test_search.py": {
     "mtime": 1785501446.8637352,
@@ -3288,10 +3288,10 @@
     "semantic_hash": "1fb06a02b15e7e7bcdbc5c5846fe94c2"
   },
   "static/js/store_admin/products.js": {
-    "mtime": 1785478276.0911934,
-    "seen": 1790973930.9639122,
-    "ast_hash": "2ffa23bd9b2668b9475717c360114401",
-    "semantic_hash": "2ffa23bd9b2668b9475717c360114401"
+    "mtime": 1791038033.5557292,
+    "seen": 1791038267.3971045,
+    "ast_hash": "7c7b1698d0525cdbbe4c2600796ea5fa",
+    "semantic_hash": ""
   },
   "static/js/store_admin/richtext.js": {
     "mtime": 1785478276.0891948,
@@ -3300,10 +3300,10 @@
     "semantic_hash": "b1bd818ccf9e41ba19cb02bcb4888447"
   },
   "static/js/store_admin/settings.js": {
-    "mtime": 1789736175.4150274,
-    "seen": 1790973930.9639122,
-    "ast_hash": "d362cd99805fa0aa9a65e70c4b3acc89",
-    "semantic_hash": "d362cd99805fa0aa9a65e70c4b3acc89"
+    "mtime": 1791038153.271262,
+    "seen": 1791038267.3971045,
+    "ast_hash": "2dd0e5a6e70796be8c70d877ab06932c",
+    "semantic_hash": ""
   },
   "static/js/store_admin/shortcodes.js": {
     "mtime": 1785478276.0871968,
@@ -5388,15 +5388,15 @@
     "semantic_hash": ""
   },
   "templates/store_admin/products.html": {
-    "mtime": 1785478276.090197,
-    "seen": 1791021027.798526,
-    "ast_hash": "8934e2df71799dfbb9e9818a54a245f7",
+    "mtime": 1791037993.681512,
+    "seen": 1791038267.399074,
+    "ast_hash": "ae0c69927dcf3480c0a7e8faab484d55",
     "semantic_hash": ""
   },
   "templates/store_admin/settings.html": {
-    "mtime": 1789736175.0257032,
-    "seen": 1791021027.798526,
-    "ast_hash": "a105df438d745eac7c6bda52efc38df3",
+    "mtime": 1791038142.101904,
+    "seen": 1791038267.399074,
+    "ast_hash": "5a0b7ccb17c07a4115f0a93549291cc2",
     "semantic_hash": ""
   },
   "templates/store_admin/shortcodes.html": {

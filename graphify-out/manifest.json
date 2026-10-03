@@ -2094,10 +2094,10 @@
     "semantic_hash": "10852585b2e5f22d8f5bb35ac0b8da85"
   },
   "docker/entrypoint.sh": {
-    "mtime": 1785758250.6635673,
-    "seen": 1790973930.9639122,
-    "ast_hash": "3e1e1630cd1763e5846d2fa297ebdb8a",
-    "semantic_hash": "3e1e1630cd1763e5846d2fa297ebdb8a"
+    "mtime": 1791042125.0172365,
+    "seen": 1791042370.3693724,
+    "ast_hash": "7cac979eaf8e65a9acdf1bf6936234e6",
+    "semantic_hash": ""
   },
   "docker/gunicorn.conf.py": {
     "mtime": 1784398612.0222464,
@@ -3366,8 +3366,8 @@
     "semantic_hash": "e2addacbbdda4f023436a86fc2c8a8eb"
   },
   "static/themes/nextshop/.vite/manifest.json": {
-    "mtime": 1791028950.243533,
-    "seen": 1791037582.8033352,
+    "mtime": 1791042189.3368309,
+    "seen": 1791042370.3703713,
     "ast_hash": "b1b5d5dae8a779e5c3e3ae8b2992633c",
     "semantic_hash": "b1b5d5dae8a779e5c3e3ae8b2992633c"
   },
@@ -3384,9 +3384,9 @@
     "semantic_hash": "e56300d0f527490f2f01f7bf87239301"
   },
   "static/themes/nextshop/js/theme.js": {
-    "mtime": 1791028950.243533,
-    "seen": 1791037582.8033352,
-    "ast_hash": "56869f2422c4f56032bb4fe9587a5b64",
+    "mtime": 1791042189.3728166,
+    "seen": 1791042370.3703713,
+    "ast_hash": "1e0b4378394f8d49fe99cd8e68212fa0",
     "semantic_hash": ""
   },
   "static/themes/pulse/.vite/manifest.json": {
@@ -4044,9 +4044,9 @@
     "semantic_hash": "03c7b61c7499ba6d227ca3715cb96e27"
   },
   "themes/nextshop/src/main.js": {
-    "mtime": 1791020266.8636193,
-    "seen": 1791021027.7965126,
-    "ast_hash": "20f8b9e59e080bbbbe6329515f73ba2f",
+    "mtime": 1791042120.1534653,
+    "seen": 1791042370.3703713,
+    "ast_hash": "eea2a13daacc15d65db9b82d11dd0508",
     "semantic_hash": ""
   },
   "themes/nextshop/src/modules/alpine-data.js": {
@@ -5958,9 +5958,9 @@
     "semantic_hash": ""
   },
   "themes/nextshop/base.html": {
-    "mtime": 1791022814.8261259,
-    "seen": 1791022939.7375355,
-    "ast_hash": "e06e9ff1af7cb9b56c8f86f0af0327cc",
+    "mtime": 1791042128.2913487,
+    "seen": 1791042370.3723767,
+    "ast_hash": "3e9b34e6ae7a9d4e16b26faf9bd5e4a3",
     "semantic_hash": ""
   },
   "themes/nextshop/blog_list.html": {
@@ -6012,9 +6012,9 @@
     "semantic_hash": ""
   },
   "themes/nextshop/home.html": {
-    "mtime": 1791028734.077372,
-    "seen": 1791037582.8043349,
-    "ast_hash": "026517750dd78a598c9fabcf7ca924b7",
+    "mtime": 1791042122.891054,
+    "seen": 1791042370.3723767,
+    "ast_hash": "2ba83fc633a23022b4e9ba426bd7c790",
     "semantic_hash": ""
   },
   "themes/nextshop/invoices.html": {
@@ -6078,9 +6078,9 @@
     "semantic_hash": ""
   },
   "themes/nextshop/partials/slider.html": {
-    "mtime": 1791027819.7013083,
-    "seen": 1791037582.8043349,
-    "ast_hash": "ffda721f613e6826113dcd2ba848f108",
+    "mtime": 1791042121.8806922,
+    "seen": 1791042370.3723767,
+    "ast_hash": "73d0d6318e818379d1b8708e36e824cd",
     "semantic_hash": ""
   },
   "themes/nextshop/partials/theme.css.html": {

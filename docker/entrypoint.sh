@@ -69,7 +69,7 @@ fi
 
 if [ "${RUN_COLLECTSTATIC:-1}" = "1" ]; then
   echo "[entrypoint] collectstatic..."
-  python manage.py collectstatic --noinput
+  python manage.py collectstatic --noinput --clear
 fi
 
 echo "[entrypoint] starting: $*"

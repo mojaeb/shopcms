@@ -102,32 +102,47 @@ window.SwiperModules = { Navigation, Pagination, Autoplay };
 
 function initHeroSwipers() {
   document.querySelectorAll("[data-ns-hero]").forEach((el) => {
+    if (el.dataset.swiperInit === "1") return;
     const slides = el.querySelectorAll(".swiper-slide");
     if (!slides.length) return;
+    el.dataset.swiperInit = "1";
     const multi = slides.length > 1;
     const nextEl = el.querySelector(".ns-slider-next");
     const prevEl = el.querySelector(".ns-slider-prev");
     const paginationEl = el.querySelector(".swiper-pagination");
-    new Swiper(el, {
-      modules: [Navigation, Pagination, Autoplay],
-      loop: multi,
-      speed: 450,
-      autoplay: multi ? { delay: 5000, disableOnInteraction: false, pauseOnMouseEnter: true } : false,
-      pagination: multi && paginationEl ? { el: paginationEl, clickable: true } : undefined,
-      navigation: multi && nextEl && prevEl ? { nextEl, prevEl } : undefined,
-      a11y: {
-        prevSlideMessage: "اسلاید قبلی",
-        nextSlideMessage: "اسلاید بعدی",
-        paginationBulletMessage: "رفتن به اسلاید {{index}}",
-      },
-    });
+    // rewind, not loop: loop clones break on dir=rtl and the hero looks frozen
+    try {
+      new Swiper(el, {
+        modules: [Navigation, Pagination, Autoplay],
+        loop: false,
+        rewind: multi,
+        speed: 450,
+        watchOverflow: true,
+        observer: true,
+        observeParents: true,
+        autoplay: multi
+          ? { delay: 5000, disableOnInteraction: false, pauseOnMouseEnter: true }
+          : false,
+        pagination: multi && paginationEl ? { el: paginationEl, clickable: true } : undefined,
+        navigation: multi && nextEl && prevEl ? { nextEl, prevEl } : undefined,
+        a11y: {
+          prevSlideMessage: "اسلاید قبلی",
+          nextSlideMessage: "اسلاید بعدی",
+          paginationBulletMessage: "رفتن به اسلاید {{index}}",
+        },
+      });
+    } catch (err) {
+      console.error("[NextShop] hero slider", err);
+    }
   });
 }
 
 function initCarouselSwipers() {
   document.querySelectorAll("[data-ns-carousel]").forEach((el) => {
+    if (el.dataset.swiperInit === "1") return;
     const slides = el.querySelectorAll(".swiper-slide");
     if (!slides.length) return;
+    el.dataset.swiperInit = "1";
     const wrap = el.closest(".ns-carousel") || el.parentElement;
     const nextEl = wrap.querySelector(".ns-carousel-next");
     const prevEl = wrap.querySelector(".ns-carousel-prev");
@@ -137,10 +152,16 @@ function initCarouselSwipers() {
       spaceBetween: 16,
       speed: 400,
       watchOverflow: true,
+      observer: true,
+      observeParents: true,
       a11y: { prevSlideMessage: "قبلی", nextSlideMessage: "بعدی" },
     };
     if (nextEl && prevEl) opts.navigation = { nextEl, prevEl };
-    new Swiper(el, opts);
+    try {
+      new Swiper(el, opts);
+    } catch (err) {
+      console.error("[NextShop] carousel", err);
+    }
   });
 }
 

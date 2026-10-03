@@ -1,13 +1,13 @@
 # Graph Report - app  (2026-10-03)
 
 ## Corpus Check
-- 863 files · ~1,787,447 words
+- 863 files · ~1,788,538 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 137 file(s) not represented in the graph (top: .csv 51, .ttf 24, .css 14)
 
 ## Summary
-- 12367 nodes · 29054 edges · 700 communities (470 shown, 230 thin omitted)
-- Extraction: 90% EXTRACTED · 10% INFERRED · 0% AMBIGUOUS · INFERRED: 2770 edges (avg confidence: 0.93)
+- 12379 nodes · 29083 edges · 678 communities (472 shown, 206 thin omitted)
+- Extraction: 90% EXTRACTED · 10% INFERRED · 0% AMBIGUOUS · INFERRED: 2775 edges (avg confidence: 0.93)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
@@ -24,38 +24,38 @@
 - live-browser.js
 - cms/models.py
 - checks.mjs
-- Store
+- Domain
 - design_system.py
 - StoreMembership
 - context.mjs
-- test_orders.py
+- PaymentTransaction
 - Product
-- TaxService
+- Store
 - AuthService
-- core/api/__init__.py
+- django_conf
 - slideTo
 - forEach
 - api/super_admin.py
-- ProductSearchService
+- test_cache.py
 - G
 - setLiveState
 - StoreConfigForm
 - injected/index.mjs
-- test_store_scoping.py
+- User
 - live-server.mjs
-- CustomerAddress
+- addresses.py
 - connectSSE
 - slideTo
 - forEach
-- User
+- test_2fa.py
 - design-system.mjs
 - api/auth.py
 - REQUIREMENTS_AND_PHASES.md
-- otp.py
-- zarinpal.py
+- RateLimitService
+- StoreService
 - detect-antipatterns-browser.js
 - svelte-component.mjs
-- DesignSystemGenerator
+- StoreConfigService
 - hook-lib.mjs
 - issueAjaxRequest
 - modern-screenshot.umd.js
@@ -65,8 +65,8 @@
 - el
 - A11y
 - minimal/js/theme.js
-- pytest
-- test_subscriptions.py
+- ShadcnInstaller
+- SubscriptionService
 - builtin/__init__.py
 - initPageChat
 - StoreSetting
@@ -80,7 +80,7 @@
 - getDocument
 - cms/api/admin.py
 - Zoom
-- get_current_store
+- test_theme_engine.py
 - doctor.mjs
 - forEach
 - JWTService
@@ -90,12 +90,12 @@
 - live.mjs
 - CMSService
 - getDocument
-- cip/generate.py
+- cip/core.py
 - hook-admin.mjs
 - session-store.mjs
 - StorageDriverBase
 - includes
-- BlogPost
+- StorePlugin
 - test_shortcodes.py
 - api/store_admin.py
 - ZarinpalGateway
@@ -106,59 +106,59 @@
 - live-poll.mjs
 - store_admin_ui.py
 - 08 — Conventions & gotchas
-- test_wishlist.py
-- CMSCacheService
+- json
+- CacheManager
 - Tailwind CSS Utility Reference
 - logo/core.py
 - comments/api/public.py
 - storefront.py
 - shipping/api/admin.py
 - parseAnyColor
-- detect-html.mjs
+- ProductService
 - spacing
-- insert-ui.mjs
+- Order
 - slide_search_core.py
 - concept-seed.mjs
 - live-copy-edit-agent.mjs
 - ShippingContext
-- BM25
+- ThemeSettingsService
 - live-manual-edit-evidence.mjs
 - test_super_admin.py
-- Coupon
+- test_shipment_sms.py
 - plugins/api/admin.py
 - cart.js
 - products/api/admin.py
-- carts/api/admin.py
+- test_discounts.py
 - html-token-validator.py
 - TestTailwindConfigGenerator
 - scripts/core.py
 - getWindow
 - generate-image.mjs
-- event-validation.mjs
+- insert-ui.mjs
 - NotificationService
 - blog/api/admin.py
 - radius
-- subscriptions/api/admin.py
+- subscriptions/api/public.py
 - admin_docs.py
 - bindVariantHost
 - scanCssTextForPulsingDot
 - ref_node_path
-- BlogService
+- get_current_store
 - tanstack-adapter.mjs
-- test_plugins.py
+- PluginService
 - gohar/.vite/manifest.json
 - bindVariantHost
-- detect-url.mjs
+- detect-html.mjs
 - handleManualEditActivity
 - svelte-ast.mjs
 - Brand Guidelines v1.0
 - notifications/providers/__init__.py
 - gohar/src/main.js
 - getWindow
-- django_contrib
+- products/admin.py
 - api/cart.py
 - gray
-- tenants/models.py
+- test_digital.py
 - generate-slide.py
 - sveltekit-adapter.mjs
 - live-inject.mjs
@@ -189,7 +189,7 @@
 - nextshop/package.json
 - Form & Input Components
 - test_bulk_prices.py
-- core/admin.py
+- django_contrib
 - createLiveBrowserSessionState
 - minimal/src/main.js
 - auth.js
@@ -197,22 +197,22 @@
 - blog/api/public.py
 - minimal/package.json
 - settings/base.py
-- cms/signals.py
+- CMSCacheService
 - collectBrowserFindings
 - checkQuality
 - tag-strategy.mjs
-- payments.py
+- resolveVarRefs
 - Tailwind CSS Responsive Design
 - Animation Recipes
-- _store
-- StoreAdmin
+- test_taxes.py
+- ProductSearchService
 - Animation Recipes
 - wishlist.js
 - push
 - extract-colors.cjs
-- DiscountService
+- test_reports.py
 - applyEditing
-- tasks.py
+- tenants/models.py
 - serve-question.mjs
 - money_tags.py
 - swapWithStyle
@@ -222,12 +222,12 @@
 - config/urls.py
 - design-tokens-starter.json
 - StaticElement
-- admin_navigation.py
-- TestShadcnInstaller
+- pytest
+- test_products.py
 - createLiveBrowserDomHelpers
 - Typography Specifications
 - detect-utils.mjs
-- SandboxGateway
+- render-html.py
 - live.md
 - js/blog.js
 - discounts.js
@@ -235,19 +235,20 @@
 - validate-tokens.cjs
 - card
 - test_files.py
-- ShadcnInstaller
+- manual-edits-buffer.mjs
+- FileService
 - cms/admin.py
 - HealthService
 - frameworks/index.mjs
 - ShippingMethod
 - Logo Usage Rules
-- 05 — Storefront & themes
+- Command
 - inject-brand-context.cjs
 - primitive
 - re
 - checkTextOcclusionDOM
 - test_tailwind_config_gen.py
-- api/wishlist.py
+- CustomerAddress
 - 06 — Commerce flows (cart → order)
 - js/orders.js
 - critique-storage.mjs
@@ -259,15 +260,16 @@
 - ui-core.mjs
 - addresses.js
 - product-filters.js
+- test_addresses.py
 - settings.js
 - digital/api/admin.py
-- 03 — Domain models
+- carts/admin.py
 - js/comments.js
 - catalog.js
 - richtext.js
 - subscriptions.js
 - django_apps
-- test_health.py
+- test_store_admin.py
 - checkElementGptBorderShadowDOM
 - checkHeadingRhythmDOM
 - notifications/api/admin.py
@@ -275,7 +277,7 @@
 - shadcn/ui Accessibility Patterns
 - downloads.js
 - money.js
-- خلاصه
+- store_admin/comments.js
 - Animation Standards Reference
 - src/main.js
 - src/main.js
@@ -283,22 +285,22 @@
 - shipping/admin.py
 - Animation Standards Reference
 - shortcodes.js
-- files.js
+- subscription.py
 - palette.mjs
 - ChannelType
 - products/signals.py
 - banners.js
 - ShopCMS Deployment Guide
-- PaymentVerifyResult
+- SandboxGateway
 - Asset Approval Checklist
 - Logo AI Prompt Engineering
-- carts/admin.py
-- CouponUsage
+- datetime
+- files/models.py
 - auth-session.js
 - Responsive Design
-- events.py
+- S3CompatibleDriver
 - readConfig
-- Working With Sonner
+- .cancel
 - Color Palette Management
 - profile.js
 - toast.js
@@ -307,8 +309,8 @@
 - filterFindings
 - UI Styling Skill
 - generation-preflight.mjs
-- NotificationProvider
-- orders/api/public.py
+- test_subscriptions.py
+- context.py
 - reports/api/admin.py
 - accounts/admin.py
 - throttling.py
@@ -324,24 +326,25 @@
 - onboard.md
 - stateOf
 - Tailwind CSS Customization
-- BlogConfig
+- resolveLengthPx
+- journal.mjs
 - inline-ignores.mjs
 - Apple Design
 - Apple Design
 - The Toolkit
 - nuxt.mjs
 - Workflow
-- blog/signals.py
+- shipping/models.py
 - NotificationsConfig
 - shipping/apps.py
 - Routing by Task Type
 - Workflow
 - Public / customer
 - Operate mode depth (and Read notes)
-- optimization.py
+- 09 — Dev, seeds, Docker, tests
 - Asset Organization Guide
 - Primary Color Meanings
-- api/audit.py
+- address.py
 - entrypoint.sh
 - Core Logo Types
 - TenantsConfig
@@ -352,14 +355,14 @@
 - Brand Consistency Checklist
 - CIP Mockup Prompt Engineering
 - Color Semantics
-- .body
+- Scan mode (approach C: auto-extract, then confirm descriptive language)
 - iOS platform
 - Finding Animation Opportunities
 - Design Principles
 - Design Principles
 - Finding Animation Opportunities
 - animate.md
-- checkElementGptBorderShadow
+- comments/api/admin.py
 - Handle `generate`
 - File implementation steps
 - Icon Design Reference
@@ -379,28 +382,28 @@
 - optimize.md
 - Layout Patterns
 - Cognitive Load Assessment
-- payments/providers/__init__.py
-- test_zarinpal.py
+- file.py
+- storage/manager.py
 - resolveLiveInjectionAnchor
 - .constructor
-- digital/api/public.py
+- LocalStorageDriver
 - 02 — Architecture
-- store_admin/orders.js
-- backup_active_stores
+- LOCAL_SETUP.md
+- فاز ۲۶ — Backup & Restore (تکمیل شد)
 - update.md
 - Logo Design Reference
 - Token Architecture
 - detect-csp.mjs
-- products
-- backup_manifest.py
+- خلاصه فاز ۲
+- مشکلات رایج
 - Primitive Tokens
 - Simplify the Design
-- Step 4b: Write .impeccable/design.json sidecar (extensions only)
+- subscriptions/admin.py
 - Hardening Dimensions
 - Design System Master File — NextShop (Lona Center)
-- Scan mode (approach C: auto-extract, then confirm descriptive language)
+- خلاصه فاز ۱۱
 - پیشنهاد ساختار دیتابیس
-- HTML / data contracts (do not break)
+- خلاصه فاز ۱۰
 - concat
 - Core Visual Elements
 - CIP Design Style Guide
@@ -413,7 +416,7 @@
 - shadcn/ui Theming & Customization
 - seed-data/README.md
 - راهنمای اجرای ShopCMS روی سرور
-- core/services/__init__.py
+- test_full_checkout_api_flow
 - $type
 - $type
 - radius
@@ -426,17 +429,15 @@
 - طرق ورود (Authentication)
 - ۱۰. مشکلات رایج
 - Design Engineering
-- روش ۲ — با Docker (Postgres + Redis + Celery)
+- PaymentTransactionAdmin
 - CIP Design Reference
 - notifications/admin.py
 - Design Engineering
 - Common Cognitive Load Violations
-- test_payamak_otp_posts_pattern_api
 - Shape
 - _stub_router
 - DESIGN.md
 - Design System: NextShop / Lona Center
-- Command
 - 10 — File map (read these first)
 - راهنمای راه‌اندازی سرور
 - روش ۱ — سریع (بدون Docker، با SQLite)
@@ -451,12 +452,10 @@
 - خلاصه فاز ۴
 - hook.mjs
 - PRODUCT.md
-- Color Customization
 - Impeccable Finish Reviewer
 - Impeccable Manual Edit Applier
 - Slides Reference
 - HTML Slide Template
-- Component Customization
 - destructive
 - new-work.md
 - Impeccable Manual Edit Applier
@@ -485,7 +484,6 @@
 - خلاصه فاز ۶
 - فاز ۲۸ — Testing & Deployment (تکمیل شد)
 - خلاصه فاز ۱
-- taxes/apps.py
 - Gohar (گوهر) Theme
 - CSS Transform Mastery
 - The Sonner Principles (Building Loved Components)
@@ -537,26 +535,17 @@
 - فاز ۵ - Theme Engine
 - فاز ۷ - سیستم محصولات
 - RUN.md
-- Working With Sonner
-- خلاصه
+- CustomerSubscription
 - خلاصه فاز ۰
-- CmsConfig
 - FilesConfig
 - PaymentsConfig
 - ProductsConfig
-- addresses/apps.py
-- carts/apps.py
-- comments/apps.py
-- dashboard/apps.py
-- digital/apps.py
-- subscriptions/apps.py
-- wishlists/apps.py
 - stateOf
 
 ## God Nodes (most connected - your core abstractions)
 1. `Store` - 399 edges
 2. `User` - 195 edges
-3. `Product` - 128 edges
+3. `Product` - 129 edges
 4. `Domain` - 124 edges
 5. `Theme` - 117 edges
 6. `JWTService` - 115 edges
@@ -566,25 +555,25 @@
 10. `forEach()` - 97 edges
 
 ## Surprising Connections (you probably didn't know these)
+- `ایندکس‌های دیتابیس` --references--> `products()`  [INFERRED]
+  docs/cursor_file_implementation_steps.md → accounts/tests/test_store_scoping.py
 - `نقش‌های مجاز` --references--> `products()`  [INFERRED]
   docs/cursor_file_implementation_steps.md → accounts/tests/test_store_scoping.py
-- `کارت هدیه (`GiftCard`)` --references--> `GiftCard`  [INFERRED]
-  docs/cursor_file_implementation_steps.md → carts/models.py
+- `اپ `addresses`` --references--> `CustomerAddress`  [INFERRED]
+  docs/cursor_file_implementation_steps.md → addresses/models.py
 - `افزونه‌های built-in` --references--> `coupon()`  [INFERRED]
   docs/cursor_file_implementation_steps.md → carts/tests/test_cart.py
 - `افزونه‌های پیش‌فرض` --references--> `coupon()`  [INFERRED]
   docs/cursor_file_implementation_steps.md → carts/tests/test_cart.py
-- `OTP — ورود و ثبت‌نام` --references--> `NotificationService`  [INFERRED]
-  docs/cursor_file_implementation_steps.md → notifications/services/notification.py
 
 ## Import Cycles
 - None detected.
 
-## Communities (700 total, 230 thin omitted)
+## Communities (678 total, 206 thin omitted)
 
 ### Community 0 - "django_db"
 Cohesion: 0.03
-Nodes (39): Migration, Migration, Migration, Migration, Migration, Migration, Migration, Migration (+31 more)
+Nodes (42): Migration, Migration, Migration, Migration, Migration, Migration, Migration, Migration (+34 more)
 
 ### Community 1 - "pulse/js/theme.js"
 Cohesion: 0.02
@@ -595,8 +584,8 @@ Cohesion: 0.02
 Nodes (112): ac(), al(), Ar, Br, cc(), cl(), cn(), co() (+104 more)
 
 ### Community 3 - "CartService"
-Cohesion: 0.15
-Nodes (7): Cart, CartError, CartService, test_apply_coupon(), test_insufficient_stock(), test_merge_guest_cart(), cart()
+Cohesion: 0.07
+Nodes (23): Cart, CartError, CartService, DiscountError, DiscountService, auth_headers(), store(), test_add_and_serialize_cart() (+15 more)
 
 ### Community 4 - "gohar/js/theme.js"
 Cohesion: 0.02
@@ -607,48 +596,48 @@ Cohesion: 0.03
 Nodes (122): applyGlobalBarLabelState(), applyPlaceholderSizingStyles(), averageRgb01(), bindEditBadgeProxy(), bufferToBase64(), buildCollapsible(), buildColorModels(), buildListHtml() (+114 more)
 
 ### Community 6 - "cms/models.py"
-Cohesion: 0.10
+Cohesion: 0.09
 Nodes (20): BannerPosition, BlockType, MenuLocation, WidgetType, Command, Command, Command, Banner (+12 more)
 
 ### Community 7 - "checks.mjs"
 Cohesion: 0.03
-Nodes (137): ANIMATION_VALUE_KEYWORDS, checkBorders(), checkClippedOverflow(), checkColors(), checkEdgeFlushCardsDOM(), checkElementAIPaletteDOM(), checkElementBlinkingCursorDOM(), checkElementBorders() (+129 more)
+Nodes (136): ANIMATION_VALUE_KEYWORDS, borderColorsFromStyle(), borderWidthsFromStyle(), checkBorders(), checkClippedOverflow(), checkCreamPalette(), checkEdgeFlushCardsDOM(), checkElementBlinkingCursorDOM() (+128 more)
 
-### Community 8 - "Store"
-Cohesion: 0.02
-Nodes (77): setup_store(), store(), store(), store(), platform_metrics(), Command, Command, MaintenanceService (+69 more)
+### Community 8 - "Domain"
+Cohesion: 0.05
+Nodes (36): store(), store(), store(), store(), مدل‌ها (`tenants/models.py`), store(), setup_store(), store() (+28 more)
 
 ### Community 9 - "design_system.py"
-Cohesion: 0.04
-Nodes (25): generate_html(), get_deliverable_info(), get_image_base64(), main(), format_output(), ansi_ljust(), _detect_page_type(), _filter_anti_patterns_for_mode() (+17 more)
+Cohesion: 0.03
+Nodes (29): The contract (read once), ansi_ljust(), DesignSystemGenerator, _detect_page_type(), _filter_anti_patterns_for_mode(), format_ascii_box(), format_markdown(), format_master_md() (+21 more)
 
 ### Community 10 - "StoreMembership"
-Cohesion: 0.05
-Nodes (63): MembershipStatus, RoleScope, TwoFactorMethod, Command, Meta, Permission, Role, StoreMembership (+55 more)
+Cohesion: 0.04
+Nodes (77): MembershipStatus, RoleScope, TwoFactorMethod, Command, Meta, Permission, Role, StoreMembership (+69 more)
 
 ### Community 11 - "context.mjs"
 Cohesion: 0.04
-Nodes (90): appendAutonomyCounterDirective(), appendDetectorFallback(), appendImageGenDirective(), appendImageToolsDirective(), appendStalenessDirective(), appendSubagentAuthorizationDirective(), appendSurfaceBriefContext(), automaticHookMode() (+82 more)
+Nodes (93): appendAutonomyCounterDirective(), appendDetectorFallback(), appendImageGenDirective(), appendImageToolsDirective(), appendStalenessDirective(), appendSubagentAuthorizationDirective(), appendSurfaceBriefContext(), automaticHookMode() (+85 more)
 
-### Community 12 - "test_orders.py"
-Cohesion: 0.03
-Nodes (73): report_sales(), StoreAdminError, order_with_item(), Payments, اپ `orders`, InvoiceAdmin, OrderAdmin, OrderHistoryInline (+65 more)
+### Community 12 - "PaymentTransaction"
+Cohesion: 0.06
+Nodes (33): create_payment(), get_payment(), list_gateways(), payment_callback(), payment_webhook(), PaymentCreateSchema, refund_payment(), RefundSchema (+25 more)
 
 ### Community 13 - "Product"
-Cohesion: 0.03
-Nodes (88): CartItem, auth_headers(), product(), store(), test_add_and_serialize_cart(), test_add_requires_auth(), test_add_with_django_session(), test_cart_count_api() (+80 more)
+Cohesion: 0.08
+Nodes (39): CartItem, product(), product(), product(), TimeStampedModel, test_product_filter_options_cached(), Command, product() (+31 more)
 
-### Community 14 - "TaxService"
-Cohesion: 0.06
-Nodes (21): store(), store(), Command, Plugin system, اپ `taxes`, مدل‌های جدید, Command, Meta (+13 more)
+### Community 14 - "Store"
+Cohesion: 0.08
+Nodes (9): StoreAdminService, Store fields, اپ `taxes`, fa(), Meta, TaxRule, TaxError, TaxService (+1 more)
 
 ### Community 15 - "AuthService"
-Cohesion: 0.07
-Nodes (23): OTPPurpose, Command, OTPCode, AuthError, AuthService, TokenPair, OTPService, _get_latest_otp() (+15 more)
+Cohesion: 0.06
+Nodes (25): OTPPurpose, Command, UserManager, OTPCode, AuthError, AuthService, TokenPair, OTPError (+17 more)
 
-### Community 16 - "core/api/__init__.py"
-Cohesion: 0.05
-Nodes (34): BackupCreateSchema, BackupJobSchema, BackupRestoreSchema, create_backup(), download_backup(), get_backup(), _job_schema(), list_backups() (+26 more)
+### Community 16 - "django_conf"
+Cohesion: 0.04
+Nodes (32): BackupCreateSchema, BackupJobSchema, BackupRestoreSchema, create_backup(), download_backup(), get_backup(), _job_schema(), list_backups() (+24 more)
 
 ### Community 17 - "slideTo"
 Cohesion: 0.07
@@ -662,9 +651,9 @@ Nodes (65): Ai(), an(), bs, Ci(), da(), dl(), eo(), fl() (+57 more)
 Cohesion: 0.06
 Nodes (45): DashboardStatsSchema, DomainCreateSchema, DomainSchema, DomainUpdateSchema, PaymentSettingsSchema, PluginSchema, ShippingSettingsSchema, StoreAdminCreateSchema (+37 more)
 
-### Community 20 - "ProductSearchService"
-Cohesion: 0.07
-Nodes (34): blog_detail(), cms_page(), product_detail(), product_filter_options(), product_list(), report_summary(), clear_cache(), store() (+26 more)
+### Community 20 - "test_cache.py"
+Cohesion: 0.13
+Nodes (19): blog_detail(), cms_page(), product_detail(), product_filter_options(), product_list(), report_summary(), clear_cache(), store() (+11 more)
 
 ### Community 21 - "G"
 Cohesion: 0.07
@@ -675,24 +664,24 @@ Cohesion: 0.08
 Nodes (73): abandonForeignSession(), abortSvelteComponentInjection(), buildInsertPlaceholderSnapshotFromDom(), buildPickedAnchorSnapshot(), cancelEditing(), cancelEditingToPicking(), cancelInsertConfigure(), captureAndEmit() (+65 more)
 
 ### Community 23 - "StoreConfigForm"
-Cohesion: 0.06
-Nodes (16): UserManager, StoreManagerError, StoreManagerService, store(), store_admin_role(), test_assign_primary_creates_staff_user(), test_assign_primary_replaces_previous_manager(), test_membership_save_keeps_single_primary() (+8 more)
+Cohesion: 0.11
+Nodes (5): Meta, StoreConfigForm, parse_google_verification(), SeoError, test_parse_google_verification_rejects_junk()
 
 ### Community 24 - "injected/index.mjs"
 Cohesion: 0.06
 Nodes (68): addBrowserFindings(), addVisualContrastFindings(), addVisualContrastResult(), analyzeVisualContrast(), analyzeVisualContrastCandidate(), blendRgba(), browserColorsClose(), browserDesignSystemConfig() (+60 more)
 
-### Community 25 - "test_store_scoping.py"
-Cohesion: 0.05
-Nodes (43): PermissionService, manager_of_store1(), manager_role(), store1(), store2(), store_admin_role(), test_admin_multi_store_assignment(), test_admin_queryset_scopes_products() (+35 more)
+### Community 25 - "User"
+Cohesion: 0.04
+Nodes (31): User, DeviceService, PermissionService, test_record_and_revoke_device(), _bound_original(), _grant_store_staff_object_perm(), is_platform_only_nav_model(), is_store_staff_user() (+23 more)
 
 ### Community 26 - "live-server.mjs"
 Cohesion: 0.05
-Nodes (69): assembleLiveBrowserScript(), assertLiveBrowserScriptParts(), LIVE_BROWSER_SCRIPT_PARTS, readLiveBrowserScriptParts(), resolveLiveBrowserScriptParts(), compactError(), runGenerationPreflight(), eventPriority() (+61 more)
+Nodes (67): assembleLiveBrowserScript(), assertLiveBrowserScriptParts(), LIVE_BROWSER_SCRIPT_PARTS, readLiveBrowserScriptParts(), resolveLiveBrowserScriptParts(), eventPriority(), selectAvailablePendingEvent(), acknowledgePendingEvent() (+59 more)
 
-### Community 27 - "CustomerAddress"
-Cohesion: 0.06
-Nodes (43): AddressResponseSchema, AddressSchema, AddressUpdateSchema, checkout_selection(), create_address(), delete_address(), get_address(), list_addresses() (+35 more)
+### Community 27 - "addresses.py"
+Cohesion: 0.22
+Nodes (13): AddressResponseSchema, AddressSchema, AddressUpdateSchema, checkout_selection(), create_address(), delete_address(), get_address(), list_addresses() (+5 more)
 
 ### Community 28 - "connectSSE"
 Cohesion: 0.07
@@ -706,9 +695,9 @@ Nodes (50): addClasses(), attachEvents(), checkOverflow(), deleteProps(), detach
 Cohesion: 0.08
 Nodes (66): A11y(), A(), b(), c(), d(), f(), g(), l() (+58 more)
 
-### Community 31 - "User"
-Cohesion: 0.07
-Nodes (19): User, DeviceService, TwoFactorService, test_login_challenge_flow(), test_requires_2fa_for_staff(), test_totp_setup_and_enable(), test_record_and_revoke_device(), staff_user() (+11 more)
+### Community 31 - "test_2fa.py"
+Cohesion: 0.15
+Nodes (6): UserSecuritySettings, TwoFactorService, test_login_challenge_flow(), test_requires_2fa_for_staff(), test_totp_setup_and_enable(), 2FA (TOTP)
 
 ### Community 32 - "design-system.mjs"
 Cohesion: 0.07
@@ -716,15 +705,19 @@ Nodes (67): addClampEndpoints(), addColorObject(), addDesignColor(), addFontSize
 
 ### Community 33 - "api/auth.py"
 Cohesion: 0.05
-Nodes (47): DeviceSchema, disable_two_factor(), enable_two_factor(), list_devices(), logout(), LogoutSchema, me(), MeResponseSchema (+39 more)
+Nodes (48): DeviceSchema, disable_two_factor(), enable_two_factor(), list_devices(), logout(), LogoutSchema, me(), MeResponseSchema (+40 more)
 
 ### Community 34 - "REQUIREMENTS_AND_PHASES.md"
 Cohesion: 0.04
 Nodes (54): Address, Cart, Checkout, CMS, Discount, Inventory, Invoice, Multi Tenant (+46 more)
 
-### Community 35 - "otp.py"
-Cohesion: 0.06
-Nodes (17): UserDevice, UserSecuritySettings, APIRateLimitMiddleware, SecurityHeadersMiddleware, RateLimitExceeded, RateLimitService, clear_cache(), test_rate_limit_allows_under_threshold() (+9 more)
+### Community 35 - "RateLimitService"
+Cohesion: 0.09
+Nodes (14): UserDevice, APIRateLimitMiddleware, RateLimitExceeded, RateLimitService, clear_cache(), test_rate_limit_allows_under_threshold(), test_rate_limit_blocks_over_threshold(), test_rate_limit_disabled() (+6 more)
+
+### Community 36 - "StoreService"
+Cohesion: 0.08
+Nodes (16): Domain, Multi-tenancy, StoreSetting, clear_current_store(), TenantMiddleware, DomainRepository, StoreRepository, StoreInactiveError (+8 more)
 
 ### Community 37 - "detect-antipatterns-browser.js"
 Cohesion: 0.05
@@ -732,11 +725,11 @@ Nodes (59): browserColorsClose(), browserDesignSystemConfig(), browserHasDirectT
 
 ### Community 38 - "svelte-component.mjs"
 Cohesion: 0.06
-Nodes (78): bakeParamValues(), collectAllSelectors(), collectSelectorsFromNodes(), collectUnusedSelectors(), escapeRegExp(), formatBody(), isToggleOn(), normalizeSelector() (+70 more)
+Nodes (80): bakeParamValues(), collectAllSelectors(), collectSelectorsFromNodes(), collectUnusedSelectors(), escapeRegExp(), formatBody(), isToggleOn(), normalizeSelector() (+72 more)
 
-### Community 39 - "DesignSystemGenerator"
-Cohesion: 0.07
-Nodes (10): The contract (read once), DesignSystemGenerator, _palette_is_dark(), _relative_luminance(), _resolve_dial(), _select_palette_for_mode(), TestReasoningMatch, TestEndToEndCoherence (+2 more)
+### Community 39 - "StoreConfigService"
+Cohesion: 0.12
+Nodes (15): _lastmod(), _origin_from_request(), SeoService, _as_bool(), _as_decimal_str(), _as_number(), _as_str(), _cities_from_csv() (+7 more)
 
 ### Community 40 - "hook-lib.mjs"
 Cohesion: 0.05
@@ -751,8 +744,8 @@ Cohesion: 0.09
 Nodes (55): ae(), be(), bt(), Ce(), s(), Ct(), de(), dt() (+47 more)
 
 ### Community 43 - "test_distance.py"
-Cohesion: 0.08
-Nodes (24): is_iran_coordinate(), calculate_shipping(), distance_preview(), DistancePreviewSchema, list_methods(), ShippingCalculateSchema, _call_routing_api(), haversine_km() (+16 more)
+Cohesion: 0.10
+Nodes (19): is_iran_coordinate(), _call_routing_api(), haversine_km(), real_distance_km(), test_build_context_no_store_origin_distance_none(), test_build_context_outside_iran_distance_none(), test_build_context_with_coordinates_sets_distance(), test_build_context_without_coordinates_distance_none() (+11 more)
 
 ### Community 44 - "hook-before-edit.mjs"
 Cohesion: 0.10
@@ -774,53 +767,49 @@ Nodes (50): A11y(), b(), d(), f(), g(), h(), l(), m() (+42 more)
 Cohesion: 0.07
 Nodes (56): As, Bi(), Br(), bs, bt(), cs(), ds(), Es (+48 more)
 
-### Community 49 - "pytest"
-Cohesion: 0.06
-Nodes (8): clear_django_cache(), security_test_settings(), client(), test_uploaded_media_is_served_when_debug_is_false(), main(), _run(), test_flags_hardcoded_hex_sharing_line_with_token(), test_token_only_line_reports_no_violation()
-
-### Community 50 - "test_subscriptions.py"
-Cohesion: 0.07
-Nodes (25): Digital & subscriptions (side effects of paid order), اپ `subscriptions`, CustomerSubscriptionAdmin, SubscriptionPlanAdmin, SubscriptionRenewalAdmin, BillingInterval, RenewalStatus, SubscriptionStatus (+17 more)
+### Community 49 - "ShadcnInstaller"
+Cohesion: 0.03
+Nodes (7): main(), _run(), test_flags_hardcoded_hex_sharing_line_with_token(), test_token_only_line_reports_no_violation(), main(), ShadcnInstaller, TestShadcnInstaller
 
 ### Community 51 - "builtin/__init__.py"
-Cohesion: 0.19
-Nodes (18): PluginSettingField, AppointmentPlugin, BlogFeaturePlugin, BookingPlugin, CommentsFeaturePlugin, CouponFeaturePlugin, DigitalDownloadPlugin, FeaturePlugin (+10 more)
+Cohesion: 0.20
+Nodes (19): PluginSettingField, AppointmentPlugin, BlogFeaturePlugin, BookingPlugin, CommentsFeaturePlugin, CouponFeaturePlugin, DigitalDownloadPlugin, FeaturePlugin (+11 more)
 
 ### Community 52 - "initPageChat"
 Cohesion: 0.08
 Nodes (53): armPageChatForTyping(), attachSteerFocusDebug(), attachSteerFocusGuard(), buildSteerProcessingDots(), buildSteerQueueHint(), clearSteerAwaitTimer(), clearSteerFocusRecoverTimer(), collapsePageChat() (+45 more)
 
 ### Community 53 - "StoreSetting"
-Cohesion: 0.03
-Nodes (67): Important env vars, Settings, DomainInline, Meta, PrettyJSONFormField, PrettyJSONTextarea, _ShippingMethodInlineForm, StorePluginInline (+59 more)
+Cohesion: 0.04
+Nodes (38): Command, DomainAdmin, DomainInline, Meta, PluginAdmin, PrettyJSONFormField, PrettyJSONTextarea, _ShippingMethodInlineForm (+30 more)
 
 ### Community 54 - "detect-text.mjs"
 Cohesion: 0.07
-Nodes (42): blankCssComments(), BLOCK_BRACE_PREFIX_KEYWORDS, CSS_IN_JS_EXTENSIONS, detectText(), extFromFilePath(), extractCSSinJS(), extractStyleBlocks(), findCSSinJSTemplates() (+34 more)
+Nodes (40): blankCssComments(), BLOCK_BRACE_PREFIX_KEYWORDS, CSS_IN_JS_EXTENSIONS, detectText(), extFromFilePath(), extractCSSinJS(), extractStyleBlocks(), findCSSinJSTemplates() (+32 more)
 
 ### Community 55 - "manual-apply.mjs"
-Cohesion: 0.08
-Nodes (53): addOpToManualApplyChunk(), APPLY_EVENT_HARD_TIMEOUT_MS, APPLY_EVENT_SOFT_DEADLINE_MS, buildManualApplyAgentAction(), clearManualApplyTransaction(), collectManualApplyFiles(), compactManualApplyBatch(), compactManualApplyCandidates() (+45 more)
+Cohesion: 0.09
+Nodes (48): addOpToManualApplyChunk(), APPLY_EVENT_HARD_TIMEOUT_MS, APPLY_EVENT_SOFT_DEADLINE_MS, buildManualApplyAgentAction(), clearManualApplyTransaction(), collectManualApplyFiles(), compactManualApplyBatch(), compactManualApplyCandidates() (+40 more)
 
 ### Community 56 - "detect-antipatterns.mjs"
 Cohesion: 0.07
-Nodes (39): confirm(), detectCli(), dim(), fileUrlToLocalPath(), formatAdvisorySection(), formatFindings(), formatFindingsBody(), formatFindingSummary() (+31 more)
+Nodes (42): confirm(), detectCli(), dim(), fileUrlToLocalPath(), formatAdvisorySection(), formatFindings(), formatFindingsBody(), formatFindingSummary() (+34 more)
 
 ### Community 57 - "issueAjaxRequest"
 Cohesion: 0.09
 Nodes (51): addClassToElement(), addRequestIndicatorClasses(), ajaxHelper(), appendParam(), asElement(), asParentNode(), boostElement(), cleanInnerHtmlForHistory() (+43 more)
 
 ### Community 58 - "test_shipping.py"
-Cohesion: 0.10
-Nodes (22): zone_tier(), ShippingPaymentType, ShippingQuote, get_provider(), ShippingService, test_build_context_adds_package_weight(), test_build_context_uses_product_weight(), test_city_row_beats_zone_tier() (+14 more)
+Cohesion: 0.11
+Nodes (27): shipping_method(), shipping_method(), CalculationMode, ShippingProviderType, ShippingZone, ShippingQuote, ShippingService, method() (+19 more)
 
 ### Community 59 - "css-cascade.mjs"
-Cohesion: 0.05
-Nodes (69): applyStaticDeclaration(), buildBorderOverrideMap(), parseShorthand(), resolveVar(), buildStaticStyleMap(), collectStaticCssRules(), collectStaticCssText(), compareStaticPriority() (+61 more)
+Cohesion: 0.07
+Nodes (36): applyStaticDeclaration(), buildBorderOverrideMap(), parseShorthand(), resolveVar(), buildStaticStyleMap(), buildStaticWindow(), collectStaticCssRules(), compareStaticPriority() (+28 more)
 
 ### Community 60 - "live-commit-manual-edits.mjs"
-Cohesion: 0.07
-Nodes (68): allEntryIds(), argVal(), buildRepairBatch(), candidatesForEntry(), changedFilesSinceSnapshot(), clearAppliedEntries(), collectApplyOwnedFiles(), collectRollbackFiles() (+60 more)
+Cohesion: 0.10
+Nodes (49): allEntryIds(), argVal(), buildRepairBatch(), candidatesForEntry(), changedFilesSinceSnapshot(), clearAppliedEntries(), collectApplyOwnedFiles(), collectRollbackFiles() (+41 more)
 
 ### Community 61 - "getDocument"
 Cohesion: 0.09
@@ -834,9 +823,9 @@ Nodes (34): add_menu_item(), add_slide(), _banner_fields(), BannerCreateSchema, 
 Cohesion: 0.12
 Nodes (43): h(), T(), Autoplay(), y(), bindVariantHost(), A(), b(), d() (+35 more)
 
-### Community 64 - "get_current_store"
-Cohesion: 0.04
-Nodes (34): get_banners(), get_layout(), get_menus(), get_page(), get_slider(), PageSchema, SeoSchema, active_plugins() (+26 more)
+### Community 64 - "test_theme_engine.py"
+Cohesion: 0.05
+Nodes (17): set_current_store(), ThemeResolver, theme_asset(), theme_include(), theme_template(), minimal_store(), modern_store(), test_all_pages_exist_in_default() (+9 more)
 
 ### Community 65 - "doctor.mjs"
 Cohesion: 0.06
@@ -847,8 +836,8 @@ Cohesion: 0.10
 Nodes (47): c(), addEventListener(), boot(), r(), cloneAttributes(), t(), createElementIfNotDefined(), createIcons() (+39 more)
 
 ### Community 67 - "JWTService"
-Cohesion: 0.07
-Nodes (15): JWTAuth, JWTService, auth_headers(), mod_headers(), moderator(), user(), auth_headers(), auth_headers() (+7 more)
+Cohesion: 0.06
+Nodes (25): JWTAuth, JWTService, manager_of_store1(), store1(), store2(), test_admin_multi_store_assignment(), test_admin_queryset_scopes_products(), test_admin_store_list_scoped() (+17 more)
 
 ### Community 68 - "layout.md"
 Cohesion: 0.06
@@ -860,11 +849,11 @@ Nodes (39): addImageRow(), addVariantRow(), applyPickedUrl(), buildAttrSelects()
 
 ### Community 70 - "test_comments.py"
 Cohesion: 0.09
-Nodes (18): CommentAdmin, CommentLikeAdmin, ReplyInline, CommentStatus, Comment, CommentLike, Meta, CommentService (+10 more)
+Nodes (22): CommentAdmin, CommentLikeAdmin, ReplyInline, CommentStatus, Comment, CommentLike, Meta, CommentService (+14 more)
 
 ### Community 71 - "live.mjs"
-Cohesion: 0.09
-Nodes (26): Step 1: Run the pass, resolveProjectRoot(), resolveTargetSelection(), __dirname, ensureServerRunning(), globToRegex(), globToRegex(), resolveFiles() (+18 more)
+Cohesion: 0.15
+Nodes (21): resolveProjectRoot(), resolveTargetSelection(), __dirname, ensureServerRunning(), globToRegex(), acceptInstructions(), bootInstructions(), deferredWrapperInstructions() (+13 more)
 
 ### Community 72 - "CMSService"
 Cohesion: 0.10
@@ -874,9 +863,9 @@ Nodes (14): cms_context(), CMSService, factory(), test_cms_admin_create_banner()
 Cohesion: 0.10
 Nodes (45): addTriggerHandler(), bodyContains(), canAccessLocalStorage(), determineHistoryUpdates(), findAll(), findAndSwapOobElements(), getCachedHistory(), getDocument() (+37 more)
 
-### Community 74 - "cip/generate.py"
-Cohesion: 0.08
-Nodes (16): detect_domain(), get_cip_brief(), _load_csv(), search(), search_all(), _search_csv(), build_cip_prompt(), check_logo_required() (+8 more)
+### Community 74 - "cip/core.py"
+Cohesion: 0.09
+Nodes (10): BM25, detect_domain(), get_cip_brief(), _load_csv(), search(), search_all(), _search_csv(), format_brief() (+2 more)
 
 ### Community 75 - "hook-admin.mjs"
 Cohesion: 0.12
@@ -884,19 +873,15 @@ Nodes (42): ACTIONS, addIgnoreFile(), addIgnoreRule(), addIgnoreValue(), DETECTO
 
 ### Community 76 - "session-store.mjs"
 Cohesion: 0.09
-Nodes (37): FORBIDDEN, verifyAcceptedFile(), verifyAcceptedSource(), completeCli(), completeThroughServer(), parseArgs(), readServerInfo(), collectManualApplyFiles() (+29 more)
-
-### Community 77 - "StorageDriverBase"
-Cohesion: 0.07
-Nodes (9): StorageDriverBase, LocalStorageDriver, MinIOStorageDriver, R2StorageDriver, S3CompatibleDriver, S3StorageDriver, get_driver(), list_drivers() (+1 more)
+Nodes (36): FORBIDDEN, verifyAcceptedFile(), completeCli(), completeThroughServer(), parseArgs(), readServerInfo(), collectManualApplyFiles(), manualApplyReplyCommand() (+28 more)
 
 ### Community 78 - "includes"
 Cohesion: 0.10
 Nodes (34): ao(), at(), bo(), ec(), Fe(), ga(), Gl(), gt() (+26 more)
 
-### Community 79 - "BlogPost"
-Cohesion: 0.11
-Nodes (12): BlogCategoryAdmin, BlogCommentAdmin, BlogPostAdmin, BlogTagAdmin, Command, Command, BlogCategory, BlogComment (+4 more)
+### Community 79 - "StorePlugin"
+Cohesion: 0.04
+Nodes (29): BlogCategoryAdmin, BlogCommentAdmin, BlogPostAdmin, BlogTagAdmin, Command, Command, BlogCategory, BlogComment (+21 more)
 
 ### Community 80 - "test_shortcodes.py"
 Cohesion: 0.12
@@ -906,13 +891,17 @@ Nodes (19): Shortcode, _cache_key(), expand_shortcodes(), replace_pair(), replac
 Cohesion: 0.12
 Nodes (31): add_team_member(), dashboard_stats(), get_customer(), _get_store(), list_customers(), list_team(), _member_schema(), DashboardStatsSchema (+23 more)
 
+### Community 82 - "ZarinpalGateway"
+Cohesion: 0.11
+Nodes (13): ZarinpalGateway, test_zarinpal_custom_urls(), test_zarinpal_error_code_fallback(), test_zarinpal_live_inquiry(), test_zarinpal_live_refund_graphql(), test_zarinpal_live_refund_requires_access_token(), test_zarinpal_live_request_uses_api(), test_zarinpal_live_verify() (+5 more)
+
 ### Community 83 - "live-wrap.mjs"
 Cohesion: 0.13
 Nodes (35): resolveSourceTraits(), argVal(), buildInsertWrapperLines(), computeInsertLine(), INSERT_POSITIONS, insertCli(), isInsertPosition(), resolveElementMatch() (+27 more)
 
 ### Community 84 - "live-accept.mjs"
 Cohesion: 0.07
-Nodes (50): acceptCli(), acceptReceiptPath(), argVal(), buildAcceptedWrappedSource(), buildCarbonizeReplacement(), decodeHtmlAttr(), deindentContent(), detectCommentSyntax() (+42 more)
+Nodes (49): acceptCli(), acceptReceiptPath(), argVal(), buildAcceptedWrappedSource(), buildCarbonizeReplacement(), decodeHtmlAttr(), deindentContent(), detectCommentSyntax() (+41 more)
 
 ### Community 85 - "initGlobalBar"
 Cohesion: 0.09
@@ -927,56 +916,56 @@ Cohesion: 0.14
 Nodes (29): completionAckForAcceptResult(), completionTypeForAcceptResult(), PREVIEW_MODES_WITHOUT_SOURCE_MARKERS, augmentEventWithAcceptHandling(), buildAcceptScriptArgs(), buildPollReplyPayload(), completeAcceptHandling(), DEFAULT_EVENT_LEASE_MS (+21 more)
 
 ### Community 88 - "store_admin_ui.py"
-Cohesion: 0.19
-Nodes (23): What not to do, _ctx(), manage_banners(), manage_blog(), manage_blog_edit(), manage_blog_new(), manage_catalog(), manage_comments() (+15 more)
+Cohesion: 0.21
+Nodes (22): What not to do, _ctx(), manage_banners(), manage_blog(), manage_blog_edit(), manage_blog_new(), manage_catalog(), manage_comments() (+14 more)
 
 ### Community 89 - "08 — Conventions & gotchas"
 Cohesion: 0.08
 Nodes (19): 08 — Conventions & gotchas, Cart/checkout gotchas, Code style, Frontend libraries, Money & i18n, Plugins, Tenancy, Testing (+11 more)
 
-### Community 90 - "test_wishlist.py"
-Cohesion: 0.12
-Nodes (14): Meta, WishlistItem, WishlistError, WishlistService, auth_headers(), store(), test_add_and_list_wishlist(), test_storefront_wishlist_page() (+6 more)
+### Community 90 - "json"
+Cohesion: 0.09
+Nodes (24): add_to_wishlist(), check_wishlist(), list_wishlist(), remove_from_wishlist(), _store(), toggle_wishlist(), _user(), wishlist_count() (+16 more)
 
-### Community 91 - "CMSCacheService"
+### Community 91 - "CacheManager"
 Cohesion: 0.10
-Nodes (5): CMSCacheService, CacheManager, API (`/api/v1/store-admin/reports/`), اپ `reports` + `ReportService`, خلاصه
+Nodes (10): CacheManager, API (`/api/v1/store-admin/reports/`), API جدید, Health بهبود یافته, Management Commands, اپ `reports` + `ReportService`, ایندکس‌های دیتابیس, خلاصه (+2 more)
 
 ### Community 92 - "Tailwind CSS Utility Reference"
 Cohesion: 0.05
 Nodes (43): Arbitrary Values, Aspect Ratio, Background Colors, Border Color, Border Radius, Border Style, Border Width, Borders (+35 more)
 
 ### Community 93 - "logo/core.py"
-Cohesion: 0.09
-Nodes (10): BM25, detect_domain(), _load_csv(), search(), search_all(), _search_csv(), generate_design_brief(), _check_file() (+2 more)
+Cohesion: 0.11
+Nodes (7): BM25, detect_domain(), _load_csv(), search(), search_all(), _search_csv(), generate_design_brief()
 
 ### Community 94 - "comments/api/public.py"
-Cohesion: 0.13
-Nodes (16): comment_stats(), CommentAdminSchema, CommentModerateSchema, list_comments(), moderate_comment(), _store(), CommentCreateSchema, CommentLikeSchema (+8 more)
+Cohesion: 0.29
+Nodes (10): CommentCreateSchema, CommentLikeSchema, create_comment(), list_my_comments(), list_product_comments(), _optional_user(), _store(), toggle_like() (+2 more)
 
 ### Community 95 - "storefront.py"
 Cohesion: 0.10
 Nodes (24): _login_redirect(), _require_store(), storefront_404(), storefront_500(), storefront_addresses(), storefront_blog_list(), storefront_blog_single(), storefront_cart() (+16 more)
 
 ### Community 96 - "shipping/api/admin.py"
-Cohesion: 0.08
-Nodes (27): shipping_method(), shipping_method(), add_price(), bulk_import_prices(), BulkPriceImportSchema, BulkPriceRowSchema, create_method(), create_zone() (+19 more)
+Cohesion: 0.15
+Nodes (16): add_price(), bulk_import_prices(), BulkPriceImportSchema, BulkPriceRowSchema, create_method(), create_zone(), _detect_overlaps(), export_prices() (+8 more)
 
 ### Community 97 - "parseAnyColor"
 Cohesion: 0.12
 Nodes (35): checkBorders(), checkElementBorders(), checkElementBordersDOM(), checkElementColors(), checkElementColorsDOM(), checkElementGlowDOM(), checkElementHoverContrast(), checkElementIconTile() (+27 more)
 
-### Community 98 - "detect-html.mjs"
-Cohesion: 0.07
-Nodes (19): buildStaticWindow(), makeStaticStyle(), style, StaticDocument, checkStaticPageTypography(), detectHtml(), STATIC_ELEMENT_RULES, checkCreamPalette() (+11 more)
+### Community 98 - "ProductService"
+Cohesion: 0.08
+Nodes (8): Command, ProductAttributeValue, ProductService, test_normalize_and_swatch(), test_parse_single_and_multi_colors(), color_swatch_css(), normalize_color_code(), parse_color_codes()
 
 ### Community 99 - "spacing"
 Cohesion: 0.06
 Nodes (34): $type, $value, $type, $value, $type, $value, $type, $value (+26 more)
 
-### Community 100 - "insert-ui.mjs"
-Cohesion: 0.09
-Nodes (13): canCreateInsert(), clampPlaceholderSize(), computeInsertPosition(), groupSiblingRows(), hitSiblingInsertGap(), horizontalOverlap(), insertCreateDisabledReason(), insertLineCoords() (+5 more)
+### Community 100 - "Order"
+Cohesion: 0.10
+Nodes (25): order_with_item(), اپ `orders`, InvoiceAdmin, OrderAdmin, OrderHistoryInline, OrderItemInline, ShipmentAdmin, OrderStatus (+17 more)
 
 ### Community 101 - "slide_search_core.py"
 Cohesion: 0.08
@@ -987,52 +976,52 @@ Cohesion: 0.09
 Nodes (19): API_BASE, API_TIMEOUT_MS, apiBudgetMs(), dealCompositions(), driveSelection(), fetchRoll(), here, loadLocal() (+11 more)
 
 ### Community 103 - "live-copy-edit-agent.mjs"
-Cohesion: 0.13
-Nodes (30): applyMockWrites(), buildCopyEditBatchPrompt(), checkFrameworkSourceSyntax(), chooseCopyEditAgent(), COMMAND_AUTH_CACHE, commandAuthed(), commandExists(), compactBatchForPrompt() (+22 more)
+Cohesion: 0.14
+Nodes (31): applyMockWrites(), buildCopyEditBatchPrompt(), checkFrameworkSourceSyntax(), chooseCopyEditAgent(), COMMAND_AUTH_CACHE, commandAuthed(), commandExists(), compactBatchForPrompt() (+23 more)
 
 ### Community 104 - "ShippingContext"
-Cohesion: 0.18
-Nodes (10): ShippingContext, ShippingProvider, ApiShippingProvider, BaseCarrierProvider, FreeShippingProvider, PeykProvider, PostProvider, TipaxProvider (+2 more)
+Cohesion: 0.17
+Nodes (11): ShippingContext, ShippingProvider, ApiShippingProvider, BaseCarrierProvider, FreeShippingProvider, PeykProvider, PostProvider, TipaxProvider (+3 more)
 
-### Community 105 - "BM25"
-Cohesion: 0.10
-Nodes (4): BM25, BM25, _normalize(), TestTokenizer
+### Community 105 - "ThemeSettingsService"
+Cohesion: 0.08
+Nodes (16): StoreCacheData, StoreCacheService, _deep_merge(), _normalize_slide(), normalize_theme_config(), _normalize_trust_badge(), ThemeSettingsService, invalidate_domain_cache() (+8 more)
 
 ### Community 106 - "live-manual-edit-evidence.mjs"
 Cohesion: 0.15
-Nodes (25): analyzeSourceHint(), buildCandidatesForOp(), buildContextHintsByRef(), collectSearchFiles(), countOps(), decodeBasicHtml(), escapeRegExp(), findContextMatches() (+17 more)
+Nodes (26): analyzeSourceHint(), buildCandidatesForOp(), buildContextHintsByRef(), buildManualEditEvidence(), collectSearchFiles(), countOps(), decodeBasicHtml(), escapeRegExp() (+18 more)
 
 ### Community 107 - "test_super_admin.py"
-Cohesion: 0.11
-Nodes (21): default_theme(), plugins(), super_token(), superuser(), test_create_store(), test_create_store_admin(), test_dashboard_stats(), test_domain_crud() (+13 more)
+Cohesion: 0.06
+Nodes (37): products(), default_theme(), plugins(), sample_store(), super_token(), superuser(), test_create_store(), test_create_store_admin() (+29 more)
 
-### Community 108 - "Coupon"
-Cohesion: 0.13
-Nodes (15): DiscountScope, DiscountType, Command, Coupon, GiftCard, test_coupon_admin_api(), test_coupon_admin_api_lists_created_code(), test_expired_coupon() (+7 more)
+### Community 108 - "test_shipment_sms.py"
+Cohesion: 0.07
+Nodes (14): OrderError, OrderService, address(), customer_role(), FakeRequest, paid_order(), store(), test_sms_failure_does_not_fail_update_status() (+6 more)
 
 ### Community 109 - "plugins/api/admin.py"
-Cohesion: 0.15
-Nodes (15): list_store_plugins(), plugin_manifest(), plugin_registry(), PluginItemSchema, PluginToggleSchema, _store(), update_plugin(), PluginsConfig (+7 more)
+Cohesion: 0.22
+Nodes (8): list_store_plugins(), plugin_manifest(), plugin_registry(), PluginItemSchema, PluginToggleSchema, _store(), update_plugin(), PluginError
 
 ### Community 110 - "cart.js"
 Cohesion: 0.16
 Nodes (28): addToCart(), apiFetch(), applyCoupon(), applyGiftCard(), bindCartItemActions(), escapeHtml(), formatMoney(), formatQty() (+20 more)
 
 ### Community 111 - "products/api/admin.py"
-Cohesion: 0.16
-Nodes (19): add_attribute_values(), _attr_payload(), AttributeCreateSchema, AttributeValueInput, AttributeValuesAddSchema, BrandCreateSchema, CategoryCreateSchema, create_attribute() (+11 more)
+Cohesion: 0.11
+Nodes (32): add_attribute_values(), _attr_payload(), AttributeCreateSchema, AttributeValueInput, AttributeValuesAddSchema, BrandCreateSchema, CategoryCreateSchema, CategoryUpdateSchema (+24 more)
 
-### Community 112 - "carts/api/admin.py"
-Cohesion: 0.17
-Nodes (15): _coupon_fields(), CouponCreateSchema, CouponUpdateSchema, create_coupon(), create_gift_card(), delete_coupon(), delete_gift_card(), GiftCardCreateSchema (+7 more)
+### Community 112 - "test_discounts.py"
+Cohesion: 0.07
+Nodes (43): _coupon_fields(), CouponCreateSchema, CouponUpdateSchema, create_coupon(), create_gift_card(), delete_coupon(), delete_gift_card(), GiftCardCreateSchema (+35 more)
 
 ### Community 113 - "html-token-validator.py"
 Cohesion: 0.12
 Nodes (12): get_context(), is_allowed_exception(), is_allowed_rgba(), is_inside_block(), load_css_variables(), main(), print_result(), print_summary() (+4 more)
 
 ### Community 115 - "scripts/core.py"
-Cohesion: 0.11
-Nodes (11): detect_domain(), _domain_keywords(), _get_bm25(), _load_csv(), _load_product_keywords(), search(), _search_csv(), search_stack() (+3 more)
+Cohesion: 0.06
+Nodes (14): BM25, detect_domain(), _domain_keywords(), _get_bm25(), _load_csv(), _load_product_keywords(), _normalize(), search() (+6 more)
 
 ### Community 116 - "getWindow"
 Cohesion: 0.09
@@ -1042,13 +1031,13 @@ Nodes (25): calcBrowser(), calcDevice(), calcSupport(), closestElement(), elemen
 Cohesion: 0.09
 Nodes (19): args, buf, crc32(), crcTable, file, pngChunk(), readMode, crc32() (+11 more)
 
-### Community 118 - "event-validation.mjs"
-Cohesion: 0.12
-Nodes (26): AGENT_PHASE_SET, FORBIDDEN_MANUAL_EDIT_TEXT_CHARS, INSERT_POSITIONS, isValidId(), isValidMountVariant(), isValidVariantId(), MOUNT_ERROR_MAX_LENGTH, MOUNT_URL_MAX_LENGTH (+18 more)
+### Community 118 - "insert-ui.mjs"
+Cohesion: 0.05
+Nodes (39): AGENT_PHASE_SET, FORBIDDEN_MANUAL_EDIT_TEXT_CHARS, INSERT_POSITIONS, isValidId(), isValidMountVariant(), isValidVariantId(), MOUNT_ERROR_MAX_LENGTH, MOUNT_URL_MAX_LENGTH (+31 more)
 
 ### Community 119 - "NotificationService"
-Cohesion: 0.19
-Nodes (9): NotificationStatus, NotificationLog, NotificationError, NotificationService, test_list_providers(), test_otp_uses_notification_service(), test_send_otp_sms(), test_send_otp_sms_uses_channel_template() (+1 more)
+Cohesion: 0.23
+Nodes (4): NotificationLog, get_provider(), NotificationError, NotificationService
 
 ### Community 120 - "blog/api/admin.py"
 Cohesion: 0.16
@@ -1058,13 +1047,13 @@ Nodes (19): CategoryCreateSchema, CommentModerateSchema, create_category(), crea
 Cohesion: 0.11
 Nodes (27): $type, $value, lg, sm, $type, $value, $type, $value (+19 more)
 
-### Community 122 - "subscriptions/api/admin.py"
-Cohesion: 0.15
-Nodes (13): admin_renew(), create_plan(), get_plan(), list_subscriptions(), PlanCreateSchema, _store(), cancel_subscription(), CancelSchema (+5 more)
+### Community 122 - "subscriptions/api/public.py"
+Cohesion: 0.28
+Nodes (7): cancel_subscription(), CancelSchema, list_subscriptions(), renew_subscription(), _store(), _user(), SubscriptionError
 
 ### Community 123 - "admin_docs.py"
-Cohesion: 0.15
-Nodes (12): _base_context(), docs_index(), docs_index_url(), docs_page(), get_docs_urls(), _page_meta(), patch_admin_docs_urls(), get_urls() (+4 more)
+Cohesion: 0.20
+Nodes (8): _base_context(), docs_index(), docs_index_url(), docs_page(), get_docs_urls(), _page_meta(), patch_admin_docs_urls(), get_urls()
 
 ### Community 124 - "bindVariantHost"
 Cohesion: 0.18
@@ -1075,16 +1064,20 @@ Cohesion: 0.14
 Nodes (26): buildHtmlPatternCorpora(), checkHtmlPatterns(), collectCssCustomProps(), collectMarqueeKeyframes(), collectPulseKeyframes(), cssLengthToPx(), cssTextHasDarkRootBg(), extractShadowLengths() (+18 more)
 
 ### Community 126 - "ref_node_path"
-Cohesion: 0.12
-Nodes (14): candidates, detectorPath, __dirname, CODEX_HARNESSES, commandPrefixForSkillsDir(), __dirname, findHarnessDirs(), generatePinnedSkill() (+6 more)
+Cohesion: 0.08
+Nodes (17): Step 1: Run the pass, candidates, detectorPath, __dirname, CODEX_HARNESSES, commandPrefixForSkillsDir(), __dirname, findHarnessDirs() (+9 more)
+
+### Community 127 - "get_current_store"
+Cohesion: 0.08
+Nodes (25): get_banners(), get_layout(), get_menus(), get_page(), get_slider(), PageSchema, SeoSchema, active_plugins() (+17 more)
 
 ### Community 128 - "tanstack-adapter.mjs"
 Cohesion: 0.16
 Nodes (20): tanstackStart, applyTanStackLiveAdapter(), buildTanStackLiveRootComponent(), detectTanStackStartProject(), escapeRegExp(), findRootRouteFile(), insertAfterLastImport(), isManagedComponent() (+12 more)
 
-### Community 129 - "test_plugins.py"
-Cohesion: 0.14
-Nodes (13): list_codenames(), PluginError, admin_headers(), sync_plugins(), test_active_plugins_public_api(), test_cannot_enable_incompatible_plugin(), test_event_bus(), test_install_defaults() (+5 more)
+### Community 129 - "PluginService"
+Cohesion: 0.06
+Nodes (21): یکپارچه‌سازی, clear_listeners(), emit(), on(), serialize_manifest(), Command, get_plugin(), list_codenames() (+13 more)
 
 ### Community 130 - "gohar/.vite/manifest.json"
 Cohesion: 0.08
@@ -1094,9 +1087,9 @@ Nodes (25): src/fonts/Kalameh-Black.woff2, file, src, src/fonts/Kalameh-Bold.wof
 Cohesion: 0.18
 Nodes (25): bindVariantHost(), autofillMissingAttributes(), canAddToCart(), colorCodes(), displayComparePrice(), displayPrice(), findVariant(), getAllValues() (+17 more)
 
-### Community 132 - "detect-url.mjs"
-Cohesion: 0.18
-Nodes (17): createBrowserDetector(), detectUrl(), launchBrowser(), measureContentHiddenAfterReveal(), runVisualContrastFallback(), serializeDesignSystemForBrowser(), captureVisualContrastCandidate(), compareScreenshotContrast() (+9 more)
+### Community 132 - "detect-html.mjs"
+Cohesion: 0.10
+Nodes (25): createBrowserDetector(), detectUrl(), launchBrowser(), measureContentHiddenAfterReveal(), runVisualContrastFallback(), serializeDesignSystemForBrowser(), runTextContentAnalyzers(), detectHtml() (+17 more)
 
 ### Community 133 - "handleManualEditActivity"
 Cohesion: 0.18
@@ -1112,7 +1105,7 @@ Nodes (37): 1. Color Palette, 2. Typography, 3. Logo Usage, 4. Voice & Tone, 5. 
 
 ### Community 136 - "notifications/providers/__init__.py"
 Cohesion: 0.11
-Nodes (10): SendResult, ConsoleEmailProvider, ConsolePushProvider, ConsoleSmsProvider, KavenegarSmsProvider, SmtpEmailProvider, TelegramProvider, WebhookProvider (+2 more)
+Nodes (12): NotificationProvider, SendResult, ConsoleEmailProvider, ConsolePushProvider, ConsoleSmsProvider, KavenegarSmsProvider, SmtpEmailProvider, TelegramProvider (+4 more)
 
 ### Community 137 - "gohar/src/main.js"
 Cohesion: 0.17
@@ -1122,9 +1115,9 @@ Nodes (13): boot(), createIcons(), goharIcons, refreshIcons(), safeInit(), initM
 Cohesion: 0.11
 Nodes (22): calcBrowser(), calcDevice(), calcSupport(), elementIsChildOf(), elementIsChildOfSlot(), elementOuterSize(), extend(), extend$1() (+14 more)
 
-### Community 139 - "django_contrib"
-Cohesion: 0.13
-Nodes (5): CustomerAddressAdmin, DownloadLicenseAdmin, ProductDigitalAssetAdmin, TaxRuleAdmin, WishlistItemAdmin
+### Community 139 - "products/admin.py"
+Cohesion: 0.20
+Nodes (9): BrandAdmin, CategoryAdmin, InventoryAdmin, ProductAdmin, ProductAttributeAdmin, ProductImageInline, ProductVariantInline, TagAdmin (+1 more)
 
 ### Community 140 - "api/cart.py"
 Cohesion: 0.24
@@ -1134,9 +1127,9 @@ Nodes (16): add_to_cart(), apply_coupon(), apply_gift_card(), _cart(), cart_coun
 Cohesion: 0.09
 Nodes (23): $type, $value, $type, $value, $type, $value, $type, $value (+15 more)
 
-### Community 142 - "tenants/models.py"
-Cohesion: 0.03
-Nodes (46): coupon(), LicenseStatus, Command, DownloadLicense, generate_download_token(), Meta, ProductDigitalAsset, DigitalError (+38 more)
+### Community 142 - "test_digital.py"
+Cohesion: 0.06
+Nodes (27): DownloadLicenseAdmin, ProductDigitalAssetAdmin, LicenseStatus, DownloadLicense, generate_download_token(), Meta, ProductDigitalAsset, DigitalError (+19 more)
 
 ### Community 143 - "generate-slide.py"
 Cohesion: 0.13
@@ -1147,8 +1140,8 @@ Cohesion: 0.18
 Nodes (20): applySvelteKitLiveAdapter(), buildSvelteLiveRootComponent(), defaultSvelteLayout(), detectSvelteKitProject(), ensureSvelteLiveRootComponent(), escapeRegExp(), fileIncludes(), findSvelteKitAppHtml() (+12 more)
 
 ### Community 145 - "live-inject.mjs"
-Cohesion: 0.13
-Nodes (27): describeInjectArtifacts(), frameworkIgnorePatterns(), PATCH_UNDOERS, resolveFramework(), clearInjectJournal(), healArtifact(), healInjectJournal(), INJECT_JOURNAL_RELPATH (+19 more)
+Cohesion: 0.19
+Nodes (17): describeInjectArtifacts(), frameworkIgnorePatterns(), resolveFramework(), clearInjectJournal(), recordInjection(), CONFIG_PATH_GET(), __dirname, ensureLiveGitIgnores() (+9 more)
 
 ### Community 146 - "runHook"
 Cohesion: 0.17
@@ -1176,11 +1169,11 @@ Nodes (21): applyPlaceholderDimensions(), beginEditPin(), buildAnnotationsForCap
 
 ### Community 153 - "files/api/admin.py"
 Cohesion: 0.17
-Nodes (10): delete_file(), FileListSchema, FileUpdateSchema, get_file(), list_files(), list_storage_drivers(), _store(), update_file() (+2 more)
+Nodes (9): delete_file(), FileListSchema, FileUpdateSchema, get_file(), list_files(), list_storage_drivers(), _store(), update_file() (+1 more)
 
 ### Community 154 - "test_blog.py"
-Cohesion: 0.18
-Nodes (16): factory(), auth_headers(), category(), published_post(), staff_headers(), test_admin_create_post(), test_blog_comment_flow(), test_blog_list_and_detail_cache() (+8 more)
+Cohesion: 0.16
+Nodes (18): factory(), auth_headers(), category(), published_post(), staff_headers(), staff_user(), store(), test_admin_create_post() (+10 more)
 
 ### Community 155 - "fontSize"
 Cohesion: 0.11
@@ -1195,8 +1188,8 @@ Cohesion: 0.15
 Nodes (20): acceptedDomAlreadyClean(), applyOriginalAttrsToSvelteAnchor(), commitAcceptedSvelteComponentToDom(), componentModuleCandidates(), describeMountFailure(), detectDevServerBase(), ensureAcceptedDomClean(), findAcceptedRuntimeWrappers() (+12 more)
 
 ### Community 158 - "taxes/api/admin.py"
-Cohesion: 0.20
-Nodes (11): create_rule(), delete_rule(), get_settings(), list_rules(), _store(), TaxRuleCreateSchema, TaxRuleUpdateSchema, TaxSettingsUpdateSchema (+3 more)
+Cohesion: 0.21
+Nodes (10): create_rule(), delete_rule(), get_settings(), list_rules(), _store(), TaxRuleCreateSchema, TaxRuleUpdateSchema, TaxSettingsUpdateSchema (+2 more)
 
 ### Community 160 - "matches"
 Cohesion: 0.17
@@ -1215,8 +1208,8 @@ Cohesion: 0.11
 Nodes (19): $type, $value, background, foreground, muted-foreground, primary, primary-hover, secondary (+11 more)
 
 ### Community 164 - "context-signals.mjs"
-Cohesion: 0.18
-Nodes (15): escapeRegExp(), extractPlatform(), extractSectionValue(), cli(), COMMON_DEV_PORTS, devServerSignals(), gatherSignals(), gitSignals() (+7 more)
+Cohesion: 0.22
+Nodes (12): cli(), COMMON_DEV_PORTS, devServerSignals(), gatherSignals(), gitSignals(), hasCode(), isVendoredPath(), latestCritique() (+4 more)
 
 ### Community 165 - "impeccable/SKILL.md"
 Cohesion: 0.09
@@ -1234,10 +1227,6 @@ Nodes (18): addBrowserFindings(), addVisualContrastFindings(), addVisualContrast
 Cohesion: 0.17
 Nodes (18): checkColors(), checkElementAIPaletteDOM(), checkElementGlow(), checkElementRadialSpotlight(), checkElementRadialSpotlightDOM(), checkGlow(), checkHoverContrast(), checkRadialSpotlight() (+10 more)
 
-### Community 169 - "BasePlugin"
-Cohesion: 0.16
-Nodes (3): BasePlugin, PluginManifest, register()
-
 ### Community 170 - "nextshop/package.json"
 Cohesion: 0.11
 Nodes (18): alpinejs, dependencies, alpinejs, lucide, swiper, devDependencies, vite, lucide (+10 more)
@@ -1250,9 +1239,9 @@ Nodes (32): Accordion, Alert, Alert Dialog, Avatar, Badge, Button, Card, Checkbo
 Cohesion: 0.18
 Nodes (9): ShippingPrice, store(), test_bulk_import_creates_rows(), test_bulk_import_invalid_weight_range(), test_bulk_import_overlap_warning(), test_bulk_import_replace_all(), test_bulk_import_upsert_no_duplicate(), test_export_prices() (+1 more)
 
-### Community 173 - "core/admin.py"
-Cohesion: 0.15
-Nodes (5): _has_admin_permission(), patch_admin_superuser_only(), SuperuserAdminAuthenticationForm, AuditLogAdmin, BackupJobAdmin
+### Community 173 - "django_contrib"
+Cohesion: 0.11
+Nodes (6): CustomerAddressAdmin, _has_admin_permission(), patch_admin_superuser_only(), SuperuserAdminAuthenticationForm, AuditLogAdmin, BackupJobAdmin
 
 ### Community 174 - "createLiveBrowserSessionState"
 Cohesion: 0.20
@@ -1278,9 +1267,9 @@ Nodes (13): BlogCommentCreateSchema, _clamp_page(), create_comment(), get_post()
 Cohesion: 0.12
 Nodes (16): dependencies, gsap, lucide, devDependencies, vite, gsap, lucide, vite (+8 more)
 
-### Community 181 - "cms/signals.py"
-Cohesion: 0.19
-Nodes (7): invalidate_on_block(), invalidate_on_menu_item(), invalidate_on_shortcode(), invalidate_on_slide(), invalidate_on_store_model(), _invalidate_store(), invalidate_reports_on_order()
+### Community 181 - "CMSCacheService"
+Cohesion: 0.14
+Nodes (8): CMSCacheService, invalidate_on_block(), invalidate_on_menu_item(), invalidate_on_shortcode(), invalidate_on_slide(), invalidate_on_store_model(), _invalidate_store(), invalidate_reports_on_order()
 
 ### Community 182 - "collectBrowserFindings"
 Cohesion: 0.19
@@ -1294,9 +1283,9 @@ Nodes (16): checkElementOversizedH1(), checkElementOversizedH1DOM(), checkElemen
 Cohesion: 0.21
 Nodes (16): appendOriginToDirective(), buildTagBlock(), commentClose(), commentOpen(), detectLineEnding(), findCspMetaTags(), getAttr(), insertTag() (+8 more)
 
-### Community 185 - "payments.py"
-Cohesion: 0.24
-Nodes (11): create_payment(), get_payment(), list_gateways(), payment_callback(), payment_webhook(), PaymentCreateSchema, refund_payment(), RefundSchema (+3 more)
+### Community 185 - "resolveVarRefs"
+Cohesion: 0.11
+Nodes (35): buildHtmlPatternCorpora(), checkColors(), checkElementAIPaletteDOM(), checkGlow(), checkHoverContrast(), checkHtmlPatterns(), collectCssCustomProps(), collectMarqueeKeyframes() (+27 more)
 
 ### Community 186 - "Tailwind CSS Responsive Design"
 Cohesion: 0.06
@@ -1306,13 +1295,13 @@ Nodes (32): 1. Mobile-First Design, 2. Consistent Breakpoint Usage, 3. Test at B
 Cohesion: 0.06
 Nodes (30): Accordion / collapse, Animation Recipes, Button press, Drag to dismiss, Drawer / sheet, Dropdown, popover, menu, select, Hold to confirm, Masking a crossfade that won't settle (+22 more)
 
-### Community 188 - "_store"
-Cohesion: 0.17
-Nodes (13): CategoryUpdateSchema, delete_brand(), delete_category(), delete_product(), get_product(), list_brands(), list_categories(), list_products_admin() (+5 more)
+### Community 188 - "test_taxes.py"
+Cohesion: 0.11
+Nodes (13): Command, media_url(), Category, Tag, admin_headers(), store(), test_category_tax_rule(), test_default_tax_calculation() (+5 more)
 
-### Community 189 - "StoreAdmin"
-Cohesion: 0.15
-Nodes (6): DomainAdmin, PluginAdmin, StoreAdmin, StorePluginAdmin, StoreSettingAdmin, ThemeAdmin
+### Community 189 - "ProductSearchService"
+Cohesion: 0.13
+Nodes (15): factory(), ProductSortOrder, ProductSearchService, test_filter_by_attribute(), test_filter_by_brand_and_price(), test_filter_in_stock(), test_filter_options_api(), test_filter_options_scoped_to_category() (+7 more)
 
 ### Community 190 - "Animation Recipes"
 Cohesion: 0.06
@@ -1330,17 +1319,21 @@ Nodes (30): go(), go(), el(), fi(), ge(), gn(), go(), gs (+22 more)
 Cohesion: 0.20
 Nodes (11): calculateCompliance(), colorDistance(), displayPalette(), extractHexColors(), findNearestBrandColor(), fs, generateImageMagickCommand(), hexToRgb() (+3 more)
 
+### Community 194 - "test_reports.py"
+Cohesion: 0.14
+Nodes (14): report_sales(), ReportService, auth_headers(), staff_user(), store(), test_customers_report(), test_inventory_api(), test_inventory_report() (+6 more)
+
 ### Community 195 - "applyEditing"
 Cohesion: 0.06
 Nodes (42): addManualContextText(), applyEditing(), buildLocatorForLeaf(), canRestoreManualEditElement(), collectEditableTextRows(), visit(), collectManualContextPieces(), walk() (+34 more)
 
-### Community 196 - "tasks.py"
-Cohesion: 0.17
-Nodes (7): cleanup_audit_logs(), cleanup_old_backups(), cleanup_temp_files(), expire_subscriptions(), ping(), warm_active_stores_cache(), Celery Beat
+### Community 196 - "tenants/models.py"
+Cohesion: 0.04
+Nodes (17): clear_django_cache(), security_test_settings(), Command, Command, BaseService, MaintenanceService, backup_active_stores(), cleanup_audit_logs() (+9 more)
 
 ### Community 197 - "serve-question.mjs"
-Cohesion: 0.16
-Nodes (14): answerFile(), esc(), loadRound(), localImages, nextFile(), page(), payloadPath, portArg (+6 more)
+Cohesion: 0.09
+Nodes (29): answerFile(), esc(), loadRound(), localImages, nextFile(), page(), payloadPath, portArg (+21 more)
 
 ### Community 198 - "money_tags.py"
 Cohesion: 0.20
@@ -1359,12 +1352,12 @@ Cohesion: 0.22
 Nodes (14): firstCssUrl(), getLayerValue(), loadVisualContrastImage(), parseObjectPosition(), parsePositionPair(), parsePositionToken(), pickWorstContrastColor(), pointToImageSource() (+6 more)
 
 ### Community 202 - "orders/api/admin.py"
-Cohesion: 0.23
+Cohesion: 0.21
 Nodes (10): get_order(), list_orders(), order_statuses(), OrderAdminDetailSchema, OrderAdminListSchema, OrderStatusUpdateSchema, ShipmentUpdateSchema, _store() (+2 more)
 
 ### Community 203 - "config/urls.py"
-Cohesion: 0.16
-Nodes (3): serve_media(), download_file(), _optional_user()
+Cohesion: 0.12
+Nodes (10): serve_media(), Storefront / manage (`tenants/urls.py`), URL routing, PluginsConfig, get_plugin_urlpatterns(), list_registry_manifests(), load_plugins(), register_api_routers() (+2 more)
 
 ### Community 204 - "design-tokens-starter.json"
 Cohesion: 0.15
@@ -1372,11 +1365,15 @@ Nodes (12): component, $type, $value, dark, semantic, $schema, $type, $value (+4
 
 ### Community 205 - "StaticElement"
 Cohesion: 0.06
-Nodes (19): Charts, Common mismatches to catch, How to use this, Interaction & performance, Motion & visuals, Picking The Right Library, State & styling, The list (+11 more)
+Nodes (20): Charts, Common mismatches to catch, How to use this, Interaction & performance, Motion & visuals, Picking The Right Library, State & styling, The list (+12 more)
 
-### Community 206 - "admin_navigation.py"
-Cohesion: 0.19
-Nodes (9): can_access_admin(), can_view_model(), _check(), get_navigation(), _item(), _group_map(), test_model_permission_allows_superuser_and_denies_anonymous(), test_sidebar_keeps_platform_open_and_collapses_catalog() (+1 more)
+### Community 206 - "pytest"
+Cohesion: 0.09
+Nodes (13): can_access_admin(), can_view_model(), _check(), get_navigation(), _item(), _group_map(), test_model_permission_allows_superuser_and_denies_anonymous(), test_sidebar_keeps_platform_open_and_collapses_catalog() (+5 more)
+
+### Community 207 - "test_products.py"
+Cohesion: 0.12
+Nodes (21): store(), test_sina_live_not_implemented(), test_sina_registered(), test_sina_sandbox_create_and_verify(), txn(), test_product_detail_cache_invalidates_on_save(), test_product_list_paginates_and_caches(), test_product_service_category_filter() (+13 more)
 
 ### Community 208 - "createLiveBrowserDomHelpers"
 Cohesion: 0.19
@@ -1387,12 +1384,12 @@ Cohesion: 0.06
 Nodes (30): Accessibility, Base System, Best Practices, Clean & Modern, Common Font Pairings, Contrast Requirements, CSS Implementation, Editorial (+22 more)
 
 ### Community 210 - "detect-utils.mjs"
-Cohesion: 0.33
-Nodes (11): astro, detectAstroProject(), fileExists(), findConfigFile(), firstExistingFile(), hasAnyDependency(), literalConfigFiles(), readPackageDeps() (+3 more)
+Cohesion: 0.37
+Nodes (10): detectAstroProject(), fileExists(), findConfigFile(), firstExistingFile(), hasAnyDependency(), literalConfigFiles(), readPackageDeps(), detectNextProject() (+2 more)
 
-### Community 211 - "SandboxGateway"
-Cohesion: 0.24
-Nodes (3): PaymentCreateResult, PaymentRefundResult, SandboxGateway
+### Community 211 - "render-html.py"
+Cohesion: 0.10
+Nodes (9): generate_html(), get_deliverable_info(), get_image_base64(), main(), format_output(), format_output(), _check_file(), main() (+1 more)
 
 ### Community 212 - "live.md"
 Cohesion: 0.06
@@ -1419,32 +1416,36 @@ Cohesion: 0.20
 Nodes (12): $type, $value, bg, bg, padding, shadow, card, bg (+4 more)
 
 ### Community 218 - "test_files.py"
-Cohesion: 0.27
-Nodes (12): _make_image(), _make_video(), staff_headers(), staff_user(), test_delete_file_api(), test_delete_file_removes_records(), test_detect_file_types(), test_list_storage_drivers_api() (+4 more)
+Cohesion: 0.31
+Nodes (12): FileType, FileError, _make_image(), _make_video(), test_delete_file_api(), test_delete_file_removes_records(), test_detect_file_types(), test_list_storage_drivers_api() (+4 more)
+
+### Community 219 - "manual-edits-buffer.mjs"
+Cohesion: 0.19
+Nodes (22): args, buffer, cwd, pageUrlFilter, remaining, compactManualLogText(), rollbackManualApplyTransaction(), summarizeManualApplyFailures() (+14 more)
 
 ### Community 222 - "cms/admin.py"
 Cohesion: 0.30
 Nodes (10): BannerAdmin, ContentBlockInline, LayoutSettingsAdmin, MenuAdmin, MenuItemInline, PageAdmin, ShortcodeAdmin, SlideInline (+2 more)
 
 ### Community 223 - "HealthService"
-Cohesion: 0.19
-Nodes (5): health_check(), liveness(), readiness(), HealthService, HealthStatus
+Cohesion: 0.16
+Nodes (6): health_check(), liveness(), platform_metrics(), readiness(), HealthService, HealthStatus
 
 ### Community 224 - "frameworks/index.mjs"
-Cohesion: 0.15
-Nodes (12): COMMENT_SYNTAXES, FRAMEWORKS, INJECT_KINDS, PREVIEW_MODES, SOURCE_TRAIT_DEFAULTS, STYLE_MODES, TAG_PATCH_KIND, nextjs (+4 more)
+Cohesion: 0.14
+Nodes (13): astro, COMMENT_SYNTAXES, FRAMEWORKS, INJECT_KINDS, PREVIEW_MODES, SOURCE_TRAIT_DEFAULTS, STYLE_MODES, TAG_PATCH_KIND (+5 more)
 
 ### Community 225 - "ShippingMethod"
-Cohesion: 0.40
-Nodes (3): اپ `shipping` (Plugin-based), ShippingCalculator, ShippingMethod
+Cohesion: 0.22
+Nodes (4): اپ `shipping` (Plugin-based), zone_tier(), ShippingCalculator, ShippingMethod
 
 ### Community 226 - "Logo Usage Rules"
 Cohesion: 0.07
 Nodes (28): Absolute Don'ts, Approved Backgrounds, Before Using Logo, Clear Space, Co-branding, Color Rules, Color Usage, Color Variants (+20 more)
 
-### Community 227 - "05 — Storefront & themes"
-Cohesion: 0.33
-Nodes (5): 05 — Storefront & themes, Store admin UI is not a theme, Theme authoring rules, Theme directories on disk, Vite themes (pulse, gohar)
+### Community 227 - "Command"
+Cohesion: 0.17
+Nodes (3): Command, media_url(), price_of()
 
 ### Community 228 - "inject-brand-context.cjs"
 Cohesion: 0.31
@@ -1462,13 +1463,13 @@ Nodes (14): bl(), De(), Ml(), notify(), os, pc(), pop(), re() (+6 more)
 Cohesion: 0.22
 Nodes (11): checkTextOcclusionDOM(), clippedByInset(), clippedByRect(), elementDirectText(), expandBoxShorthand(), firstMetricLengthPx(), isLayeredElement(), isOpaqueDecoratedBox() (+3 more)
 
-### Community 233 - "api/wishlist.py"
-Cohesion: 0.36
-Nodes (10): add_to_wishlist(), check_wishlist(), list_wishlist(), remove_from_wishlist(), _store(), toggle_wishlist(), _user(), wishlist_count() (+2 more)
+### Community 233 - "CustomerAddress"
+Cohesion: 0.22
+Nodes (4): CustomerAddress, Meta, AddressService, سرویس `AddressService`
 
 ### Community 234 - "06 — Commerce flows (cart → order)"
-Cohesion: 0.15
-Nodes (9): Cart — `/api/v1/cart`  **add requires login (401)**, 06 — Commerce flows (cart → order), Cart, Checkout, End-to-end sequence, Orders, Shipping calculator, Tax (+1 more)
+Cohesion: 0.22
+Nodes (8): 06 — Commerce flows (cart → order), Checkout, End-to-end sequence, Orders, Payments, Shipping calculator, Tax, Tests related to this flow
 
 ### Community 235 - "js/orders.js"
 Cohesion: 0.38
@@ -1510,17 +1511,21 @@ Nodes (7): apiFetch(), bindListEvents(), getCookie(), loadAddresses(), openForm(
 Cohesion: 0.44
 Nodes (9): buildQuery(), fetchProducts(), getCheckedValues(), isModern(), isNextshop(), isPulse(), renderPagination(), renderProductCard() (+1 more)
 
+### Community 246 - "test_addresses.py"
+Cohesion: 0.20
+Nodes (15): auth_headers(), sample_address(), test_addresses_require_auth(), test_checkout_selection_api(), test_checkout_selection_multiple_without_default(), test_checkout_selection_single_address(), test_create_address_api(), test_delete_address_api() (+7 more)
+
 ### Community 247 - "settings.js"
-Cohesion: 0.36
-Nodes (6): addSlide(), emptySlide(), loadSettings(), renderGscForm(), renderThemeForm(), renumberSlides()
+Cohesion: 0.19
+Nodes (14): addSlide(), bindColorPair(), emptySlide(), hexOrEmpty(), loadSettings(), openPicker(), previewStyle(), renderGscForm() (+6 more)
 
 ### Community 248 - "digital/api/admin.py"
 Cohesion: 0.26
 Nodes (7): AssetAttachSchema, attach_asset(), detach_asset(), list_assets(), list_licenses(), revoke_license(), _store()
 
-### Community 249 - "03 — Domain models"
-Cohesion: 0.15
-Nodes (12): 03 — Domain models, addresses, carts, cms, files / digital / subscriptions / notifications / core, orders, payments, Relationship sketch (+4 more)
+### Community 249 - "carts/admin.py"
+Cohesion: 0.08
+Nodes (22): CartAdmin, CartItemInline, CouponAdmin, CouponM2MFilter, CouponUsageAdmin, GiftCardAdmin, GiftCardUsageAdmin, 03 — Domain models (+14 more)
 
 ### Community 250 - "js/comments.js"
 Cohesion: 0.54
@@ -1539,16 +1544,20 @@ Cohesion: 0.54
 Nodes (7): apiFetch(), bindActions(), formatDate(), getCookie(), load(), renderList(), renderSub()
 
 ### Community 254 - "django_apps"
-Cohesion: 0.18
-Nodes (3): AccountsConfig, OrdersConfig, ReportsConfig
+Cohesion: 0.05
+Nodes (13): AccountsConfig, AddressesConfig, BlogConfig, CartsConfig, CmsConfig, CommentsConfig, DashboardConfig, DigitalConfig (+5 more)
+
+### Community 255 - "test_store_admin.py"
+Cohesion: 0.19
+Nodes (14): admin_token(), customer_token(), customer_user(), setup_store(), store_admin_user(), test_customer_denied(), test_dashboard_stats(), test_list_customers() (+6 more)
 
 ### Community 256 - "checkElementGptBorderShadowDOM"
 Cohesion: 0.38
 Nodes (7): borderColorsFromStyle(), borderWidthsFromStyle(), checkElementGptBorderShadow(), checkElementGptBorderShadowDOM(), checkGptThinBorderWideShadow(), shadowLayerAlpha(), shadowMaxBlurPx()
 
 ### Community 257 - "checkHeadingRhythmDOM"
-Cohesion: 0.36
-Nodes (10): checkHeadingRhythmDOM(), clusterTop(), edgeAbove(), edgeBelow(), hasOwnTopBoundary(), insideSmallCard(), isVisibleFlow(), overlapsX() (+2 more)
+Cohesion: 0.62
+Nodes (7): checkHeadingRhythmDOM(), clusterTop(), edgeAbove(), edgeBelow(), hasOwnTopBoundary(), isVisibleFlow(), overlapsX()
 
 ### Community 258 - "notifications/api/admin.py"
 Cohesion: 0.28
@@ -1570,9 +1579,9 @@ Nodes (6): apiFetch(), formatDate(), getCookie(), renderLicense(), renderList(),
 Cohesion: 0.52
 Nodes (6): currencySuffix(), formatAmount(), formatMoney(), formatMoneyHtml(), isToman(), toPersianDigits()
 
-### Community 263 - "خلاصه"
-Cohesion: 0.24
-Nodes (11): API ادمین (`comments.moderate`), API مشتری, Seed, Storefront, خلاصه, formatDate(), load(), moderate() (+3 more)
+### Community 263 - "store_admin/comments.js"
+Cohesion: 0.23
+Nodes (11): formatDate(), load(), moderate(), normalizeProduct(), renderRows(), statusBadge(), loadDetail(), loadOrders() (+3 more)
 
 ### Community 264 - "Animation Standards Reference"
 Cohesion: 0.07
@@ -1602,17 +1611,17 @@ Nodes (25): Aggressive Escalation Triggers, Guidelines, Operating Posture, Part 
 Cohesion: 0.47
 Nodes (3): escapeHtml(), load(), render()
 
-### Community 272 - "files.js"
-Cohesion: 0.28
-Nodes (10): absoluteUrl(), formatBytes(), loadFiles(), openDetail(), queryParams(), renderGrid(), thumbUrl(), typeLabel() (+2 more)
+### Community 272 - "subscription.py"
+Cohesion: 0.22
+Nodes (8): admin_renew(), create_plan(), get_plan(), list_subscriptions(), PlanCreateSchema, _store(), BillingInterval, RenewalStatus
 
 ### Community 273 - "palette.mjs"
 Cohesion: 0.21
 Nodes (7): args, buildWeights(), hashUnit(), pickSeed(), seed, SEEDS, weightedPick()
 
 ### Community 274 - "ChannelType"
-Cohesion: 0.27
-Nodes (4): ChannelType, Command, Meta, NotificationChannel
+Cohesion: 0.17
+Nodes (11): ChannelType, NotificationStatus, Command, Meta, NotificationChannel, test_list_providers(), test_otp_uses_notification_service(), test_payamak_otp_posts_pattern_api() (+3 more)
 
 ### Community 275 - "products/signals.py"
 Cohesion: 0.38
@@ -1623,12 +1632,12 @@ Cohesion: 0.27
 Nodes (9): escapeHtml(), fillForm(), load(), loadPicker(), openDialog(), render(), syncPreview(), thumbUrl() (+1 more)
 
 ### Community 277 - "ShopCMS Deployment Guide"
-Cohesion: 0.25
-Nodes (5): CI/CD, Quick start (development), ShopCMS Deployment Guide, Staging / test server (با داده و رسانهٔ فعلی), Testing
+Cohesion: 0.22
+Nodes (9): Backups, CI/CD, Health probes, Monitoring, Production stack, Quick start (development), ShopCMS Deployment Guide, Staging / test server (با داده و رسانهٔ فعلی) (+1 more)
 
-### Community 278 - "PaymentVerifyResult"
-Cohesion: 0.12
-Nodes (5): PaymentVerifyResult, IDPayGateway, MellatGateway, PasargadGateway, SinaGateway
+### Community 278 - "SandboxGateway"
+Cohesion: 0.06
+Nodes (12): PaymentCreateResult, PaymentGateway, PaymentInquiryResult, PaymentRefundResult, PaymentVerifyResult, IDPayGateway, MellatGateway, PasargadGateway (+4 more)
 
 ### Community 279 - "Asset Approval Checklist"
 Cohesion: 0.08
@@ -1638,13 +1647,13 @@ Nodes (25): Accessibility, Archival, Asset Approval Checklist, Automation Suppor
 Cohesion: 0.08
 Nodes (25): Common Pitfalls, Core Prompt Structure, Detailed Brief, Eco/Sustainable, Effective Keywords by Style, Fashion Brand, Healthcare, Industry-Specific Prompts (+17 more)
 
-### Community 281 - "carts/admin.py"
-Cohesion: 0.35
-Nodes (7): CartAdmin, CartItemInline, CouponAdmin, CouponM2MFilter, CouponUsageAdmin, GiftCardAdmin, GiftCardUsageAdmin
+### Community 281 - "datetime"
+Cohesion: 0.19
+Nodes (7): build_cip_prompt(), check_logo_required(), generate_cip_set(), generate_with_nano_banana(), load_env(), load_logo_image(), main()
 
-### Community 282 - "CouponUsage"
+### Community 282 - "files/models.py"
 Cohesion: 0.20
-Nodes (9): CouponUsage, GiftCardUsage, Meta, APIها, `DiscountService`, Seed, Storefront, خلاصه (+1 more)
+Nodes (7): FileThumbnailAdmin, FileThumbnailInline, MediaFileAdmin, StorageDriver, ThumbnailVariant, FileThumbnail, Meta
 
 ### Community 283 - "auth-session.js"
 Cohesion: 0.54
@@ -1654,17 +1663,17 @@ Nodes (7): clear(), csrfHeader(), get(), read(), refresh(), setTokens(), write()
 Cohesion: 0.08
 Nodes (25): Assess Adaptation Challenge, Breakpoints: Content-Driven, Content Adaptation, Desktop Adaptation (Mobile → Desktop), Detect Input Method, Not Just Screen Size, Email Adaptation (Web → Email), Implement Adaptations, Layout Adaptation Patterns (+17 more)
 
-### Community 285 - "events.py"
-Cohesion: 0.18
-Nodes (3): clear_listeners(), emit(), on()
+### Community 285 - "S3CompatibleDriver"
+Cohesion: 0.21
+Nodes (4): MinIOStorageDriver, R2StorageDriver, S3CompatibleDriver, S3StorageDriver
 
 ### Community 286 - "readConfig"
 Cohesion: 0.20
 Nodes (11): applyConfigSource(), applyDetectorConfigSource(), cloneDefaultConfig(), detectorSection(), hookSection(), ignoreValueFilesKey(), mergeIgnoreValues(), numberOr() (+3 more)
 
-### Community 287 - "Working With Sonner"
-Cohesion: 0.17
-Nodes (10): Functions, Sonner API Reference, `toast()` options, `<Toaster />`, Picking the right call, Recipes, Setup, Styling — the escalation ladder (+2 more)
+### Community 287 - ".cancel"
+Cohesion: 0.09
+Nodes (20): Functions, Sonner API Reference, `toast()` options, `<Toaster />`, Picking the right call, Recipes, Setup, Styling — the escalation ladder (+12 more)
 
 ### Community 288 - "Color Palette Management"
 Cohesion: 0.08
@@ -1691,16 +1700,16 @@ Cohesion: 0.08
 Nodes (24): Accessibility Patterns, Alternative: Tailwind-Only Setup, Best Practices, Common Patterns, Component Layer: shadcn/ui, Component Library Guide, Component + Styling Setup, Core Stack (+16 more)
 
 ### Community 296 - "generation-preflight.mjs"
-Cohesion: 0.31
-Nodes (7): buildGenerationPreflight(), execFileAsync, insertTarget(), normalizeTarget(), replaceTarget(), sourceResolutionCache, targetSignature()
+Cohesion: 0.27
+Nodes (9): buildGenerationPreflight(), compactError(), execFileAsync, insertTarget(), normalizeTarget(), replaceTarget(), runGenerationPreflight(), sourceResolutionCache (+1 more)
 
-### Community 297 - "NotificationProvider"
-Cohesion: 0.29
-Nodes (3): NotificationProvider, get_provider(), list_providers()
+### Community 297 - "test_subscriptions.py"
+Cohesion: 0.27
+Nodes (12): SubscriptionStatus, auth_headers(), order(), plan(), store(), test_cancel_subscription(), test_create_plan(), test_create_subscription_from_order() (+4 more)
 
-### Community 298 - "orders/api/public.py"
-Cohesion: 0.36
-Nodes (8): get_invoice(), get_order(), InvoiceSchema, list_orders(), OrderDetailSchema, OrderListSchema, _store(), _user()
+### Community 298 - "context.py"
+Cohesion: 0.06
+Nodes (25): AuditLogSchema, list_audit_logs(), _store(), _to_schema(), throttle_exceeded(), clear_cache(), optimization_status(), _store() (+17 more)
 
 ### Community 299 - "reports/api/admin.py"
 Cohesion: 0.42
@@ -1746,6 +1755,14 @@ Nodes (22): Assess Onboarding Needs, Context Over Ceremony, Contextual Help, Des
 Cohesion: 0.09
 Nodes (22): @apply Directive, Best Practices, Color Customization, Complete Tailwind Config, Configuration Examples, Content Configuration, Custom Color Palette, Custom Font Sizes (+14 more)
 
+### Community 318 - "resolveLengthPx"
+Cohesion: 0.21
+Nodes (14): checkKickerAboveHeading(), checkKickerAboveHeadingDOM(), checkKickerAboveHeadingFromDoc(), checkNumberedSectionLabels(), checkNumberedSectionLabelsDOM(), checkNumberedSectionLabelsFromDoc(), cleanInlineText(), collectKickerCandidates() (+6 more)
+
+### Community 319 - "journal.mjs"
+Cohesion: 0.27
+Nodes (12): PATCH_UNDOERS, healArtifact(), healInjectJournal(), INJECT_JOURNAL_RELPATH, INJECT_JOURNAL_VERSION, injectJournalPath(), insideProject(), normalizeRel() (+4 more)
+
 ### Community 320 - "inline-ignores.mjs"
 Cohesion: 0.40
 Nodes (9): addRules(), applyInlineIgnores(), getSet(), hasDirectives(), isInlineIgnored(), normalizeRule(), parseInlineIgnores(), parseRuleList() (+1 more)
@@ -1770,9 +1787,9 @@ Nodes (8): applyNuxtLiveAdapter(), buildNuxtPlugin(), detectNuxtProject(), nuxt,
 Cohesion: 0.10
 Nodes (18): Behavior contract, Markup, Reference wiring, Rules, Styles, The Picker, Hard Rules, Invocation Variants (+10 more)
 
-### Community 326 - "blog/signals.py"
-Cohesion: 0.47
-Nodes (6): _invalidate(), invalidate_on_category(), invalidate_on_comment(), invalidate_on_post(), invalidate_on_post_tags(), invalidate_on_tag()
+### Community 326 - "shipping/models.py"
+Cohesion: 0.22
+Nodes (3): ShippingPaymentType, ShippingZoneTier, Command
 
 ### Community 330 - "Routing by Task Type"
 Cohesion: 0.10
@@ -1790,9 +1807,9 @@ Nodes (19): 04 — API (django-ninja), Addresses — `/api/v1/addresses`, Auth �
 Cohesion: 0.22
 Nodes (9): Color, Components, Layout, Motion, Operate mode depth (and Read notes), Product constraints, Product permissions, The product slop test (+1 more)
 
-### Community 337 - "optimization.py"
-Cohesion: 0.13
-Nodes (14): clear_cache(), optimization_status(), _store(), warm_cache(), 09 — Dev, seeds, Docker, tests, Celery Beat (Tehran), CI, Docker (+6 more)
+### Community 337 - "09 — Dev, seeds, Docker, tests"
+Cohesion: 0.18
+Nodes (10): 09 — Dev, seeds, Docker, tests, Celery Beat (Tehran), CI, Docker, Extra seeds, Local (SQLite, no Redis) — daily path, Requirements files, Tests (+2 more)
 
 ### Community 338 - "Asset Organization Guide"
 Cohesion: 0.11
@@ -1802,9 +1819,9 @@ Nodes (18): Asset Entry (manifest.json), Asset Organization Guide, By Campaign, 
 Cohesion: 0.11
 Nodes (18): Accessibility Considerations, Analogous, Black, Blue, Color Combinations by Industry, Color Harmony Types, Complementary, Green (+10 more)
 
-### Community 340 - "api/audit.py"
-Cohesion: 0.36
-Nodes (4): AuditLogSchema, list_audit_logs(), _store(), _to_schema()
+### Community 340 - "address.py"
+Cohesion: 0.32
+Nodes (6): test_validate_address_invalid_phone(), test_validate_address_success(), AddressValidationError, normalize_phone(), normalize_postal_code(), validate_address_data()
 
 ### Community 470 - "Core Logo Types"
 Cohesion: 0.11
@@ -1838,9 +1855,9 @@ Nodes (17): Apparel (Polo/T-Shirt), Base Prompt Structure, Business Card, CIP Mo
 Cohesion: 0.11
 Nodes (17): Accent, Applying Semantic Tokens, Background & Foreground, Border & Ring, Color Semantics, Dark Mode Overrides, Destructive, Interactive States (+9 more)
 
-### Community 479 - ".body"
-Cohesion: 0.25
-Nodes (7): Step 2b: Stage the frontmatter, Context always available, How rendering works, Registered page keys (`STOREFRONT_PAGES`), Shared storefront JS (`static/js/`), Template tags (builtins — no `{% load %}` needed), Auth gotchas
+### Community 479 - "Scan mode (approach C: auto-extract, then confirm descriptive language)"
+Cohesion: 0.06
+Nodes (30): Component translation rules, Narrative mapping, Scan mode (approach C: auto-extract, then confirm descriptive language), Schema, Step 1: Find the design assets, Step 2: Auto-extract what can be auto-extracted, Step 2b: Stage the frontmatter, Step 3: Ask the user for qualitative language (+22 more)
 
 ### Community 480 - "iOS platform"
 Cohesion: 0.25
@@ -1866,17 +1883,17 @@ Nodes (15): 1. Frequency — how often will a user see this?, 2. Purpose — why
 Cohesion: 0.12
 Nodes (14): Accessibility and control, Choose material by meaning, Find the job, Implement to the runtime, Set the motion thesis, Timing and easing, Verify, Visitor mode (+6 more)
 
-### Community 486 - "checkElementGptBorderShadow"
-Cohesion: 0.32
-Nodes (8): borderColorsFromStyle(), borderWidthsFromStyle(), checkElementGptBorderShadow(), checkElementGptBorderShadowDOM(), checkGptThinBorderWideShadow(), cssColorAlpha(), shadowLayerAlpha(), shadowMaxBlurPx()
+### Community 486 - "comments/api/admin.py"
+Cohesion: 0.26
+Nodes (6): comment_stats(), CommentAdminSchema, CommentModerateSchema, list_comments(), moderate_comment(), _store()
 
 ### Community 487 - "Handle `generate`"
 Cohesion: 0.12
 Nodes (16): 1. Read the screenshot (if present), 2. Wrap the element, 3. Load the action's reference, 4. Plan three variants: identity first, then mode, then axes, 5. Apply the freeform prompt (if present), 6. Deliver variants, 7. Parameters (composition-sized, 0-4 per variant), 8. Signal done (+8 more)
 
 ### Community 488 - "File implementation steps"
-Cohesion: 0.12
-Nodes (15): API, API, API ادمین (`/api/v1/store-admin/notifications/`), Checkout, File implementation steps, OTP — ورود و ثبت‌نام, Seed, Seed (+7 more)
+Cohesion: 0.18
+Nodes (10): API, API ادمین (`/api/v1/store-admin/notifications/`), File implementation steps, OTP — ورود و ثبت‌نام, Seed, Seed, اپ `notifications`, خلاصه کل پروژه (فاز ۰ تا ۲۸) (+2 more)
 
 ### Community 489 - "Icon Design Reference"
 Cohesion: 0.13
@@ -1895,8 +1912,8 @@ Cohesion: 0.13
 Nodes (14): AIDA (Attention-Interest-Desire-Action), Before-After-Bridge, Contrast Patterns, Copywriting Formulas, Core Formulas, Cost of Inaction, FAB (Features-Advantages-Benefits), Formula-to-Slide Mapping (+6 more)
 
 ### Community 493 - "راهنمای اجرای ShopCMS روی لوکال"
-Cohesion: 0.13
-Nodes (15): Celery (اختیاری — بدون Docker), Multi-tenant, `No module named 'django'`, آدرس‌های مهم بعد از اجرا, اجرای تست‌ها, خطای دیتابیس Postgres, خلاصه دستورات (کپی سریع), راهنمای اجرای ShopCMS روی لوکال (+7 more)
+Cohesion: 0.14
+Nodes (14): Celery (اختیاری — بدون Docker), Multi-tenant, آدرس‌های مهم بعد از اجرا, اجرای تست‌ها, خلاصه دستورات (کپی سریع), راهنمای اجرای ShopCMS روی لوکال, روش ۲ — با Docker (Postgres + Redis + Celery), ورود با OTP (توسعه) (+6 more)
 
 ### Community 494 - "Android platform"
 Cohesion: 0.29
@@ -1946,9 +1963,9 @@ Nodes (13): Card Styles, Component Variants, CSS Structures, Feature Grid (3 col
 Cohesion: 0.29
 Nodes (7): Cognitive Load Assessment, Cognitive Load Checklist, Extraneous Load: Bad Design, Germane Load: Learning Effort, Intrinsic Load: The Task Itself, The Working Memory Rule, Three Types of Cognitive Load
 
-### Community 507 - "test_zarinpal.py"
-Cohesion: 0.20
-Nodes (12): test_zarinpal_custom_urls(), test_zarinpal_error_code_fallback(), test_zarinpal_live_inquiry(), test_zarinpal_live_refund_graphql(), test_zarinpal_live_refund_requires_access_token(), test_zarinpal_live_request_uses_api(), test_zarinpal_live_verify(), test_zarinpal_registered() (+4 more)
+### Community 507 - "storage/manager.py"
+Cohesion: 0.25
+Nodes (3): StorageManager, get_driver(), list_drivers()
 
 ### Community 508 - "resolveLiveInjectionAnchor"
 Cohesion: 0.62
@@ -1958,21 +1975,13 @@ Nodes (7): elementMatchesOriginalMarkup(), findLiveElementForOriginalMarkup(), f
 Cohesion: 0.18
 Nodes (12): en(), Ha(), ie(), Mt, nn(), onAny(), ql(), tn() (+4 more)
 
-### Community 510 - "digital/api/public.py"
-Cohesion: 0.52
-Nodes (4): download_info(), list_downloads(), _store(), _user()
-
 ### Community 511 - "02 — Architecture"
-Cohesion: 0.29
-Nodes (6): 02 — Architecture, Cache invalidation (signals), Dual surface, Storefront / manage (`tenants/urls.py`), Templates, URL routing
+Cohesion: 0.13
+Nodes (9): SecurityHeadersMiddleware, 02 — Architecture, Cache invalidation (signals), Dual surface, Important env vars, Middleware order (base), Plugin system, Settings (+1 more)
 
-### Community 512 - "store_admin/orders.js"
-Cohesion: 0.48
-Nodes (5): loadDetail(), loadOrders(), renderDetail(), renderOrders(), statusBadge()
-
-### Community 513 - "backup_active_stores"
-Cohesion: 0.15
-Nodes (12): backup_active_stores(), API, Celery Beat, Management Commands, تنظیمات جدید, فاز ۲۶ — Backup & Restore (تکمیل شد), قابلیت‌ها, Backups (+4 more)
+### Community 513 - "فاز ۲۶ — Backup & Restore (تکمیل شد)"
+Cohesion: 0.33
+Nodes (6): API, Celery Beat, Management Commands, تنظیمات جدید, فاز ۲۶ — Backup & Restore (تکمیل شد), قابلیت‌ها
 
 ### Community 514 - "update.md"
 Cohesion: 0.15
@@ -1990,9 +1999,13 @@ Nodes (12): Categories, Dark Mode, File Organization, Layer 1: Primitive Tokens,
 Cohesion: 0.20
 Nodes (10): detectCsp(), INLINE_HEADER_SIGNALS, LAYOUT_EXTS, MONOREPO_HELPER_SIGNALS, NUXT_ROUTE_RULES_SIGNALS, NUXT_SECURITY_SIGNALS, SCAN_EXTS, SKIP_DIRS (+2 more)
 
-### Community 518 - "products"
-Cohesion: 0.07
-Nodes (28): products(), ۲. پنل مدیریت فروشگاه (Store Admin), accounts, 07 — Auth & roles, 2FA, Development, JWT vs session, Methods (+20 more)
+### Community 518 - "خلاصه فاز ۲"
+Cohesion: 0.25
+Nodes (8): APIها (`/api/v1/auth/`), JWT, تست OTP در توسعه, تست‌ها, جریان احراز هویت, خلاصه فاز ۲, دستورات, نمونه ثبت‌نام
+
+### Community 519 - "مشکلات رایج"
+Cohesion: 0.33
+Nodes (6): `No module named 'django'`, خطای دیتابیس Postgres, `فروشگاه یافت نشد` (404), مشکلات رایج, پورت 8000 اشغال است, پوشه `staticfiles` وجود ندارد
 
 ### Community 520 - "Primitive Tokens"
 Cohesion: 0.17
@@ -2002,9 +2015,9 @@ Nodes (11): Border Radius, Color Scales, Gray Scale, Motion / Duration, Primary 
 Cohesion: 0.17
 Nodes (11): Assess Current State, Code Simplification, Content Simplification, Document Removed Complexity, Information Architecture, Interaction Simplification, Layout Simplification, Plan Simplification (+3 more)
 
-### Community 522 - "Step 4b: Write .impeccable/design.json sidecar (extensions only)"
-Cohesion: 0.33
-Nodes (6): Component translation rules, Narrative mapping, Schema, Step 4b: Write .impeccable/design.json sidecar (extensions only), Tonal ramps, What to include
+### Community 522 - "subscriptions/admin.py"
+Cohesion: 0.60
+Nodes (3): CustomerSubscriptionAdmin, SubscriptionPlanAdmin, SubscriptionRenewalAdmin
 
 ### Community 523 - "Hardening Dimensions"
 Cohesion: 0.17
@@ -2014,17 +2027,17 @@ Nodes (11): Accessibility Resilience, Assess Hardening Needs, Edge Cases & Bound
 Cohesion: 0.17
 Nodes (11): 10. Anti-patterns (Banned), 1. Visual Theme & Atmosphere, 2. Color Palette & Roles, 3. Typography, 4. Spacing & Radius (Density 5), 5. Motion, 6. Shadows (Soft UI Evolution), 7. Component Rules (+3 more)
 
-### Community 525 - "Scan mode (approach C: auto-extract, then confirm descriptive language)"
-Cohesion: 0.33
-Nodes (6): Scan mode (approach C: auto-extract, then confirm descriptive language), Step 1: Find the design assets, Step 2: Auto-extract what can be auto-extracted, Step 3: Ask the user for qualitative language, Step 4: Write DESIGN.md, Step 5: Confirm and refine
+### Community 525 - "خلاصه فاز ۱۱"
+Cohesion: 0.40
+Nodes (5): API, Checkout, Seed, تست‌ها, خلاصه فاز ۱۱
 
 ### Community 526 - "پیشنهاد ساختار دیتابیس"
 Cohesion: 0.17
 Nodes (12): CMS, Core, Marketing, Order, Payment, Product, Prompt:, Response: (+4 more)
 
-### Community 527 - "HTML / data contracts (do not break)"
-Cohesion: 0.33
-Nodes (6): Add to cart, Cart badge, Cart page, Checkout page, Default base.html pattern, HTML / data contracts (do not break)
+### Community 527 - "خلاصه فاز ۱۰"
+Cohesion: 0.40
+Nodes (5): API (`/api/v1/addresses/`) — نیاز به ورود (JWT یا Session), Storefront, اپ `addresses`, تست‌ها, خلاصه فاز ۱۰
 
 ### Community 528 - "concat"
 Cohesion: 0.33
@@ -2063,8 +2076,8 @@ Cohesion: 0.18
 Nodes (10): Assess Current State, Color Refinement, Composition Refinement, Motion Reduction, Plan Refinement, Refine the Design, Simplification, Verify Quality (+2 more)
 
 ### Community 537 - "shadcn/ui Theming & Customization"
-Cohesion: 0.17
-Nodes (11): Base Color Presets, Best Practices, Color Format, CSS Variable System, Dark Mode Setup, Next.js App Router, Radius Customization, shadcn/ui Theming & Customization (+3 more)
+Cohesion: 0.10
+Nodes (19): Base Color Presets, Best Practices, Color Customization, Color Format, Component Customization, CSS Variable System, Customize Styles, Customize Variants (+11 more)
 
 ### Community 538 - "seed-data/README.md"
 Cohesion: 0.18
@@ -2111,8 +2124,8 @@ Cohesion: 0.20
 Nodes (9): Common Structures, Duarte Sparkline Pattern, Matching Strategy to Context, Product Demo (6 slides), Sales Pitch (9 slides), Search Commands, Slide Strategies, Strategy Selection (+1 more)
 
 ### Community 550 - "طرق ورود (Authentication)"
-Cohesion: 0.17
-Nodes (10): خلاصه, طرق ورود (Authentication), فایل‌های مهم, لینک‌های مرتبط, نقشه سریع دسترسی‌ها, ۳. سوپرادمین پلتفرم (Super Admin), ۴. Django Admin (ورود با رمز عبور), ۵. احراز هویت دومرحله‌ای (TOTP / 2FA) (+2 more)
+Cohesion: 0.22
+Nodes (9): خلاصه, طرق ورود (Authentication), فایل‌های مهم, لینک‌های مرتبط, نقشه سریع دسترسی‌ها, ۳. سوپرادمین پلتفرم (Super Admin), ۴. Django Admin (ورود با رمز عبور), ۵. احراز هویت دومرحله‌ای (TOTP / 2FA) (+1 more)
 
 ### Community 551 - "۱۰. مشکلات رایج"
 Cohesion: 0.20
@@ -2121,10 +2134,6 @@ Nodes (10): `bind: address already in use` روی پورت 80, `DisallowedHost` 
 ### Community 552 - "Design Engineering"
 Cohesion: 0.22
 Nodes (8): Accessibility, Design Engineering, Initial Response, prefers-reduced-motion, Review Checklist, Review Format (Required), Stagger Animations, Touch device hover states
-
-### Community 553 - "روش ۲ — با Docker (Postgres + Redis + Celery)"
-Cohesion: 0.40
-Nodes (5): روش ۲ — با Docker (Postgres + Redis + Celery), ۱. آماده‌سازی `.env`, ۲. اجرای سرویس‌ها, ۳. مایگریشن و Seed (داخل کانتینر), ۴. توقف
 
 ### Community 554 - "CIP Design Reference"
 Cohesion: 0.22
@@ -2206,10 +2215,6 @@ Nodes (3): isStopEvent(), main(), readStdin()
 Cohesion: 0.25
 Nodes (6): Anti-references, Audience, Brand / product lane, Platform, Product, Voice
 
-### Community 578 - "Color Customization"
-Cohesion: 0.50
-Nodes (4): Color Customization, Method 1: Update CSS Variables, Method 2: Theme Generator, Method 3: Multiple Themes
-
 ### Community 579 - "Impeccable Finish Reviewer"
 Cohesion: 0.29
 Nodes (6): Checks, in order, Disposition, Impeccable Finish Reviewer, Input Contract, Output Contract, Verdict Pass
@@ -2225,10 +2230,6 @@ Nodes (6): Key Features, Knowledge Base, Slides Reference, Usage, When to Use, W
 ### Community 582 - "HTML Slide Template"
 Cohesion: 0.29
 Nodes (6): Animation Classes, Background Images, Base Structure, Chart.js Integration, CSS Variables Reference, HTML Slide Template
-
-### Community 583 - "Component Customization"
-Cohesion: 0.50
-Nodes (4): Component Customization, Customize Styles, Customize Variants, Override with className
 
 ### Community 584 - "destructive"
 Cohesion: 0.67
@@ -2450,13 +2451,9 @@ Nodes (3): تسک‌ها, فاز ۰ - زیرساخت پروژه, هدف
 Cohesion: 0.67
 Nodes (3): تسک‌ها, فاز ۱ - هسته Multi Tenant, هدف
 
-### Community 1187 - "Working With Sonner"
-Cohesion: 0.17
-Nodes (10): Functions, Sonner API Reference, `toast()` options, `<Toaster />`, Picking the right call, Recipes, Setup, Styling — the escalation ladder (+2 more)
-
-### Community 1288 - "خلاصه"
-Cohesion: 0.40
-Nodes (5): API, جریان کار, خلاصه, دستورات, قابلیت‌ها
+### Community 1288 - "CustomerSubscription"
+Cohesion: 0.12
+Nodes (11): Digital & subscriptions (side effects of paid order), API, اپ `subscriptions`, جریان کار, خلاصه, دستورات, قابلیت‌ها, CustomerSubscription (+3 more)
 
 ### Community 1290 - "خلاصه فاز ۰"
 Cohesion: 0.40
@@ -2464,23 +2461,23 @@ Nodes (5): APIهای آماده, خلاصه فاز ۰, ساختار پروژه, 
 
 ## Knowledge Gaps
 - **2565 isolated node(s):** `fs`, `path`, `fs`, `path`, `fs` (+2560 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 4267 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **230 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 4269 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **206 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Store` connect `Store` to `django_db`, `backup_active_stores`, `test_plugins.py`, `CartService`, `products`, `cms/models.py`, `StoreMembership`, `test_orders.py`, `Product`, `tenants/models.py`, `AuthService`, `TaxService`, `core/api/__init__.py`, `ChannelType`, `api/super_admin.py`, `ProductSearchService`, `StoreConfigForm`, `test_store_scoping.py`, `test_blog.py`, `CustomerAddress`, `api/auth.py`, `otp.py`, `test_distance.py`, `test_bulk_prices.py`, `test_subscriptions.py`, `StoreSetting`, `test_shipping.py`, `get_current_store`, `tasks.py`, `test_comments.py`, `CMSService`, `BlogPost`, `test_shortcodes.py`, `test_files.py`, `CMSCacheService`, `test_wishlist.py`, `shipping/api/admin.py`, `ShippingMethod`, `test_super_admin.py`, `Coupon`, `NotificationService`, `test_zarinpal.py`?**
-  _High betweenness centrality (0.161) - this node is a cross-community bridge._
-- **Why does `Context always available` connect `.body` to `products`?**
-  _High betweenness centrality (0.115) - this node is a cross-community bridge._
-- **Why does `StaticDocument` connect `detect-html.mjs` to `css-cascade.mjs`, `.body`?**
+- **Why does `Store` connect `Store` to `django_db`, `PluginService`, `CartService`, `cms/models.py`, `Domain`, `CustomerSubscription`, `StoreMembership`, `02 — Architecture`, `PaymentTransaction`, `Product`, `test_digital.py`, `AuthService`, `django_conf`, `subscription.py`, `ChannelType`, `api/super_admin.py`, `test_cache.py`, `StoreConfigForm`, `User`, `test_blog.py`, `files/models.py`, `test_2fa.py`, `api/auth.py`, `StoreService`, `StoreConfigService`, `test_subscriptions.py`, `context.py`, `test_distance.py`, `test_bulk_prices.py`, `SubscriptionService`, `builtin/__init__.py`, `StoreSetting`, `test_shipping.py`, `test_taxes.py`, `ProductSearchService`, `test_theme_engine.py`, `test_reports.py`, `JWTService`, `tenants/models.py`, `test_comments.py`, `shipping/models.py`, `CMSService`, `StorePlugin`, `test_shortcodes.py`, `test_products.py`, `ZarinpalGateway`, `test_files.py`, `CacheManager`, `FileService`, `json`, `HealthService`, `ShippingMethod`, `ProductService`, `Command`, `Order`, `CustomerAddress`, `ThemeSettingsService`, `test_super_admin.py`, `test_shipment_sms.py`, `test_discounts.py`, `test_addresses.py`, `NotificationService`, `file.py`, `get_current_store`, `test_store_admin.py`?**
+  _High betweenness centrality (0.153) - this node is a cross-community bridge._
+- **Why does `Context always available` connect `Scan mode (approach C: auto-extract, then confirm descriptive language)` to `User`?**
   _High betweenness centrality (0.111) - this node is a cross-community bridge._
+- **Why does `StaticDocument` connect `css-cascade.mjs` to `detect-html.mjs`, `Scan mode (approach C: auto-extract, then confirm descriptive language)`?**
+  _High betweenness centrality (0.110) - this node is a cross-community bridge._
 - **Are the 152 inferred relationships involving `Store` (e.g. with `Command` and `OTPCode`) actually correct?**
   _`Store` has 152 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 97 inferred relationships involving `User` (e.g. with `phone_lookup()` and `refresh_token()`) actually correct?**
   _`User` has 97 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 59 inferred relationships involving `Product` (e.g. with `products()` and `test_admin_multi_store_assignment()`) actually correct?**
-  _`Product` has 59 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 60 inferred relationships involving `Product` (e.g. with `products()` and `test_admin_multi_store_assignment()`) actually correct?**
+  _`Product` has 60 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 61 inferred relationships involving `Domain` (e.g. with `store()` and `setup_store()`) actually correct?**
   _`Domain` has 61 INFERRED edges - model-reasoned connections that need verification._

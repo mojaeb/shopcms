@@ -22,7 +22,7 @@ RUN mkdir -p logs staticfiles media backups \
 
 ENV SECRET_KEY=build-time-dummy-key
 ENV ALLOWED_HOSTS=*
-RUN python manage.py collectstatic --noinput --settings=config.settings.production
+RUN python manage.py collectstatic --noinput --clear --settings=config.settings.production
 
 EXPOSE 8000
 
