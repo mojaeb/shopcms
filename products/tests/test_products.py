@@ -58,6 +58,30 @@ def products_token(store):
 
 
 @pytest.mark.django_db
+def test_store_admin_product_list_paginates(client, store, products_token):
+    Product.objects.bulk_create(
+        [
+            Product(
+                store=store,
+                name=f"Item {i}",
+                slug=f"item-{i}",
+                status=ProductStatus.ACTIVE,
+                base_price=1000,
+            )
+            for i in range(21)
+        ]
+    )
+    headers = {"HTTP_AUTHORIZATION": f"Bearer {products_token}", "HTTP_HOST": "products.local"}
+    first = client.get("/api/v1/store-admin/products/?page=1", **headers)
+    second = client.get("/api/v1/store-admin/products/?page=2", **headers)
+    assert first.status_code == 200
+    assert second.status_code == 200
+    assert first.json()["count"] == 21
+    assert len(first.json()["items"]) == 20
+    assert len(second.json()["items"]) == 1
+
+
+@pytest.mark.django_db
 def test_product_service_list(store, product_data):
     service = ProductService()
     products = list(service.list_products(store))

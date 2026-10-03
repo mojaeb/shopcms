@@ -200,6 +200,11 @@
                 href: "/manage/pages/",
             },
             {
+                title: "بنرها",
+                desc: "تصویر تبلیغاتی صفحه خانه",
+                href: "/manage/banners/",
+            },
+            {
                 title: "تخفیف و کارت هدیه",
                 desc: "کد تخفیف و موجودی کارت",
                 href: "/manage/discounts/",

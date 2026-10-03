@@ -152,6 +152,15 @@ def manage_settings(request):
 
 
 @store_staff_required
+def manage_banners(request):
+    return render(
+        request,
+        "store_admin/banners.html",
+        _ctx(request, page_title="بنرها", active_nav="banners"),
+    )
+
+
+@store_staff_required
 def manage_pages(request):
     return render(
         request,

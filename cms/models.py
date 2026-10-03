@@ -135,7 +135,7 @@ class Banner(TimeStampedModel, SeoFieldsMixin):
     store = models.ForeignKey(Store, on_delete=models.CASCADE, related_name="banners", verbose_name="فروشگاه")
     title = models.CharField(max_length=200, verbose_name="عنوان")
     subtitle = models.CharField(max_length=300, blank=True, verbose_name="زیرعنوان")
-    image = models.URLField(blank=True, verbose_name="تصویر")
+    image = models.CharField(max_length=500, blank=True, verbose_name="تصویر")
     link = models.CharField(max_length=500, blank=True, verbose_name="لینک")
     position = models.CharField(max_length=30, choices=BannerPosition.choices, verbose_name="موقعیت")
     sort_order = models.IntegerField(default=0, verbose_name="ترتیب")

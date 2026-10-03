@@ -806,6 +806,20 @@ a.sa-stat:hover {
 }
 
 /* —— Media picker (product) —— */
+.sa-banner-preview {
+    margin: 0.35rem 0 0.75rem;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--sa-border);
+    max-height: 140px;
+}
+.sa-banner-preview img {
+    display: block;
+    width: 100%;
+    max-height: 140px;
+    object-fit: cover;
+}
+
 .sa-picker-dialog {
     max-width: 720px;
     width: calc(100% - 2rem);
@@ -1147,8 +1161,81 @@ a.sa-stat:hover {
 .sa-settings {
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
-    max-width: 640px;
+    gap: 1rem;
+    max-width: 760px;
+}
+.sa-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    border-bottom: 1px solid var(--sa-border);
+}
+.sa-tab {
+    appearance: none;
+    background: transparent;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    padding: 0.65rem 0.9rem;
+    font: inherit;
+    font-size: 0.92rem;
+    color: var(--sa-muted);
+    cursor: pointer;
+}
+.sa-tab:hover { color: var(--sa-text); }
+.sa-tab:focus-visible {
+    outline: 2px solid var(--sa-accent);
+    outline-offset: 2px;
+}
+.sa-tab.is-active {
+    color: var(--sa-text);
+    font-weight: 700;
+    border-bottom-color: var(--sa-accent);
+}
+.sa-color-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.sa-color-row input[type="color"] {
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0.15rem;
+    border: 1px solid var(--sa-border);
+    border-radius: 8px;
+    background: var(--sa-surface);
+    cursor: pointer;
+}
+.sa-color-row .sa-input { flex: 1; }
+.sa-media-field,
+.sa-badge-card {
+    display: grid;
+    gap: 0.55rem;
+}
+.sa-media-field-preview {
+    height: 7.5rem;
+    border: 1px solid var(--sa-border);
+    border-radius: 8px;
+    background-color: var(--sa-bg);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+}
+.sa-badge-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.85rem;
+}
+.sa-badge-card {
+    margin: 0;
+    padding: 0.9rem;
+    border: 1px solid var(--sa-border);
+    border-radius: 8px;
+}
+.sa-badge-card legend {
+    padding: 0 0.3rem;
+    font-size: 0.9rem;
+    font-weight: 700;
 }
 .sa-settings .sa-form {
     max-width: none;
@@ -1613,6 +1700,7 @@ a.sa-dash-kpi:hover .sa-dash-kpi-go {
     .sa-variant-cell-check { justify-content: flex-start; }
     .sa-variant-remove { grid-column: 1 / -1; }
     .sa-theme-colors { grid-template-columns: 1fr; }
+    .sa-badge-grid { grid-template-columns: 1fr; }
     .sa-settings { max-width: none; }
 }
 @media (max-width: 720px) {

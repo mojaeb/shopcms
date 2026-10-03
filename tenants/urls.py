@@ -24,6 +24,7 @@ urlpatterns = [
     path("manage/orders/<int:order_id>/", manage.manage_order_detail, name="store_admin_order_detail"),
     path("manage/discounts/", manage.manage_discounts, name="store_admin_discounts"),
     path("manage/settings/", manage.manage_settings, name="store_admin_settings"),
+    path("manage/banners/", manage.manage_banners, name="store_admin_banners"),
     path("manage/pages/", manage.manage_pages, name="store_admin_pages"),
     path("manage/pages/new/", manage.manage_page_new, name="store_admin_page_new"),
     path("manage/pages/<int:page_id>/edit/", manage.manage_page_edit, name="store_admin_page_edit"),

@@ -1,5 +1,7 @@
 """Store Admin CMS API."""
 
+from django.utils.dateparse import parse_datetime
+from django.utils.timezone import get_current_timezone, is_naive, make_aware
 from ninja import Router, Schema
 from ninja.errors import HttpError
 
@@ -55,6 +57,8 @@ class BannerCreateSchema(Schema):
     position: str = BannerPosition.HOME_TOP
     sort_order: int = 0
     is_active: bool = True
+    starts_at: str | None = None
+    ends_at: str | None = None
 
 
 class SliderCreateSchema(Schema):
@@ -283,17 +287,82 @@ def add_menu_item(request, location: str, payload: MenuItemCreateSchema):
     return {"id": item.id, "label": item.label, "url": item.href}
 
 
+def _parse_optional_dt(value):
+    if value in (None, ""):
+        return None
+    text = str(value).strip().replace("Z", "+00:00")
+    parsed = parse_datetime(text)
+    if parsed is None and len(text) == 16 and "T" in text:
+        parsed = parse_datetime(text + ":00")
+    if parsed is None:
+        raise HttpError(400, "تاریخ نامعتبر است")
+    if is_naive(parsed):
+        parsed = make_aware(parsed, get_current_timezone())
+    return parsed
+
+
+def _banner_fields(payload: BannerCreateSchema) -> dict:
+    title = (payload.title or "").strip()
+    if not title:
+        raise HttpError(400, "عنوان الزامی است")
+    position = payload.position or BannerPosition.HOME_TOP
+    if position not in BannerPosition.values:
+        raise HttpError(400, "موقعیت بنر نامعتبر است")
+    image = (payload.image or "").strip()
+    if len(image) > 500:
+        raise HttpError(400, "آدرس تصویر بیش از حد طولانی است")
+    link = (payload.link or "").strip()
+    if len(link) > 500:
+        raise HttpError(400, "لینک بیش از حد طولانی است")
+    starts_at = _parse_optional_dt(payload.starts_at)
+    ends_at = _parse_optional_dt(payload.ends_at)
+    if starts_at and ends_at and ends_at < starts_at:
+        raise HttpError(400, "تاریخ پایان باید بعد از شروع باشد")
+    return {
+        "title": title,
+        "subtitle": (payload.subtitle or "").strip(),
+        "image": image,
+        "link": link,
+        "position": position,
+        "sort_order": payload.sort_order if payload.sort_order is not None else 0,
+        "is_active": bool(payload.is_active),
+        "starts_at": starts_at,
+        "ends_at": ends_at,
+    }
+
+
 @router.get("/banners")
 def list_banners(request):
-    store = _store(request)
-    return cms.get_banners(store)
+    return cms.list_admin_banners(_store(request))
 
 
 @router.post("/banners")
 def create_banner(request, payload: BannerCreateSchema):
     store = _store(request)
-    banner = Banner.objects.create(store=store, **payload.dict())
-    return {"id": banner.id, "title": banner.title}
+    banner = Banner.objects.create(store=store, **_banner_fields(payload))
+    return cms.serialize_banner_admin(banner)
+
+
+@router.put("/banners/{banner_id}")
+def update_banner(request, banner_id: int, payload: BannerCreateSchema):
+    store = _store(request)
+    try:
+        banner = Banner.objects.get(pk=banner_id, store=store)
+    except Banner.DoesNotExist:
+        raise HttpError(404, "بنر یافت نشد")
+    for field, value in _banner_fields(payload).items():
+        setattr(banner, field, value)
+    banner.save()
+    return cms.serialize_banner_admin(banner)
+
+
+@router.delete("/banners/{banner_id}")
+def delete_banner(request, banner_id: int):
+    store = _store(request)
+    deleted, _ = Banner.objects.filter(pk=banner_id, store=store).delete()
+    if not deleted:
+        raise HttpError(404, "بنر یافت نشد")
+    return {"success": True}
 
 
 @router.get("/sliders")

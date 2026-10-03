@@ -6,6 +6,11 @@
         <a href="/manage/products/new/" class="sa-btn" id="product-new">محصول جدید</a>
     </div>
     <div id="products-table-wrap" class="sa-loading-host"></div>
+    <div class="sa-pager" id="products-pager" hidden>
+        <button type="button" class="sa-btn sa-btn-ghost sa-btn-sm" id="products-prev">قبلی</button>
+        <span id="products-page-label" class="sa-muted"></span>
+        <button type="button" class="sa-btn sa-btn-ghost sa-btn-sm" id="products-next">بعدی</button>
+    </div>
 </div>
 {% endblock %}
 {% block extra_js %}

@@ -1,0 +1,88 @@
+{% extends "store_admin/base.html" %}
+{% block content %}
+<div id="sa-banners" class="sa-page">
+    <div class="sa-toolbar">
+        <p class="sa-muted sa-toolbar-hint">بنرهای صفحهٔ خانه، دسته‌بندی و سایدبار را از اینجا بسازید یا غیرفعال کنید.</p>
+        <button type="button" class="sa-btn" id="bn-new">بنر جدید</button>
+    </div>
+
+    <div class="sa-table-wrap sa-loading-host" id="bn-table-host">
+        <table class="sa-table">
+            <thead>
+                <tr>
+                    <th>عنوان</th>
+                    <th>موقعیت</th>
+                    <th>ترتیب</th>
+                    <th>وضعیت</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="bn-tbody"></tbody>
+        </table>
+    </div>
+
+    <dialog id="bn-dialog" class="sa-dialog sa-dialog-wide">
+        <form method="dialog" id="bn-form" class="sa-form">
+            <h2 id="bn-dialog-title">بنر جدید</h2>
+            <input type="hidden" id="bn-id">
+            <label>عنوان
+                <input type="text" id="bn-title" class="sa-input" required>
+            </label>
+            <label>زیرعنوان
+                <input type="text" id="bn-subtitle" class="sa-input">
+            </label>
+            <label>موقعیت
+                <select id="bn-position" class="sa-input">
+                    <option value="home_top">بالای صفحه خانه</option>
+                    <option value="home_middle">وسط صفحه خانه</option>
+                    <option value="category_top">بالای دسته‌بندی</option>
+                    <option value="sidebar">سایدبار</option>
+                </select>
+            </label>
+            <label>آدرس تصویر
+                <input type="text" id="bn-image" class="sa-input" dir="ltr" placeholder="/media/... یا https://...">
+            </label>
+            <div class="sa-form-actions">
+                <button type="button" class="sa-btn sa-btn-ghost" id="bn-pick">انتخاب از رسانه</button>
+            </div>
+            <div id="bn-preview" class="sa-banner-preview" hidden>
+                <img id="bn-preview-img" alt="">
+            </div>
+            <label>لینک
+                <input type="text" id="bn-link" class="sa-input" dir="ltr" placeholder="/products/ یا https://...">
+            </label>
+            <label>ترتیب نمایش
+                <input type="number" id="bn-sort" class="sa-input" dir="ltr" value="0" min="0">
+            </label>
+            <label>شروع نمایش
+                <input type="datetime-local" id="bn-starts" class="sa-input" dir="ltr">
+            </label>
+            <label>پایان نمایش
+                <input type="datetime-local" id="bn-ends" class="sa-input" dir="ltr">
+            </label>
+            <label class="sa-check-inline">
+                <input type="checkbox" id="bn-active" checked>
+                فعال
+            </label>
+            <div class="sa-form-actions">
+                <button type="submit" class="sa-btn" value="save">ذخیره</button>
+                <button type="button" class="sa-btn sa-btn-ghost" id="bn-cancel">انصراف</button>
+            </div>
+        </form>
+    </dialog>
+
+    <dialog id="bn-picker" class="sa-dialog sa-picker-dialog">
+        <div class="sa-picker-body">
+            <div class="sa-editor-section-head">
+                <h2 class="sa-picker-title">انتخاب از رسانه</h2>
+                <button type="button" class="sa-btn sa-btn-ghost sa-btn-sm" id="bn-picker-close">بستن</button>
+            </div>
+            <p class="sa-muted sa-text-sm">روی تصویر کلیک کنید. برای آپلود جدید به <a href="/manage/files/">رسانه</a> بروید.</p>
+            <div id="bn-picker-grid" class="sa-picker-grid"></div>
+        </div>
+    </dialog>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="/static/js/store_admin/banners.js"></script>
+{% endblock %}

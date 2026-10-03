@@ -6,6 +6,12 @@
 
     const wrap = document.getElementById("products-table-wrap");
     const searchInput = document.getElementById("product-search");
+    const pager = document.getElementById("products-pager");
+    const pageLabel = document.getElementById("products-page-label");
+    const prevBtn = document.getElementById("products-prev");
+    const nextBtn = document.getElementById("products-next");
+    const PAGE_SIZE = 20;
+    let page = 1;
     let searchTimer = null;
 
     function statusLabel(status) {
@@ -88,24 +94,75 @@
         });
     }
 
+    function updatePager(count) {
+        const total = Math.max(0, Number(count) || 0);
+        const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+        if (page > pages) page = pages;
+        const show = total > PAGE_SIZE;
+        if (pager) pager.hidden = !show;
+        if (prevBtn) prevBtn.disabled = page <= 1;
+        if (nextBtn) nextBtn.disabled = page >= pages;
+        if (!pageLabel) return;
+        const start = total ? (page - 1) * PAGE_SIZE + 1 : 0;
+        const end = Math.min(page * PAGE_SIZE, total);
+        pageLabel.textContent =
+            "صفحه " +
+            api.formatNumber(page) +
+            " از " +
+            api.formatNumber(pages) +
+            " · " +
+            api.formatNumber(start) +
+            "–" +
+            api.formatNumber(end) +
+            " از " +
+            api.formatNumber(total);
+    }
+
     function loadProducts() {
         const q = (searchInput.value || "").trim();
-        const qs = q ? "?search=" + encodeURIComponent(q) : "";
+        const params = new URLSearchParams();
+        params.set("page", String(page));
+        if (q) params.set("search", q);
         api.setPageLoading(wrap, true);
-        api.apiFetch("/api/v1/store-admin/products/" + qs).then(function ({ ok, data }) {
+        api.apiFetch("/api/v1/store-admin/products/?" + params.toString()).then(function ({ ok, data }) {
             api.setPageLoading(wrap, false);
             if (!ok) {
                 wrap.innerHTML = '<div class="sa-empty">خطا در بارگذاری محصولات</div>';
+                if (pager) pager.hidden = true;
                 return;
             }
-            renderTable(api.unwrapList(data));
+            const items = api.unwrapList(data);
+            const count = data && typeof data.count === "number" ? data.count : items.length;
+            const pages = Math.max(1, Math.ceil(count / PAGE_SIZE));
+            if (page > pages) {
+                page = pages;
+                loadProducts();
+                return;
+            }
+            renderTable(items);
+            updatePager(count);
         });
     }
 
     searchInput.addEventListener("input", function () {
         clearTimeout(searchTimer);
+        page = 1;
         searchTimer = setTimeout(loadProducts, 300);
     });
+
+    if (prevBtn) {
+        prevBtn.addEventListener("click", function () {
+            if (page <= 1) return;
+            page -= 1;
+            loadProducts();
+        });
+    }
+    if (nextBtn) {
+        nextBtn.addEventListener("click", function () {
+            page += 1;
+            loadProducts();
+        });
+    }
 
     loadProducts();
 })();

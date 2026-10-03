@@ -1,37 +1,140 @@
 {% extends "store_admin/base.html" %}
 {% block content %}
 <div id="sa-settings" class="sa-page sa-settings">
-    <form id="settings-form" class="sa-form sa-card">
-        <h2>تنظیمات عمومی</h2>
+    <div class="sa-tabs" role="tablist" aria-label="بخش‌های تنظیمات">
+        <button type="button" class="sa-tab is-active" role="tab" aria-selected="true" data-panel="general">عمومی</button>
+        <button type="button" class="sa-tab" role="tab" aria-selected="false" data-panel="look">ظاهر</button>
+        <button type="button" class="sa-tab" role="tab" aria-selected="false" data-panel="badges">نشان‌ها</button>
+        <button type="button" class="sa-tab" role="tab" aria-selected="false" data-panel="seo">سئو</button>
+    </div>
+
+    <form id="settings-form" class="sa-form sa-card" data-panel="general">
+        <h2>فروشگاه</h2>
+        <p class="sa-muted sa-form-intro">نام، واحد پول و زبان همین فروشگاه. روی ویترین و فاکتور دیده می‌شود.</p>
         <label>نام فروشگاه
-            <input type="text" id="setting-name" required class="sa-input">
+            <input type="text" id="setting-name" required class="sa-input" autocomplete="organization">
         </label>
-        <label>ارز
-            <input type="text" id="setting-currency" required class="sa-input" maxlength="10">
-        </label>
+        <div class="sa-grid-2">
+            <label>ارز
+                <input type="text" id="setting-currency" required class="sa-input" maxlength="10" list="currency-options" placeholder="IRT">
+                <datalist id="currency-options">
+                    <option value="IRT"></option>
+                    <option value="IRR"></option>
+                    <option value="تومان"></option>
+                </datalist>
+            </label>
+            <label>زبان
+                <input type="text" id="setting-language" class="sa-input" list="language-options" placeholder="fa" maxlength="10">
+                <datalist id="language-options">
+                    <option value="fa"></option>
+                    <option value="en"></option>
+                </datalist>
+            </label>
+        </div>
         <label>منطقه زمانی
-            <input type="text" id="setting-timezone" class="sa-input" placeholder="Asia/Tehran">
-        </label>
-        <label>زبان
-            <input type="text" id="setting-language" class="sa-input" placeholder="fa">
+            <input type="text" id="setting-timezone" class="sa-input" list="timezone-options" placeholder="Asia/Tehran" dir="ltr">
+            <datalist id="timezone-options">
+                <option value="Asia/Tehran"></option>
+                <option value="UTC"></option>
+            </datalist>
         </label>
         <div class="sa-form-actions">
-            <button type="submit" class="sa-btn">ذخیره تغییرات</button>
+            <button type="submit" class="sa-btn">ذخیره تنظیمات عمومی</button>
         </div>
     </form>
 
-    <form id="seo-gsc-form" class="sa-form sa-card">
+    <form id="theme-settings-form" class="sa-form sa-card" data-panel="look" hidden>
+        <div data-section="look">
+            <h2>ظاهر ویترین</h2>
+            <p class="sa-muted sa-form-intro">لوگو، رنگ‌ها و اسلاید صفحهٔ خانه. اگر اسلاید خالی باشد از اسلایدر محتوا استفاده می‌شود.</p>
+
+            <div class="sa-media-field">
+                <div class="sa-media-field-preview" id="theme-logo-preview" hidden></div>
+                <label>لوگو
+                    <input type="text" id="theme-logo" class="sa-input" dir="ltr" placeholder="/media/... یا https://...">
+                </label>
+                <button type="button" class="sa-btn sa-btn-ghost sa-btn-sm" data-pick="theme-logo">انتخاب از رسانه</button>
+            </div>
+
+            <div class="sa-theme-colors">
+                <label class="sa-color-field">رنگ اصلی
+                    <span class="sa-color-row">
+                        <input type="color" id="theme-color-primary-picker" value="#0f766e" aria-label="انتخاب رنگ اصلی">
+                        <input type="text" id="theme-color-primary" class="sa-input" dir="ltr" placeholder="#0f766e" maxlength="7">
+                    </span>
+                </label>
+                <label class="sa-color-field">پس‌زمینه
+                    <span class="sa-color-row">
+                        <input type="color" id="theme-color-bg-picker" value="#f8fafc" aria-label="انتخاب رنگ پس‌زمینه">
+                        <input type="text" id="theme-color-bg" class="sa-input" dir="ltr" placeholder="#ffffff" maxlength="7">
+                    </span>
+                </label>
+                <label class="sa-color-field">متن
+                    <span class="sa-color-row">
+                        <input type="color" id="theme-color-text-picker" value="#0f172a" aria-label="انتخاب رنگ متن">
+                        <input type="text" id="theme-color-text" class="sa-input" dir="ltr" placeholder="#111111" maxlength="7">
+                    </span>
+                </label>
+            </div>
+
+            <div class="sa-hero-head">
+                <h3>اسلایدهای صفحه خانه</h3>
+                <button type="button" id="theme-add-slide" class="sa-btn sa-btn-ghost sa-btn-sm">افزودن اسلاید</button>
+            </div>
+            <div id="theme-slides" class="sa-theme-slides"></div>
+
+            <div class="sa-form-actions">
+                <button type="submit" class="sa-btn">ذخیره ظاهر</button>
+            </div>
+        </div>
+
+        <div data-section="badges" hidden>
+            <h2>نشان‌های اعتماد</h2>
+            <p class="sa-muted sa-form-intro">اینماد و نشان دوم در فوتر. با کلیک در تب جدید باز می‌شوند.</p>
+
+            <div class="sa-badge-grid">
+                <fieldset class="sa-badge-card">
+                    <legend>اینماد</legend>
+                    <div class="sa-media-field-preview" id="theme-enamad-preview" hidden></div>
+                    <label>آدرس تصویر
+                        <input type="text" id="theme-enamad-image" class="sa-input" dir="ltr" placeholder="/media/... یا https://...">
+                    </label>
+                    <button type="button" class="sa-btn sa-btn-ghost sa-btn-sm" data-pick="theme-enamad-image">انتخاب از رسانه</button>
+                    <label>لینک
+                        <input type="text" id="theme-enamad-link" class="sa-input" dir="ltr" placeholder="https://trustseal.enamad.ir/...">
+                    </label>
+                </fieldset>
+                <fieldset class="sa-badge-card">
+                    <legend>نشان دوم</legend>
+                    <div class="sa-media-field-preview" id="theme-badge2-preview" hidden></div>
+                    <label>آدرس تصویر
+                        <input type="text" id="theme-badge2-image" class="sa-input" dir="ltr" placeholder="/media/... یا https://...">
+                    </label>
+                    <button type="button" class="sa-btn sa-btn-ghost sa-btn-sm" data-pick="theme-badge2-image">انتخاب از رسانه</button>
+                    <label>لینک
+                        <input type="text" id="theme-badge2-link" class="sa-input" dir="ltr" placeholder="https://...">
+                    </label>
+                </fieldset>
+            </div>
+
+            <div class="sa-form-actions">
+                <button type="submit" class="sa-btn">ذخیره نشان‌ها</button>
+            </div>
+        </div>
+    </form>
+
+    <form id="seo-gsc-form" class="sa-form sa-card" data-panel="seo" hidden>
         <h2>گوگل سرچ کنسول</h2>
         <p class="sa-muted sa-form-intro">
-            با ثبت کد تأیید، گوگل این دامنه را به‌نام فروشگاه می‌شناسد. بعد از ذخیره، در
+            کد تأیید را ذخیره کنید، بعد در
             <a href="https://search.google.com/search-console" target="_blank" rel="noopener noreferrer">Search Console</a>
             روی Verify بزنید و نقشه سایت را اضافه کنید.
         </p>
         <p id="gsc-status" class="sa-gsc-status" hidden></p>
         <ol class="sa-steps">
-            <li>در Search Console یک property با آدرس همین سایت بسازید.</li>
+            <li>یک property با آدرس همین سایت بسازید.</li>
             <li>روش HTML tag یا HTML file را انتخاب کنید.</li>
-            <li>کد یا نام فایل را اینجا ذخیره کنید و در گوگل Verify را بزنید.</li>
+            <li>کد یا نام فایل را اینجا ذخیره کنید و Verify را بزنید.</li>
         </ol>
         <label>کد تأیید
             <textarea id="gsc-verification" class="sa-input" rows="3" dir="ltr" placeholder='&lt;meta name="google-site-verification" content="…"&gt; یا google123.html'></textarea>
@@ -61,94 +164,52 @@
         </div>
     </form>
 
-    <form id="theme-settings-form" class="sa-form sa-card">
-        <h2>تنظیمات تم / Hero</h2>
-        <p class="sa-muted sa-form-intro">
-            اسلایدهای صفحهٔ خانه (تم modern). اگر خالی باشد از اسلایدر CMS استفاده می‌شود.
-        </p>
-        <label>لوگو (URL)
-            <input type="url" id="theme-logo" class="sa-input" placeholder="https://...">
-        </label>
-        <div class="sa-theme-colors">
-            <label>رنگ اصلی
-                <input type="text" id="theme-color-primary" class="sa-input" placeholder="#111111">
-            </label>
-            <label>پس‌زمینه
-                <input type="text" id="theme-color-bg" class="sa-input" placeholder="#ffffff">
-            </label>
-            <label>متن
-                <input type="text" id="theme-color-text" class="sa-input" placeholder="#111111">
-            </label>
+    <dialog id="settings-picker" class="sa-dialog sa-picker-dialog">
+        <div class="sa-picker-body">
+            <div class="sa-editor-section-head">
+                <h2 class="sa-picker-title">انتخاب از رسانه</h2>
+                <button type="button" class="sa-btn sa-btn-ghost sa-btn-sm" id="settings-picker-close">بستن</button>
+            </div>
+            <p class="sa-muted sa-text-sm">روی تصویر کلیک کنید. برای آپلود به <a href="/manage/files/">رسانه</a> بروید.</p>
+            <div id="settings-picker-grid" class="sa-picker-grid"></div>
         </div>
-
-        <div class="sa-hero-head">
-            <h3>نشان‌های اعتماد (فوتر)</h3>
-        </div>
-        <p class="sa-muted sa-form-intro">
-            تصویر و لینک اینماد و نشان دوم. با کلیک در تب جدید باز می‌شوند.
-        </p>
-        <div class="sa-theme-colors">
-            <label>اینماد — آدرس تصویر
-                <input type="url" id="theme-enamad-image" class="sa-input" placeholder="https://...">
-            </label>
-            <label>اینماد — لینک
-                <input type="url" id="theme-enamad-link" class="sa-input" placeholder="https://trustseal.enamad.ir/...">
-            </label>
-            <label>نشان دوم — آدرس تصویر
-                <input type="url" id="theme-badge2-image" class="sa-input" placeholder="https://...">
-            </label>
-            <label>نشان دوم — لینک
-                <input type="url" id="theme-badge2-link" class="sa-input" placeholder="https://...">
-            </label>
-        </div>
-
-        <div class="sa-hero-head">
-            <h3>اسلایدهای Hero</h3>
-            <button type="button" id="theme-add-slide" class="sa-btn sa-btn-ghost sa-btn-sm">افزودن اسلاید</button>
-        </div>
-        <div id="theme-slides" class="sa-theme-slides"></div>
-
-        <div class="sa-form-actions">
-            <button type="submit" class="sa-btn">ذخیره تنظیمات تم</button>
-        </div>
-    </form>
-
-    <div class="sa-form sa-card">
-        <h2>دسته‌بندی‌ها و برندها</h2>
-        <p class="sa-muted sa-form-intro">
-            افزودن و حذف دسته و برند از صفحهٔ جداگانه انجام می‌شود.
-        </p>
-        <div class="sa-form-actions">
-            <a href="/manage/catalog/" class="sa-btn">مدیریت دسته‌ها و برندها</a>
-        </div>
-    </div>
+    </dialog>
 </div>
 
 <template id="theme-slide-template">
-    <fieldset class="sa-theme-slide sa-card">
+    <fieldset class="sa-theme-slide">
         <legend class="sa-theme-slide-legend"></legend>
         <div class="sa-theme-slide-fields">
+            <div class="sa-media-field-preview js-slide-preview" hidden></div>
             <label>آدرس تصویر
-                <input type="url" name="image" class="sa-input" placeholder="https://...">
+                <input type="text" name="image" class="sa-input" dir="ltr" placeholder="/media/... یا https://...">
             </label>
-            <label>آدرس Thumbnail (lazy load)
-                <input type="url" name="thumbnail" class="sa-input" placeholder="https://... (کوچک)">
+            <button type="button" class="sa-btn sa-btn-ghost sa-btn-sm js-pick-slide">انتخاب از رسانه</button>
+            <label>تصویر کوچک
+                <input type="text" name="thumbnail" class="sa-input" dir="ltr" placeholder="اختیاری، برای بارگذاری تنبل">
             </label>
-            <label>عنوان
-                <input type="text" name="title" class="sa-input">
-            </label>
+            <div class="sa-grid-2">
+                <label>عنوان
+                    <input type="text" name="title" class="sa-input">
+                </label>
+                <label>متن دکمه
+                    <input type="text" name="button_text" class="sa-input" placeholder="خرید کنید">
+                </label>
+            </div>
             <label>متن
                 <textarea name="text" class="sa-input" rows="2"></textarea>
             </label>
-            <label>متن دکمه
-                <input type="text" name="button_text" class="sa-input" placeholder="خرید کنید">
-            </label>
-            <label>لینک دکمه
-                <input type="text" name="button_link" class="sa-input" placeholder="/category/">
-            </label>
-            <label>رنگ پس‌زمینه
-                <input type="text" name="background_color" class="sa-input" placeholder="#f6f4f1">
-            </label>
+            <div class="sa-grid-2">
+                <label>لینک دکمه
+                    <input type="text" name="button_link" class="sa-input" dir="ltr" placeholder="/products/">
+                </label>
+                <label class="sa-color-field">رنگ پس‌زمینه
+                    <span class="sa-color-row">
+                        <input type="color" name="background_picker" value="#f6f4f1" aria-label="رنگ پس‌زمینه اسلاید">
+                        <input type="text" name="background_color" class="sa-input" dir="ltr" placeholder="#f6f4f1" maxlength="7">
+                    </span>
+                </label>
+            </div>
             <div class="sa-form-actions">
                 <button type="button" class="sa-btn sa-btn-danger sa-btn-sm theme-remove-slide">حذف اسلاید</button>
             </div>

@@ -83,6 +83,19 @@ class CMSService:
             "position": banner.position,
         }
 
+    def list_admin_banners(self, store) -> list:
+        banners = Banner.objects.filter(store=store).order_by("sort_order", "-created_at")
+        return [self.serialize_banner_admin(banner) for banner in banners]
+
+    def serialize_banner_admin(self, banner: Banner) -> dict:
+        return {
+            **self._serialize_banner(banner),
+            "sort_order": banner.sort_order,
+            "is_active": banner.is_active,
+            "starts_at": banner.starts_at.isoformat() if banner.starts_at else None,
+            "ends_at": banner.ends_at.isoformat() if banner.ends_at else None,
+        }
+
     def get_slider(self, store, slug: str = "home") -> dict | None:
         sliders_cache = self.cache.get(store.id, "sliders")
         if sliders_cache is None:
