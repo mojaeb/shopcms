@@ -55,6 +55,7 @@
   Store,
   SlidersHorizontal,
   Gift,
+  Star,
 } from "lucide";
 
 import Swiper from "swiper";
@@ -81,6 +82,7 @@ const nsIcons = {
   Pencil, Check, CheckCircle2, XCircle, Map, Store,
   SlidersHorizontal,
   Gift,
+  Star,
 };
 
 function refreshIcons(root = document) {

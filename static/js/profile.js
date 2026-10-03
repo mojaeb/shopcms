@@ -27,7 +27,9 @@
         };
         const csrf = getCookie("csrftoken");
         if (csrf) headers["X-CSRFToken"] = csrf;
-        const access = sessionStorage.getItem("access_token");
+        const access = window.AuthSession
+            ? window.AuthSession.getAccess()
+            : sessionStorage.getItem("access_token");
         if (access) headers.Authorization = "Bearer " + access;
 
         return fetch(API, {

@@ -156,6 +156,11 @@ BACKUP_ROOT = BASE_DIR / "backups"
 BACKUP_RETENTION_DAYS = env.int("BACKUP_RETENTION_DAYS", default=30)
 BACKUP_INCLUDE_MEDIA_DEFAULT = env.bool("BACKUP_INCLUDE_MEDIA_DEFAULT", default=True)
 
+# Keep the signed-in cookie for a month, and slide it forward on each visit.
+SESSION_COOKIE_AGE = 60 * 60 * 24 * 30
+SESSION_SAVE_EVERY_REQUEST = True
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+
 # Security
 RATE_LIMIT_ENABLED = env.bool("RATE_LIMIT_ENABLED", default=True)
 RATE_LIMIT_API_ANON = env.int("RATE_LIMIT_API_ANON", default=120)

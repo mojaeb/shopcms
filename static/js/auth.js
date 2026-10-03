@@ -33,7 +33,9 @@
         };
         const csrf = getCookie("csrftoken");
         if (csrf) headers["X-CSRFToken"] = csrf;
-        const token = sessionStorage.getItem("access_token");
+        const token = window.AuthSession
+            ? window.AuthSession.getAccess()
+            : sessionStorage.getItem("access_token");
         if (token && !headers.Authorization) {
             headers.Authorization = "Bearer " + token;
         }
@@ -162,6 +164,10 @@
     }
 
     function storeTokens(data) {
+        if (window.AuthSession) {
+            window.AuthSession.setTokens(data);
+            return;
+        }
         if (data.access_token) sessionStorage.setItem("access_token", data.access_token);
         if (data.refresh_token) sessionStorage.setItem("refresh_token", data.refresh_token);
     }

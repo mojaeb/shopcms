@@ -12,7 +12,8 @@
     }
 
     function getToken() {
-        return sessionStorage.getItem(ACCESS_KEY) || "";
+        if (global.AuthSession) return global.AuthSession.getAccess();
+        return sessionStorage.getItem(ACCESS_KEY) || localStorage.getItem(ACCESS_KEY) || "";
     }
 
     function requireAuth(nextPath) {
@@ -54,10 +55,15 @@
     }
 
     function logout() {
-        const refresh = sessionStorage.getItem(REFRESH_KEY);
-        const access = sessionStorage.getItem(ACCESS_KEY);
+        const refresh = global.AuthSession ? global.AuthSession.getRefresh() : sessionStorage.getItem(REFRESH_KEY);
+        const access = getToken();
+        if (global.AuthSession) global.AuthSession.clear();
         sessionStorage.removeItem(ACCESS_KEY);
         sessionStorage.removeItem(REFRESH_KEY);
+        try {
+            localStorage.removeItem(ACCESS_KEY);
+            localStorage.removeItem(REFRESH_KEY);
+        } catch (e) {}
         const headers = { Accept: "application/json", "Content-Type": "application/json" };
         const csrf = getCookie("csrftoken");
         if (csrf) headers["X-CSRFToken"] = csrf;
@@ -205,6 +211,15 @@
         options = options || {};
         const token = getToken();
         if (!token) {
+            if (!options._retried && global.AuthSession && global.AuthSession.getRefresh()) {
+                return global.AuthSession.refresh().then(function (renewed) {
+                    if (renewed) {
+                        return apiFetch(path, Object.assign({}, options, { _retried: true }));
+                    }
+                    requireAuth(window.location.pathname);
+                    return { ok: false, status: 401, data: { detail: "Unauthorized" } };
+                });
+            }
             requireAuth(window.location.pathname);
             return Promise.resolve({ ok: false, status: 401, data: { detail: "Unauthorized" } });
         }
@@ -228,7 +243,14 @@
             const data = await res.json().catch(function () {
                 return {};
             });
+            if (res.status === 401 && !options._retried && global.AuthSession) {
+                const renewed = await global.AuthSession.refresh();
+                if (renewed) {
+                    return apiFetch(path, Object.assign({}, options, { _retried: true }));
+                }
+            }
             if (res.status === 401) {
+                if (global.AuthSession) global.AuthSession.clear();
                 sessionStorage.removeItem(ACCESS_KEY);
                 requireAuth(window.location.pathname);
             }

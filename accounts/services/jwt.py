@@ -14,8 +14,8 @@ from django.core.cache import cache
 logger = logging.getLogger(__name__)
 
 JWT_ALGORITHM = "HS256"
-ACCESS_TOKEN_LIFETIME = timedelta(minutes=15)
-REFRESH_TOKEN_LIFETIME = timedelta(days=7)
+ACCESS_TOKEN_LIFETIME = timedelta(days=7)
+REFRESH_TOKEN_LIFETIME = timedelta(days=30)
 BLACKLIST_PREFIX = "jwt:blacklist:"
 
 
@@ -24,7 +24,7 @@ class TokenPair:
     access_token: str
     refresh_token: str
     token_type: str = "Bearer"
-    expires_in: int = 900
+    expires_in: int = 7 * 24 * 60 * 60
 
 
 class JWTService:

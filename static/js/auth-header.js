@@ -16,10 +16,19 @@
             method: "POST",
             credentials: "same-origin",
             headers,
-            body: JSON.stringify({ refresh_token: sessionStorage.getItem("refresh_token") || "" }),
+            body: JSON.stringify({
+                refresh_token: window.AuthSession
+                    ? window.AuthSession.getRefresh()
+                    : sessionStorage.getItem("refresh_token") || "",
+            }),
         }).finally(() => {
+            if (window.AuthSession) window.AuthSession.clear();
             sessionStorage.removeItem("access_token");
             sessionStorage.removeItem("refresh_token");
+            try {
+                localStorage.removeItem("access_token");
+                localStorage.removeItem("refresh_token");
+            } catch (e) {}
             window.location.href = "/";
         });
     }
