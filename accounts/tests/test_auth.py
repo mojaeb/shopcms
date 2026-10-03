@@ -79,6 +79,22 @@ def test_login_flow(setup_store):
 
 
 @pytest.mark.django_db
+def test_blacklist_one_token_leaves_others_valid():
+    jwt_service = JWTService()
+    first = jwt_service.create_tokens(1, 1, "store_admin", 1)
+    second = jwt_service.create_tokens(1, 1, "store_admin", 1)
+
+    jwt_service.blacklist_token(first.access_token)
+    jwt_service.blacklist_token(first.refresh_token)
+
+    assert jwt_service.verify_access_token(first.access_token) is None
+    assert jwt_service.verify_refresh_token(first.refresh_token) is None
+    assert jwt_service.verify_access_token(second.access_token) is not None
+    assert jwt_service.verify_refresh_token(second.refresh_token) is not None
+    assert jwt_service.verify_access_token(second.access_token)["store_id"] == 1
+
+
+@pytest.mark.django_db
 def test_jwt_create_and_verify(setup_store):
     user = User.objects.create_user(phone="09124444444")
     jwt_service = JWTService()

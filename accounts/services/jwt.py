@@ -1,6 +1,8 @@
 """JWT token service."""
 
+import hashlib
 import logging
+import uuid
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from typing import Any
@@ -51,6 +53,7 @@ class JWTService:
         base_payload: dict[str, Any] = {
             "sub": str(user_id),
             "type": "access",
+            "jti": uuid.uuid4().hex,
         }
         if store_id:
             base_payload["store_id"] = store_id
@@ -64,7 +67,7 @@ class JWTService:
         refresh_payload = {
             "sub": str(user_id),
             "type": "refresh",
-            "jti": f"{user_id}-{datetime.now(timezone.utc).timestamp()}",
+            "jti": uuid.uuid4().hex,
         }
         if store_id:
             refresh_payload["store_id"] = store_id
@@ -82,10 +85,10 @@ class JWTService:
 
     def verify_access_token(self, token: str) -> dict | None:
         try:
-            if self.is_blacklisted(token):
-                return None
             payload = self.decode(token)
             if payload.get("type") != "access":
+                return None
+            if self.is_blacklisted(token, payload):
                 return None
             return payload
         except jwt.PyJWTError as e:
@@ -94,10 +97,10 @@ class JWTService:
 
     def verify_refresh_token(self, token: str) -> dict | None:
         try:
-            if self.is_blacklisted(token):
-                return None
             payload = self.decode(token)
             if payload.get("type") != "refresh":
+                return None
+            if self.is_blacklisted(token, payload):
                 return None
             return payload
         except jwt.PyJWTError as e:
@@ -108,15 +111,27 @@ class JWTService:
         try:
             payload = self.decode(token)
             exp = payload.get("exp")
-            if exp:
-                ttl = int(exp - datetime.now(timezone.utc).timestamp())
-                if ttl > 0:
-                    cache.set(f"{BLACKLIST_PREFIX}{token[:32]}", True, ttl)
+            if not exp:
+                return
+            ttl = int(exp - datetime.now(timezone.utc).timestamp())
+            if ttl > 0:
+                cache.set(self._blacklist_cache_key(token, payload), True, ttl)
         except jwt.PyJWTError:
             pass
 
-    def is_blacklisted(self, token: str) -> bool:
-        return cache.get(f"{BLACKLIST_PREFIX}{token[:32]}") is not None
+    def is_blacklisted(self, token: str, payload: dict | None = None) -> bool:
+        if payload is None:
+            try:
+                payload = self.decode(token)
+            except jwt.PyJWTError:
+                return False
+        return cache.get(self._blacklist_cache_key(token, payload)) is not None
+
+    def _blacklist_cache_key(self, token: str, payload: dict) -> str:
+        # HS256 tokens share the same header, so token[:32] would blacklist every token.
+        jti = payload.get("jti")
+        ident = str(jti) if jti else hashlib.sha256(token.encode("utf-8")).hexdigest()
+        return f"{BLACKLIST_PREFIX}{ident}"
 
     def refresh_access_token(self, refresh_token: str) -> TokenPair | None:
         payload = self.verify_refresh_token(refresh_token)
