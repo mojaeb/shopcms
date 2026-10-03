@@ -4,7 +4,11 @@
 <div class="ns-auth" id="auth-page" data-mode="{{ auth_mode|default:'login' }}" data-unified="1">
     <div class="ns-auth-card">
         <div class="ns-auth-brand">
-            <span class="ns-auth-brand-mark" aria-hidden="true"><i data-lucide="smartphone"></i></span>
+            {% if theme_settings.logo %}
+            <img src="{{ theme_settings.logo }}" alt="{{ store.name }}" class="ns-auth-logo">
+            {% else %}
+            <img src="/static/themes/nextshop/img/logo.png" alt="{{ store.name }}" class="ns-auth-logo">
+            {% endif %}
         </div>
         <h1 class="ns-page-title">
             {% if auth_mode == 'register' %}ثبت‌نام{% else %}ورود{% endif %}

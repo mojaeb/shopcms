@@ -29,12 +29,20 @@ LOGGING["loggers"]["django.security.DisallowedHost"] = {  # noqa: F405
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 # Debug toolbar (optional, enabled when installed)
+def show_debug_toolbar(request):
+    """Keep developer chrome off customer-facing storefront pages."""
+    return request.path.startswith(("/admin/", "/__debug__/"))
+
+
 try:
     import debug_toolbar  # noqa: F401
 
     INSTALLED_APPS += ["debug_toolbar"]  # noqa: F811
     MIDDLEWARE.insert(1, "debug_toolbar.middleware.DebugToolbarMiddleware")  # noqa: F811
     INTERNAL_IPS = ["127.0.0.1"]
+    DEBUG_TOOLBAR_CONFIG = {
+        "SHOW_TOOLBAR_CALLBACK": "config.settings.development.show_debug_toolbar",
+    }
 except ImportError:
     pass
 

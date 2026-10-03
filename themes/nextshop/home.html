@@ -6,9 +6,10 @@
 <div class="ns-home">
     <div class="ns-hero-band">
         <div class="ns-width">
-            <div class="ns-hero-grid">
+            <div class="ns-hero-grid{% if not cms_banners.home_top %} ns-hero-grid--solo{% endif %}">
                 {% include "partials/slider.html" %}
 
+                {% if cms_banners.home_top %}
                 <div class="ns-banners">
                     {% if cms_banners.home_top %}
                         {% for banner in cms_banners.home_top|slice:":2" %}
@@ -24,27 +25,9 @@
                             </div>
                         </a>
                         {% endfor %}
-                    {% else %}
-                        <a href="/products/mobile/" class="ns-banner ns-banner--primary">
-                            <div class="ns-banner-inner">
-                                <strong>موبایل و تبلت</strong>
-                                <p>جدیدترین گوشی‌ها و تبلت‌های روز</p>
-                                <div class="ns-banner-cta">
-                                    <span class="ns-btn ns-btn--white">مشاهده <i data-lucide="arrow-left"></i></span>
-                                </div>
-                            </div>
-                        </a>
-                        <a href="/products/powerbank/" class="ns-banner ns-banner--accent">
-                            <div class="ns-banner-inner">
-                                <strong>لوازم جانبی</strong>
-                                <p>پاوربانک، شارژر، هندزفری و قاب</p>
-                                <div class="ns-banner-cta">
-                                    <span class="ns-btn ns-btn--white">مشاهده <i data-lucide="arrow-left"></i></span>
-                                </div>
-                            </div>
-                        </a>
                     {% endif %}
                 </div>
+                {% endif %}
             </div>
 
             {% if home_categories %}
@@ -73,8 +56,7 @@
         <div class="ns-width ns-discount-inner">
             <div class="ns-discount-copy">
                 <div>
-                    <h2>{% if home_deals.0.discount_percent %}تخفیف‌های واقعی{% else %}منتخب فروشگاه{% endif %}</h2>
-                    <p>کالاهای منتخب با قیمت شفاف و ارسال مطمئن</p>
+                    <h2>{% if home_deals.0.discount_percent %}تخفیف‌ها{% else %}منتخب فروشگاه{% endif %}</h2>
                 </div>
                 <a href="/products/" class="ns-btn ns-btn--white">
                     مشاهده همه
@@ -107,7 +89,6 @@
             <div class="ns-section-head">
                 <div>
                     <h2>{{ section.name }}</h2>
-                    <p class="ns-section-sub">منتخب این دسته‌بندی</p>
                 </div>
                 <a class="ns-section-link" href="/products/{{ section.slug }}/">
                     مشاهده همه
@@ -136,7 +117,6 @@
             <div class="ns-section-head">
                 <div>
                     <h2>تازه‌ها</h2>
-                    <p class="ns-section-sub">آخرین محصولات اضافه‌شده</p>
                 </div>
                 <a class="ns-section-link" href="/products/">مشاهده همه <i data-lucide="arrow-left"></i></a>
             </div>
@@ -154,7 +134,7 @@
         <div class="ns-width ns-mid-banners-grid">
             {% for banner in cms_banners.home_middle %}
             <a href="{{ banner.link|default:'#' }}" class="ns-banner ns-banner--primary ns-banner--mid"
-               style="{% if banner.image %}background-image:linear-gradient(120deg,rgba(15,118,110,.8),rgba(15,23,42,.35)),url('{{ banner.image }}');background-size:cover;{% endif %}">
+               {% if banner.image %}style="background-image:linear-gradient(120deg,rgba(15,23,42,.62),rgba(15,23,42,.25)),url('{{ banner.image }}');background-size:cover;"{% endif %}>
                 <div class="ns-banner-inner">
                     <strong>{{ banner.title }}</strong>
                     {% if banner.subtitle %}<p>{{ banner.subtitle }}</p>{% endif %}
@@ -171,7 +151,6 @@
             <div class="ns-section-head">
                 <div>
                     <h2>آخرین مطالب</h2>
-                    <p class="ns-section-sub">راهنماها و اخبار فروشگاه</p>
                 </div>
                 <a class="ns-section-link" href="/blog/">
                     مشاهده همه
@@ -204,37 +183,5 @@
     </section>
     {% endif %}
 
-    <section class="ns-trust" aria-label="چرا از ما بخرید">
-        <div class="ns-width ns-trust-grid">
-            <div class="ns-trust-item">
-                <span class="ns-trust-icon" aria-hidden="true"><i data-lucide="truck"></i></span>
-                <div>
-                    <strong>ارسال سراسری</strong>
-                    <p>پست و تیپاکس به سراسر کشور</p>
-                </div>
-            </div>
-            <div class="ns-trust-item">
-                <span class="ns-trust-icon" aria-hidden="true"><i data-lucide="shield-check"></i></span>
-                <div>
-                    <strong>پرداخت امن</strong>
-                    <p>درگاه معتبر و اتصال رمزنگاری‌شده</p>
-                </div>
-            </div>
-            <div class="ns-trust-item">
-                <span class="ns-trust-icon" aria-hidden="true"><i data-lucide="badge-check"></i></span>
-                <div>
-                    <strong>اصالت کالا</strong>
-                    <p>موبایل و لوازم جانبی با گارانتی معتبر</p>
-                </div>
-            </div>
-            <div class="ns-trust-item">
-                <span class="ns-trust-icon" aria-hidden="true"><i data-lucide="headphones"></i></span>
-                <div>
-                    <strong>پشتیبانی خرید</strong>
-                    <p>راهنمایی قبل و بعد از سفارش</p>
-                </div>
-            </div>
-        </div>
-    </section>
-</div>
+    </div>
 {% endblock %}

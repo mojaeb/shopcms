@@ -178,9 +178,21 @@ def storefront_product(request, slug):
     if not product:
         raise Http404("محصول یافت نشد")
     detail = ps.serialize_product_detail(product)
+    related_products = []
+    if product.category_id:
+        related_qs = ps.list_products(store, category_slug=product.category.slug).exclude(pk=product.pk)[:4]
+        related_products = [ps.serialize_product_list(p) for p in related_qs]
     context = {
         "product": detail,
         "seo": detail["seo"],
+        "related_products": related_products,
+        "has_specs": bool(
+            detail.get("attribute_options")
+            or detail.get("brand")
+            or detail.get("sku")
+            or detail.get("category")
+            or detail.get("tags")
+        ),
     }
     return engine.render_page(request, "product", context)
 

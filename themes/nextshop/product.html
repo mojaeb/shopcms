@@ -2,11 +2,11 @@
 {% block title %}{{ product.seo.meta_title|default:product.name }} - {{ store.name }}{% endblock %}
 {% block content %}
 <!--
-THESIS: The photograph scrolls with the story; the decision stays in a hairline rail. Refuses paired white cards, badge rows, and icon trust chips.
-OWN-WORLD: NextShop paper, IranYekan, teal only on the buy button and links. Square photo on a quiet field, price with the toman mark, one full-width action.
-STORY: The shopper sees the object, reads the price, chooses a variant, adds it to the cart, then reads the description and reviews without opening a tab.
-FIRST VIEWPORT: Breadcrumb. Square photo on the start side. Sticky rail with the name, price, variants, quantity, and one buy button. The description begins under the photo.
-FORM: Sticky purchase rail, fifth structure, seed af3d6137.
+THESIS: A product page is a data sheet you can order from. Every option is a ruled row, the total is a live line, and the specs are a table, not prose.
+OWN-WORLD: NextShop paper and IranYekan with a cooler, squarer hand: 4px corners, hairline rules, tabular numerals, the tenant accent only on the buy action and the active option. No cards, no shadows on the page body.
+STORY: The shopper sees the object on a plate, sets each option on its own row, reads the price that results, and orders. Below, a section index jumps to description, specs, reviews and related items.
+FIRST VIEWPORT: Breadcrumb. Photo plate on the start side. On the end side: name, short line, option rows, price, quantity, buy. On phones the buy bar docks to the bottom once the in-page button scrolls away.
+FORM: Configuration sheet, fourth candidate of re-roll 1, seed af3d6137. Refuses the sticky rail, paired cards, trust chips and badge rows.
 FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, and DESIGN.md
 -->
 <div class="ns-pdp">
@@ -23,7 +23,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
             <span class="ns-pdp-crumb">{{ product.name }}</span>
         </nav>
 
-        <div class="ns-pdp-stage">
+        <div class="ns-pdp-top">
             <div
                 class="ns-pdp-gallery"
                 x-data="vgGallery()"
@@ -102,8 +102,9 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
                 {% endif %}
             </div>
 
-            <aside
-                class="ns-pdp-rail"
+            <section
+                class="ns-pdp-sheet"
+                aria-label="سفارش {{ product.name }}"
                 {% if product.product_type == 'variable' %}
                 x-data="vgProductVariants()"
                 x-init="boot()"
@@ -116,39 +117,21 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
                 {{ product.attribute_options|json_script:"vg-product-attribute-options" }}
                 {% endif %}
 
-                <h1 class="ns-pdp-name">{{ product.name }}</h1>
+                <header class="ns-pdp-head">
+                    <h1 class="ns-pdp-name">{{ product.name }}</h1>
+                    {% if product.brand or product.sku %}
+                    <p class="ns-pdp-id">
+                        {% if product.brand %}<span><bdi>{{ product.brand }}</bdi></span>{% endif %}
+                        {% if product.sku %}<span>کد <bdi class="ns-pdp-code">{{ product.sku }}</bdi></span>{% endif %}
+                    </p>
+                    {% endif %}
+                    {% if product.short_description %}
+                    <p class="ns-pdp-lead">{{ product.short_description }}</p>
+                    {% endif %}
+                </header>
 
                 {% if product.product_type == 'variable' %}
-                <p class="ns-pdp-price">
-                    <span x-html="window.ShopMoney.formatMoney(displayPrice())">{% money product.base_price %}</span>
-                    <s x-show="displayComparePrice()" x-cloak x-html="window.ShopMoney.formatMoney(displayComparePrice())"></s>
-                </p>
-                <p class="ns-pdp-stock" :class="{ 'is-out': !canAddToCart() }" x-text="canAddToCart() ? 'موجود' : 'ناموجود'">{% if product.in_stock %}موجود{% else %}ناموجود{% endif %}</p>
-                {% else %}
-                <p class="ns-pdp-price">
-                    {% money product.base_price %}
-                    {% if product.compare_price %}<s>{% money product.compare_price %}</s>{% endif %}
-                    {% if product.discount_percent %}<span class="ns-pdp-off">{{ product.discount_percent }}٪</span>{% endif %}
-                </p>
-                <p class="ns-pdp-stock{% if not product.in_stock %} is-out{% endif %}">{% if product.in_stock %}موجود{% else %}ناموجود{% endif %}</p>
-                {% endif %}
-
-                {% if product.brand or product.category or product.sku %}
-                <p class="ns-pdp-meta">
-                    {% if product.brand %}<span>{{ product.brand }}</span>{% endif %}
-                    {% if product.category %}
-                    {% if product.brand %}<span aria-hidden="true">·</span>{% endif %}
-                    <a href="/products/{{ product.category_slug }}/">{{ product.category }}</a>
-                    {% endif %}
-                    {% if product.sku %}
-                    {% if product.brand or product.category %}<span aria-hidden="true">·</span>{% endif %}
-                    <span>کد {{ product.sku }}</span>
-                    {% endif %}
-                </p>
-                {% endif %}
-
-                {% if product.product_type == 'variable' %}
-                <div class="ns-variant-groups">
+                <div class="ns-variant-groups ns-pdp-options">
                     <template x-for="attr in visibleAttributes()" :key="'attr-' + attr.id">
                         <div class="ns-variant-group">
                             <div class="ns-variant-label">
@@ -195,25 +178,36 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
                         </div>
                     </template>
                 </div>
+
+                <div class="ns-pdp-total">
+                    <div class="ns-pdp-total-main">
+                        <span class="ns-pdp-total-label">قیمت</span>
+                        <p class="ns-pdp-price">
+                            <span x-html="window.ShopMoney.formatMoney(displayPrice())">{% money product.base_price %}</span>
+                            <s x-show="displayComparePrice()" x-cloak x-html="window.ShopMoney.formatMoney(displayComparePrice())"></s>
+                        </p>
+                    </div>
+                    <p class="ns-pdp-stock" :class="{ 'is-out': !canAddToCart() }" x-text="canAddToCart() ? 'موجود' : 'ناموجود'">{% if product.in_stock %}موجود{% else %}ناموجود{% endif %}</p>
+                </div>
+                {% else %}
+                <div class="ns-pdp-total">
+                    <div class="ns-pdp-total-main">
+                        <span class="ns-pdp-total-label">قیمت</span>
+                        <p class="ns-pdp-price">
+                            {% money product.base_price %}
+                            {% if product.compare_price %}<s>{% money product.compare_price %}</s>{% endif %}
+                            {% if product.discount_percent %}<span class="ns-pdp-off">{{ product.discount_percent }}٪</span>{% endif %}
+                        </p>
+                    </div>
+                    <p class="ns-pdp-stock{% if not product.in_stock %} is-out{% endif %}">{% if product.in_stock %}موجود{% else %}ناموجود{% endif %}</p>
+                </div>
                 {% endif %}
 
                 <div class="ns-pdp-buybox ns-product-actions"{% if product.product_type != 'variable' %} x-data="vgQty(1)"{% endif %}>
-                    <div class="ns-pdp-tools">
-                        <div class="ns-qty" data-ns-qty data-qty="1">
-                            <button type="button" class="ns-icon-btn" data-ns-qty-dec aria-label="کاهش"><i data-lucide="minus"></i></button>
-                            <span class="ns-qty-val" data-ns-qty-value>۱</span>
-                            <button type="button" class="ns-icon-btn" data-ns-qty-inc aria-label="افزایش"><i data-lucide="plus"></i></button>
-                        </div>
-                        <button
-                            type="button"
-                            class="ns-pdp-wish"
-                            data-toggle-wishlist
-                            data-product="{{ product.slug }}"
-                            aria-pressed="false"
-                        >
-                            <i data-lucide="heart"></i>
-                            <span data-wishlist-label data-idle-label="علاقه‌مندی">علاقه‌مندی</span>
-                        </button>
+                    <div class="ns-qty" data-ns-qty data-qty="1">
+                        <button type="button" class="ns-icon-btn" data-ns-qty-dec aria-label="کاهش"><i data-lucide="minus"></i></button>
+                        <span class="ns-qty-val" data-ns-qty-value>۱</span>
+                        <button type="button" class="ns-icon-btn" data-ns-qty-inc aria-label="افزایش"><i data-lucide="plus"></i></button>
                     </div>
                     {% if product.product_type == 'variable' %}
                     <button
@@ -243,23 +237,124 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
                     {% else %}
                     <button type="button" class="ns-btn ns-pdp-buy" disabled>ناموجود</button>
                     {% endif %}
+                    <button
+                        type="button"
+                        class="ns-pdp-wish"
+                        data-toggle-wishlist
+                        data-product="{{ product.slug }}"
+                        aria-pressed="false"
+                        aria-label="علاقه‌مندی"
+                        title="علاقه‌مندی"
+                    >
+                        <i data-lucide="heart"></i>
+                        <span data-wishlist-label data-idle-label="علاقه‌مندی" hidden>علاقه‌مندی</span>
+                    </button>
                 </div>
-            </aside>
 
-            <div class="ns-pdp-story">
-                {% if product.short_description %}
-                <p class="ns-pdp-lead">{{ product.short_description }}</p>
+                {% if product.product_type == 'variable' or product.in_stock %}
+                <div
+                    class="ns-pdp-dock"
+                    x-data="{ show: false }"
+                    x-init="
+                        const buy = $root.closest('.ns-pdp-sheet').querySelector('.ns-pdp-buy');
+                        const foot = document.querySelector('footer');
+                        if (buy && 'IntersectionObserver' in window) {
+                            let buyOn = true, footOn = false;
+                            const sync = () => { show = !buyOn && !footOn; };
+                            new IntersectionObserver(([e]) => { buyOn = e.isIntersecting; sync(); }).observe(buy);
+                            if (foot) new IntersectionObserver(([e]) => { footOn = e.isIntersecting; sync(); }).observe(foot);
+                        }
+                    "
+                    :class="{ 'is-visible': show }"
+                    :aria-hidden="!show"
+                >
+                    <p class="ns-pdp-dock-price">
+                        {% if product.product_type == 'variable' %}
+                        <span x-html="window.ShopMoney.formatMoney(displayPrice())">{% money product.base_price %}</span>
+                        {% else %}
+                        <span>{% money product.base_price %}</span>
+                        {% endif %}
+                    </p>
+                    <button
+                        type="button"
+                        class="ns-btn ns-pdp-dock-buy"
+                        :tabindex="show ? 0 : -1"
+                        {% if product.product_type == 'variable' %}
+                        :disabled="typeof canAddToCart === 'function' ? !canAddToCart() : false"
+                        {% endif %}
+                        @click="$root.closest('.ns-pdp-sheet').querySelector('.ns-pdp-buy').click()"
+                    >
+                        <span x-text="typeof cartLabel === 'function' ? cartLabel() : 'افزودن به سبد'">افزودن به سبد</span>
+                    </button>
+                </div>
                 {% endif %}
+            </section>
+        </div>
 
-                {% if product.description %}
-                <section class="ns-pdp-section" aria-labelledby="pdp-description">
-                    <h2 id="pdp-description">شرح</h2>
+        <nav
+            class="ns-pdp-index"
+            aria-label="بخش‌های صفحه"
+            x-data="{ active: '' }"
+            x-init="
+                active = ($root.querySelector('a') || {}).hash ? $root.querySelector('a').hash.slice(1) : '';
+                if ('IntersectionObserver' in window) {
+                    const io = new IntersectionObserver((entries) => {
+                        entries.forEach((e) => { if (e.isIntersecting) active = e.target.id; });
+                    }, { rootMargin: '-25% 0px -65% 0px' });
+                    document.querySelectorAll('.ns-pdp-section').forEach((s) => io.observe(s));
+                }
+            "
+        >
+            {% if product.description %}<a href="#pdp-description" :class="{ 'is-active': active === 'pdp-description' }">شرح</a>{% endif %}
+            {% if has_specs %}<a href="#pdp-specs" :class="{ 'is-active': active === 'pdp-specs' }">مشخصات</a>{% endif %}
+            <a href="#pdp-reviews" :class="{ 'is-active': active === 'pdp-reviews' }">نظرات</a>
+            {% if related_products %}<a href="#pdp-related" :class="{ 'is-active': active === 'pdp-related' }">کالاهای مرتبط</a>{% endif %}
+        </nav>
+
+        <div class="ns-pdp-body">
+            {% if product.description %}
+            <section class="ns-pdp-section" id="pdp-description" aria-labelledby="pdp-description-title">
+                <h2 id="pdp-description-title">شرح</h2>
+                <div class="ns-pdp-section-body">
                     <div class="ns-prose rich-content">{{ product.description|safe }}</div>
-                </section>
-                {% endif %}
+                </div>
+            </section>
+            {% endif %}
 
-                <section class="ns-pdp-section" aria-labelledby="pdp-reviews">
-                    <h2 id="pdp-reviews">نظرات</h2>
+            {% if has_specs %}
+            <section class="ns-pdp-section" id="pdp-specs" aria-labelledby="pdp-specs-title">
+                <h2 id="pdp-specs-title">مشخصات</h2>
+                <div class="ns-pdp-section-body">
+                    <dl class="ns-pdp-specs">
+                        {% if product.brand %}
+                        <div><dt>برند</dt><dd>{{ product.brand }}</dd></div>
+                        {% endif %}
+                        {% if product.category %}
+                        <div><dt>دسته‌بندی</dt><dd><a href="/products/{{ product.category_slug }}/">{{ product.category }}</a></dd></div>
+                        {% endif %}
+                        {% if product.sku %}
+                        <div><dt>کد کالا</dt><dd><bdi class="ns-pdp-code">{{ product.sku }}</bdi></dd></div>
+                        {% endif %}
+                        {% for attr in product.attribute_options %}
+                        <div>
+                            <dt>{{ attr.name }}</dt>
+                            <dd>{% for val in attr.values %}{{ val.value }}{% if not forloop.last %}، {% endif %}{% endfor %}</dd>
+                        </div>
+                        {% endfor %}
+                        {% if product.tags %}
+                        <div>
+                            <dt>برچسب‌ها</dt>
+                            <dd>{% for tag in product.tags %}{{ tag }}{% if not forloop.last %}، {% endif %}{% endfor %}</dd>
+                        </div>
+                        {% endif %}
+                    </dl>
+                </div>
+            </section>
+            {% endif %}
+
+            <section class="ns-pdp-section" id="pdp-reviews" aria-labelledby="pdp-reviews-title">
+                <h2 id="pdp-reviews-title">نظرات</h2>
+                <div class="ns-pdp-section-body">
                     <div id="product-comments" data-product="{{ product.slug }}">
                         <p id="comments-summary" class="ns-pdp-note"></p>
                         <div id="comments-list">
@@ -297,8 +392,19 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
                             <button type="button" class="ns-btn" id="submit-review">ارسال نظر</button>
                         </div>
                     </div>
-                </section>
-            </div>
+                </div>
+            </section>
+
+            {% if related_products %}
+            <section class="ns-pdp-section ns-pdp-section--wide" id="pdp-related" aria-labelledby="pdp-related-title">
+                <h2 id="pdp-related-title">کالاهای مرتبط</h2>
+                <div class="ns-products-grid ns-pdp-related">
+                    {% for p in related_products %}
+                    {% include "partials/product_card.html" with product=p %}
+                    {% endfor %}
+                </div>
+            </section>
+            {% endif %}
         </div>
     </div>
 </div>

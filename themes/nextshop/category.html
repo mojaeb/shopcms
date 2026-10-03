@@ -17,10 +17,6 @@
         <h1 class="ns-page-title">{% if category %}{{ category.name }}{% else %}دسته‌بندی‌ها{% endif %}</h1>
         {% if category and category.description %}
         <p class="ns-page-sub">{{ category.description }}</p>
-        {% elif not category %}
-        <p class="ns-page-sub">دسته موردنظر را انتخاب کنید یا همه محصولات را ببینید.</p>
-        {% else %}
-        <p class="ns-page-sub">فیلتر کنید و با اطمینان خرید کنید.</p>
         {% endif %}
     </div>
 
